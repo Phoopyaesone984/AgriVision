@@ -1,0 +1,74 @@
+/* Background */
+body{
+    background:#F4F9F4;
+    min-height:100vh;
+}
+
+.navbar-brand{
+    font-size:1.5rem;
+}
+
+main{
+    min-height:80vh;
+}
+
+footer{
+    margin-top:50px;
+}
+/* Register Card */
+.register-card {
+    background: white;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.register-title {
+    color: #2E7D32;
+    font-weight: bold;
+}
+
+/* Labels */
+.form-label {
+    color: #2E7D32;
+    font-weight: 600;
+}
+
+/* Input Boxes */
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #C8E6C9;
+    padding: 10px;
+}
+
+/* Input Focus */
+.form-control:focus {
+    border-color: #2E7D32;
+    box-shadow: 0 0 8px rgba(46, 125, 50, 0.25);
+}
+
+/* Button */
+.btn-register {
+    background-color: #2E7D32;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-register:hover {
+    background-color: #1B5E20;
+}
+
+/* Login Link */
+.login-link a {
+    color: #2E7D32;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
