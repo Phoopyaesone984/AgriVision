@@ -1,132 +1,413 @@
+<!-- templates/base.html -->
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% block title %}
-            AgriVision
-        {% endblock %}
-    </title>
+    <meta name="description" content="AgriVision - Smart Farming for Myanmar Farmers">
+    <title>{% block title %}AgriVision{% endblock %}</title>
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* ----- CSS variables : light & dark (futuristic + agriculture) ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease, color 0.2s ease;
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+        :root {
+            /* light mode (default) */
+            --bg-body: #f2f7f5;
+            --bg-surface: #ffffff;
+            --bg-nav: rgba(255, 255, 255, 0.75);
+            --bg-glass: rgba(255, 255, 255, 0.5);
+            --text-primary: #14281e;
+            --text-secondary: #2b4a3a;
+            --text-muted: #4d6a5a;
+            --border-light: rgba(32, 77, 62, 0.15);
+            --shadow-soft: 0 12px 40px rgba(20, 40, 30, 0.08);
+            --shadow-glow: 0 8px 32px rgba(0, 180, 120, 0.12);
+            --accent-green: #0ea76a;
+            --accent-green-glow: #0ea76a40;
+            --accent-cyan: #2fc7b0;
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --nav-link: #1f3d31;
+            --footer-bg: #0f261e;
+            --footer-text: #bcd9ce;
+            --mode-toggle-bg: #d4e3dd;
+        }
+        [data-theme="dark"] {
+            --bg-body: #0b1712;
+            --bg-surface: #14241d;
+            --bg-nav: rgba(12, 28, 22, 0.85);
+            --bg-glass: rgba(18, 38, 30, 0.5);
+            --text-primary: #dff3eb;
+            --text-secondary: #b6d9cb;
+            --text-muted: #8bb4a3;
+            --border-light: rgba(80, 140, 120, 0.2);
+            --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 8px 32px rgba(0, 220, 150, 0.15);
+            --accent-green: #2edb92;
+            --accent-green-glow: #2edb9240;
+            --accent-cyan: #4fe0cc;
+            --card-bg: rgba(20, 40, 30, 0.5);
+            --nav-link: #ccede2;
+            --footer-bg: #05100b;
+            --footer-text: #8db8a8;
+            --mode-toggle-bg: #1f3d31;
+        }
+
+        /* ----- global styles ----- */
+        a {
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+        a:hover {
+            color: var(--accent-cyan);
+        }
+        .navbar {
+            background: var(--bg-nav);
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-soft);
+            padding: 0.7rem 0;
+            transition: all 0.25s ease;
+        }
+        .navbar.scrolled {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            background: var(--bg-nav);
+            backdrop-filter: blur(18px) saturate(200%);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+            color: var(--text-primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .navbar-brand i {
+            color: var(--accent-green);
+            font-size: 2rem;
+            filter: drop-shadow(0 0 6px var(--accent-green-glow));
+        }
+        .nav-link {
+            font-weight: 500;
+            color: var(--nav-link) !important;
+            padding: 0.5rem 0.9rem;
+            border-radius: 50px;
+            transition: 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .nav-link:hover {
+            background: var(--accent-green-glow);
+            color: var(--accent-green) !important;
+            transform: translateY(-1px);
+        }
+        .btn-primary-nav, .btn-outline-nav {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s ease;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--nav-link);
+        }
+        .btn-primary-nav {
+            background: var(--accent-green);
+            color: #fff !important;
+            border-color: var(--accent-green);
+            box-shadow: 0 4px 12px rgba(14, 167, 106, 0.2);
+        }
+        .btn-primary-nav:hover {
+            background: #0b8b58;
+            transform: scale(0.97);
+            box-shadow: 0 6px 16px rgba(14, 167, 106, 0.3);
+            color: #fff !important;
+        }
+        .btn-outline-nav {
+            border: 1px solid var(--border-light);
+            background: var(--bg-glass);
+        }
+        .btn-outline-nav:hover {
+            background: var(--accent-green-glow);
+            border-color: var(--accent-green);
+            color: var(--accent-green) !important;
+        }
+
+        /* footer */
+        footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            border-top: 1px solid var(--border-light);
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            margin-top: 3rem;
+        }
+        /* toggle switch */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 12px;
+        }
+        .toggle-track {
+            width: 52px;
+            height: 28px;
+            background: var(--mode-toggle-bg);
+            border-radius: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.25s ease;
+            border: 1px solid var(--border-light);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .toggle-track .thumb {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #0d2b1e;
+        }
+        [data-theme="dark"] .toggle-track .thumb {
+            left: 26px;
+            background: #d0f0e0;
+        }
+        .toggle-track .thumb i {
+            font-size: 12px;
+        }
+        .toggle-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+        /* alerts */
+        .alert {
+            border-radius: 60px;
+            backdrop-filter: blur(10px);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+        }
+        main {
+            min-height: 70vh;
+        }
+        .badge-future {
+            background: var(--accent-green-glow);
+            color: var(--accent-green);
+            padding: 6px 16px;
+            border-radius: 60px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 992px) {
+            .navbar-brand { font-size: 1.3rem; }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
         <div class="container">
-
-            <a class="navbar-brand fw-bold" href="#">
-                🌾 AgriVision
+            <a class="navbar-brand" href="{% url 'landing:landing' %}">
+                <i class="bi bi-seedling"></i>
+                AgriVision
             </a>
 
-            <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav">
+            <div class="d-flex align-items-center gap-2">
+                <!-- Theme toggle -->
+                <div class="theme-toggle">
+                    <span class="toggle-label" id="themeLabel">🌿</span>
+                    <div class="toggle-track" id="themeToggle">
+                        <span class="thumb" id="themeThumb"><i class="bi bi-moon-fill" id="themeIcon"></i></span>
+                    </div>
+                </div>
 
-                <span class="navbar-toggler-icon"></span>
-
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-
-                <ul class="navbar-nav ms-auto">
-
-                    {% if user.is_authenticated %}
-
-                        <li class="nav-item">
-                            <span class="nav-link">
-                                Welcome, {{ user.username }}
-                            </span>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">
-                                Logout
-                            </a>
-                        </li>
-
-                    {% else %}
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
-                                Login
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">
-                                Register
-                            </a>
-                        </li>
-
-                    {% endif %}
-
-                </ul>
-
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
 
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="nav-link text-muted">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'landing:dashboard' %}">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-primary-nav" href="{% url 'landing:logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link btn-primary-nav" href="{% url 'landing:login' %}">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-nav" href="{% url 'register' %}">
+                                <i class="bi bi-person-plus"></i> Register
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <!-- Django Messages -->
-    <div class="container mt-3">
-
+    <!-- Messages -->
+    <div class="container mt-5 pt-4">
         {% if messages %}
-
             {% for message in messages %}
-
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-
                     {{ message }}
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                    </button>
-
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-
             {% endfor %}
-
         {% endif %}
-
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content - THIS IS THE FIX -->
     <main>
-
         {% block content %}
-
+        <!-- Default content can go here, but it will be overridden by child templates -->
+        <div class="container my-5">
+            <div class="text-center">
+                <h1>Welcome to AgriVision</h1>
+                <p>Loading content...</p>
+            </div>
+        </div>
         {% endblock %}
-
     </main>
 
     <!-- Footer -->
-    <footer class="bg-success text-white text-center py-3 mt-5">
-
+    <footer class="text-white text-center py-4">
         <small>
-            © 2026 AgriVision | Smart Agriculture Management System
+            <i class="bi bi-seedling me-1" style="color: var(--accent-green);"></i>
+            &copy; 2026 AgriVision | Smart Agriculture Management System
         </small>
-
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle
+            const toggleTrack = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeLabel = document.getElementById('themeLabel');
+            const root = document.documentElement;
 
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    root.setAttribute('data-theme', 'dark');
+                    themeIcon.className = 'bi bi-sun-fill';
+                    themeLabel.textContent = '🌙';
+                } else {
+                    root.removeAttribute('data-theme');
+                    themeIcon.className = 'bi bi-moon-fill';
+                    themeLabel.textContent = '🌿';
+                }
+                localStorage.setItem('agri-theme', theme);
+            }
+
+            const saved = localStorage.getItem('agri-theme');
+            if (saved) {
+                setTheme(saved);
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            }
+
+            toggleTrack.addEventListener('click', function() {
+                const current = root.getAttribute('data-theme');
+                const next = (current === 'dark') ? 'light' : 'dark';
+                setTheme(next);
+            });
+
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Close mobile menu on link click
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (navbarCollapse.classList.contains('show')) {
+                        const toggler = document.querySelector('.navbar-toggler');
+                        if (toggler) toggler.click();
+                    }
+                });
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>
