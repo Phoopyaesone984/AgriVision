@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterForm
+from .forms import RegisterForm,LoginForm
 
 def register_view(request):
     if request.method == "POST":
@@ -22,29 +23,61 @@ def register_view(request):
     })
 
 def login_view(request):
+
     if request.method == "POST":
-
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-
-        user = authenticate(
+        form = LoginForm(
             request,
-            username=username,
-            password=password
+            data=request.POST
         )
 
-        if user is not None:
+        print("POST received")   # test
+
+        if form.is_valid():
+            print("FORM VALID")   # test
+
+            user = form.get_user()
+
             login(request, user)
-            messages.success(request, "Welcome back!")
+
+            print("USER LOGIN:", user.username)  # test
+
+            messages.success(
+                request,
+                "Login successful!"
+            )
+
             return redirect("dashboard")
 
         else:
-            messages.error(request, "Invalid username or password.")
+            print(form.errors)   # show errors
 
-    return render(request, "login.html")
+    else:
+        form = LoginForm()
 
+    return render(
+        request,
+        "login.html",
+        {
+            "form": form
+        }
+    )
 
 def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
-    return redirect("login")
+    return redirect("landing:landing")
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def dashboard_view(request):
+    context = {
+        "stats": {
+            "total_fields": 6,
+            "active_crops": 4,
+            "revenue": "3,240",
+            "pending_tasks": 3,
+        }
+    }
+    return render(request, "dashboard.html", context)
