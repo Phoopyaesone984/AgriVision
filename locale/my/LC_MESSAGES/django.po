@@ -1,0 +1,201 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AgriVision\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-18 12:00+0000\n"
+"PO-Revision-Date: 2026-07-18 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: my\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/base.html:7
+msgid "AgriVision - Smart Farming for Myanmar Farmers"
+msgstr "AgriVision - မြန်မာ့လယ်သမားများအတွက် ခေတ်မီစမတ်စိုက်ပျိုးရေးစနစ်"
+
+#: templates/base.html:10
+msgid "AgriVision"
+msgstr "AgriVision"
+
+#: templates/base.html:140
+msgid "Features"
+msgstr "လုပ်ဆောင်ချက်များ"
+
+#: templates/base.html:141
+msgid "About"
+msgstr "ကျွန်ုပ်တို့အကြောင်း"
+
+#: templates/base.html:146
+msgid "Dashboard"
+msgstr "ဒက်ရှ်ဘုတ်"
+
+#: templates/base.html:149
+msgid "Logout"
+msgstr "အကောင့်ထွက်ရန်"
+
+#: templates/base.html:153
+msgid "Login"
+msgstr "အကောင့်ဝင်ရန်"
+
+#: templates/base.html:156
+msgid "Register"
+msgstr "အကောင့်ဖွင့်ရန်"
+
+#: templates/base.html:198
+msgid "Welcome to AgriVision"
+msgstr "AgriVision မှ လှိုက်လှဲစွာကြိုဆိုပါသည်"
+
+#: templates/base.html:199
+msgid "Loading content..."
+msgstr "ဒေတာများ ဆွဲယူနေသည်..."
+
+#: templates/base.html:207
+msgid "AgriVision | Smart Agriculture Management System"
+msgstr "AgriVision | ခေတ်မီစမတ်စိုက်ပျိုးရေး စီမံခန့်ခွဲမှုစနစ်"
+
+#: templates/landing/index.html:17
+msgid "Smart Farming Solution for Myanmar"
+msgstr "မြန်မာနိုင်ငံအတွက် ခေတ်မီစမတ်စိုက်ပျိုးရေး နည်းလမ်းကောင်းများ"
+
+#: templates/landing/index.html:21
+msgid "Predict."
+msgstr "ကြိုတင်ခန့်မှန်းမယ်။"
+
+#: templates/landing/index.html:21
+msgid "Grow."
+msgstr "စိုက်ပျိုးအောင်မြင်မယ်။"
+
+#: templates/landing/index.html:21
+msgid "Thrive."
+msgstr "ဖွံ့ဖြိုးတိုးတက်မယ်။"
+
+#: templates/landing/index.html:24
+msgid "AgriVision helps Myanmar farmers predict soil moisture, weather patterns, manage farm operations with ERP tools, and learn through community-driven agricultural blogs."
+msgstr "AgriVision သည် မြန်မာ့လယ်သမားများအတွက် မြေဆီလွှာအစိုဓာတ်နှင့် ရာသီဥတုအခြေအနေများကို ကြိုတင်ခန့်မှန်းပေးခြင်း၊ ERP ကိရိယာများဖြင့် စိုက်ပျိုးရေးလုပ်ငန်းများကို စနစ်တကျစီမံခန့်ခွဲပေးခြင်းနှင့် တောင်သူအချင်းချင်း ဗဟုသုတမျှဝေနိုင်မည့် စိုက်ပျိုးရေးဘလော့ဂ်များကို ပံ့ပိုးပေးပါသည်။"
+
+#: templates/landing/index.html:31
+msgid "Go to Dashboard"
+msgstr "ဒက်ရှ်ဘုတ်သို့ သွားရန်"
+
+#: templates/landing/index.html:35
+msgid "Get Started"
+msgstr "စတင်အသုံးပြုရန်"
+
+#: templates/landing/index.html:38
+msgid "Create Account"
+msgstr "အကောင့်အသစ်ဖွင့်ရန်"
+
+#: templates/landing/index.html:47
+msgid "Farmers Connected"
+msgstr "ချိတ်ဆက်ထားသော တောင်သူဦးရေ"
+
+#: templates/landing/index.html:51
+msgid "Prediction Accuracy"
+msgstr "ခန့်မှန်းချက် တိကျမှုနှုန်း"
+
+#: templates/landing/index.html:55
+msgid "Blog Articles"
+msgstr "စိုက်ပျိုးရေးဆောင်းပါးများ"
+
+#: templates/landing/index.html:66
+msgid "Happy Burmese Farmer"
+msgstr "ပျော်ရွှင်နေသော မြန်မာ့တောင်သူလယ်သမား"
+
+#: templates/landing/index.html:81
+msgid "Core Features"
+msgstr "အဓိကလုပ်ဆောင်ချက်များ"
+
+#: templates/landing/index.html:83
+msgid "Everything You Need for"
+msgstr "ခေတ်မီစမတ်စိုက်ပျိုးရေးအတွက်"
+
+#: templates/landing/index.html:83
+msgid "Smart Farming"
+msgstr "လိုအပ်သမျှ အားလုံးတစ်နေရာတည်းမှာ"
+
+#: templates/landing/index.html:85
+msgid "From soil analysis to farm management and community learning — all in one platform"
+msgstr "မြေဆီလွှာခွဲခြမ်းစိတ်ဖြာခြင်း၊ လယ်ယာစီမံခန့်ခွဲခြင်းနှင့် တောင်သူအချင်းချင်း ဗဟုသုတမျှဝေခြင်းတို့ကို ပလက်ဖောင်းတစ်ခုတည်းတွင် လုပ်ဆောင်နိုင်ပါသည်။"
+
+#: templates/landing/index.html:96
+msgid "Soil Detection"
+msgstr "မြေဆီလွှာစစ်ဆေးခြင်း"
+
+#: templates/landing/index.html:97
+msgid "AI-powered soil analysis that detects nutrients, pH levels, and recommends suitable crops for your land."
+msgstr "AI စနစ်သုံး မြေဆီလွှာခွဲခြမ်းစိတ်ဖြာမှုဖြင့် အာဟာရဓာတ်များနှင့် pH ပမာဏကို စစ်ဆေးပေးပြီး သင့်စိုက်ပျိုးမြေနှင့် အကိုက်ညီဆုံးသီးနှံများကို အကြံပြုပေးပါသည်။"
+
+#: templates/landing/index.html:98
+msgid "AI Powered"
+msgstr "AI နည်းပညာသုံး"
+
+#: templates/landing/index.html:106
+msgid "Weather & Moisture"
+msgstr "ရာသီဥတုနှင့် အစိုဓာတ်"
+
+#: templates/landing/index.html:107
+msgid "Real-time weather forecasts and soil moisture predictions to help you plan irrigation and planting."
+msgstr "အချိန်နဲ့တပြေးညီ ရာသီဥတုအခြေအနေနှင့် မြေဆီလွှာအစိုဓာတ်ကို ကြိုတင်ခန့်မှန်းပေးသဖြင့် ရေသွင်းခြင်းနှင့် စိုက်ပျိုးချိန်ကို အလွယ်တကူ စီစဉ်နိုင်ပါသည်။"
+
+#: templates/landing/index.html:108
+msgid "94% Accuracy"
+msgstr "၉၄% ထိ တိကျမှုရှိခြင်း"
+
+#: templates/landing/index.html:116
+msgid "Farmer ERP"
+msgstr "လယ်ယာသုံး ERP စနစ်"
+
+#: templates/landing/index.html:117
+msgid "Complete farm management: track inventory, expenses, crop cycles, harvest planning, and labor."
+msgstr "သိုလှောင်မှုစာရင်း၊ ကုန်ကျစရိတ်၊ သီးနှံစိုက်ပျိုးစက်ဝန်း၊ ရိတ်သိမ်းချိန်နှင့် လုပ်သားအင်အား စသည့် လယ်ယာလုပ်ငန်းခွင်တစ်ခုလုံးကို အဆင့်မြင့်စီမံခန့်ခွဲနိုင်ပါသည်။"
+
+#: templates/landing/index.html:118
+msgid "Full Control"
+msgstr "စိတ်ကြိုက်စီမံနိုင်ခြင်း"
+
+#: templates/landing/index.html:126
+msgid "Blogs & Community"
+msgstr "ဘလော့ဂ်နှင့် တောင်သူလူထု"
+
+#: templates/landing/index.html:127
+msgid "Access agricultural knowledge, tips, and best practices. Farmers can share comments and learn together."
+msgstr "စိုက်ပျိုးရေးဗဟုသုတများ၊ နည်းလမ်းကောင်းများနှင့် အလေ့အကျင့်ကောင်းများကို လေ့လာနိုင်ပြီး တောင်သူအချင်းချင်းလည်း မှတ်ချက်များမှတစ်ဆင့် အပြန်အလှန် ဆွေးနွေးနိုင်ပါသည်။"
+
+#: templates/landing/index.html:128
+msgid "Community Driven"
+msgstr "တောင်သူအချင်းချင်း မျှဝေခြင်း"
+
+#: templates/landing/index.html:139
+msgid "Soil Moisture Prediction"
+msgstr "မြေဆီလွှာအစိုဓာတ် ခန့်မှန်းချက်"
+
+#: templates/landing/index.html:140
+msgid "Advanced algorithms analyze soil data to predict moisture levels up to 7 days ahead."
+msgstr "အဆင့်မြင့်တွက်ချက်မှုစနစ် (Algorithms) များဖြင့် မြေဆီလွှာဒေတာကို ခွဲခြမ်းစိတ်ဖြာပြီး နောက်ထပ် (၇) ရက်စာ အစိုဓာတ်အခြေအနေကို ကြိုတင်ခန့်မှန်းပေးပါသည်။"
+
+#: templates/landing/index.html:147
+msgid "Comment & Learn"
+msgstr "ဆွေးနွေးတိုင်ပင်ပြီး လေ့လာရန်"
+
+#: templates/landing/index.html:148
+msgid "Farmers can share experiences, ask questions, and learn from each other through comments."
+msgstr "တောင်သူများအနေဖြင့် မိမိတို့၏ အတွေ့အကြုံများကို မျှဝေခြင်း၊ မေးခွန်းများမေးမြန်းခြင်းနှင့် မှတ်ချက်များမှတစ်ဆင့် အပြန်အလှန် သင်ယူနိုင်ပါသည်။"
+
+#: templates/landing/index.html:160
+msgid "Ready to Transform Your Farming?"
+msgstr "သင်၏ စိုက်ပျိုးရေးလုပ်ငန်းကို ခေတ်မီအောင် ပြောင်းလဲဖို့ အဆင်သင့်ဖြစ်ပြီလား။"
+
+#: templates/landing/index.html:161
+msgid "Join hundreds of Myanmar farmers already using AgriVision"
+msgstr "AgriVision ကို အသုံးပြုနေကြပြီဖြစ်သော မြန်မာ့တောင်သူ ရာပေါင်းများစွာနှင့် ပူးပေါင်းလိုက်ပါ။"
+
+#: templates/landing/index.html:172
+msgid "Create Free Account"
+msgstr "အခမဲ့ အကောင့်ဖွင့်ရန်"
+
+#: templates/landing/index.html:175
+msgid "Sign In"
+msgstr "အကောင့်ဝင်ရန်"

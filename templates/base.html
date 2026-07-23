@@ -1,13 +1,14 @@
 <!-- templates/base.html -->
 {% load static %}
+{% load i18n %}  <!-- ADD THIS LINE -->
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AgriVision - Smart Farming for Myanmar Farmers">
-    <title>{% block title %}AgriVision{% endblock %}</title>
+    <meta name="description" content="{% trans 'AgriVision - Smart Farming for Myanmar Farmers' %}">
+    <title>{% block title %}{% trans "AgriVision" %}{% endblock %}</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -233,6 +234,17 @@
             backdrop-filter: blur(4px);
         }
 
+        /* Burmese font support */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans Myanmar', sans-serif;
+        }
+        
+        .lang-my {
+            font-family: 'Noto Sans Myanmar', sans-serif;
+        }
+
         @media (max-width: 992px) {
             .navbar-brand { font-size: 1.3rem; }
         }
@@ -248,10 +260,37 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'landing:landing' %}">
                 <i class="bi bi-seedling"></i>
-                AgriVision
+                {% trans "AgriVision" %}
             </a>
 
             <div class="d-flex align-items-center gap-2">
+                <!-- Language Selector -->
+                <div class="dropdown me-2">
+                    <button class="btn btn-sm btn-outline-nav dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-globe2"></i> 
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% if LANGUAGE_CODE == 'my' %}
+                            မြန်မာ
+                        {% else %}
+                            ENG
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item lang-switch {% if LANGUAGE_CODE == 'en' %}active{% endif %}" 
+                               href="#" data-language="en">
+                                🇬🇧 English
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item lang-switch {% if LANGUAGE_CODE == 'my' %}active{% endif %}" 
+                               href="#" data-language="my">
+                                🇲🇲 မြန်မာ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
                 <!-- Theme toggle -->
                 <div class="theme-toggle">
                     <span class="toggle-label" id="themeLabel">🌿</span>
@@ -268,10 +307,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
                     <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
+                        <a class="nav-link" href="#features">{% trans "Features" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="#about">{% trans "About" %}</a>
                     </li>
                     
                     {% if user.is_authenticated %}
@@ -282,23 +321,23 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'landing:dashboard' %}">
-                                <i class="bi bi-speedometer2"></i> Dashboard
+                                <i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn-primary-nav" href="{% url 'landing:logout' %}">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                                <i class="bi bi-box-arrow-right"></i> {% trans "Logout" %}
                             </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link btn-primary-nav" href="{% url 'landing:login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> Login
+                                <i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn-outline-nav" href="{% url 'register' %}">
-                                <i class="bi bi-person-plus"></i> Register
+                                <i class="bi bi-person-plus"></i> {% trans "Register" %}
                             </a>
                         </li>
                     {% endif %}
@@ -319,14 +358,14 @@
         {% endif %}
     </div>
 
-    <!-- Main Content - THIS IS THE FIX -->
+    <!-- Main Content -->
     <main>
         {% block content %}
-        <!-- Default content can go here, but it will be overridden by child templates -->
+        <!-- Default content can go here -->
         <div class="container my-5">
             <div class="text-center">
-                <h1>Welcome to AgriVision</h1>
-                <p>Loading content...</p>
+                <h1>{% trans "Welcome to AgriVision" %}</h1>
+                <p>{% trans "Loading content..." %}</p>
             </div>
         </div>
         {% endblock %}
@@ -336,7 +375,7 @@
     <footer class="text-white text-center py-4">
         <small>
             <i class="bi bi-seedling me-1" style="color: var(--accent-green);"></i>
-            &copy; 2026 AgriVision | Smart Agriculture Management System
+            &copy; 2026 {% trans "AgriVision | Smart Agriculture Management System" %}
         </small>
     </footer>
 
@@ -382,6 +421,29 @@
                 setTheme(next);
             });
 
+            // Language switching
+            const langSwitches = document.querySelectorAll('.lang-switch');
+            langSwitches.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.dataset.language;
+                    const currentPath = window.location.pathname;
+                    
+                    // Set language via cookie and reload
+                    fetch(`/set-language/?language=${lang}&next=${currentPath}`)
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                window.location.reload();
+                            }
+                        })
+                        .catch(() => {
+                            window.location.reload();
+                        });
+                });
+            });
+
             // Navbar scroll effect
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', function() {
@@ -409,5 +471,4 @@
     
     {% block extra_js %}{% endblock %}
 </body>
-
 </html>

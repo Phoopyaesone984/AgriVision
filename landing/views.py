@@ -1,7 +1,9 @@
 # landing/views.py
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import activate
+from django.conf import settings
 
 def landing_page(request):
     """
@@ -24,3 +26,18 @@ def dashboard(request):
         'user': request.user,
     }
     return render(request, 'landing/dashboard.html', context)
+
+def set_language(request):
+    """
+    Set the language for the user
+    """
+    language = request.GET.get('language') or request.POST.get('language')
+    next_url = request.GET.get('next', '/')
+    
+    if language and language in dict(settings.LANGUAGES).keys():
+        activate(language)
+        request.session['django_language'] = language
+        response = redirect(next_url)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+        return response
+    return redirect(next_url)
