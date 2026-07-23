@@ -1,0 +1,373 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}AgriVision{% endblock %}</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0">
+
+<style>
+:root {
+    --bg-page: #f7f6f2;
+    --bg-sidebar: #eeede8;
+    --bg-card: #ffffff;
+    --ink: #16201b;
+    --ink-soft: #5b6b60;
+    --ink-faint: #8a978e;
+    --border: rgba(20, 32, 24, 0.08);
+
+    --mint: #7ee8c4;
+    --mint-deep: #1f4e3d;
+    --forest: #16281f;
+    --forest-deep: #0c1a13;
+
+    --amber-bg: #fbe8ae;
+    --amber-ink: #a9790f;
+    --rose-bg: #fbd9d6;
+    --rose-ink: #c0392b;
+
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-card: 0 10px 30px rgba(20, 32, 24, 0.05);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-page);
+    color: var(--ink);
+}
+
+h1, h2, .font-display {
+    font-family: 'Newsreader', Georgia, serif;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'opsz' 24, 'wght' 400, 'FILL' 0, 'GRAD' 0;
+    font-size: 20px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* ===== Layout ===== */
+.app-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+}
+
+@media (max-width: 900px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .app-sidebar { display: none; }
+}
+
+/* ===== Sidebar ===== */
+.app-sidebar {
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 24px;
+}
+
+.sidebar-brand .logo-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--forest-deep);
+    color: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebar-brand h1 {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.sidebar-brand p {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 0;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 14.5px;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-item:hover {
+    background: rgba(20, 32, 24, 0.04);
+    color: var(--ink);
+}
+
+.nav-item.active {
+    background: var(--mint);
+    color: var(--mint-deep);
+    font-weight: 600;
+}
+
+.nav-item .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.new-analysis-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--forest-deep);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 11px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: opacity 0.15s ease;
+}
+
+.new-analysis-btn:hover { opacity: 0.88; }
+
+/* ===== Topbar ===== */
+.app-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.app-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 32px;
+    background: var(--bg-page);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.app-topbar h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.search-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(20, 32, 24, 0.05);
+    border-radius: 50px;
+    padding: 9px 16px;
+    color: var(--ink-faint);
+    min-width: 220px;
+}
+
+.search-pill input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ink);
+    width: 100%;
+}
+
+.search-pill input::placeholder { color: var(--ink-faint); }
+
+.icon-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+}
+
+.icon-btn .notif-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 7px;
+    height: 7px;
+    background: var(--rose-ink);
+    border-radius: 50%;
+    border: 1.5px solid var(--bg-page);
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-chip .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.user-chip .user-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.user-chip .user-plan {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+}
+
+.app-content {
+    padding: 28px 32px 48px;
+}
+
+{% block extra_css %}{% endblock %}
+</style>
+</head>
+<body>
+
+<div class="app-layout">
+
+    <aside class="app-sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-mark"><span class="material-symbols-outlined">agriculture</span></div>
+            <div>
+                <h1>AgriVision</h1>
+                <p>Smart Farming Suite</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a href="#" class="nav-item {% block nav_agriculture %}{% endblock %}">
+                <span class="material-symbols-outlined">agriculture</span> Farm Management
+            </a>
+            <a href="#" class="nav-item {% block nav_crops %}{% endblock %}">
+                <span class="material-symbols-outlined">potted_plant</span> Crop Growth
+            </a>
+            <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
+                <span class="material-symbols-outlined">science</span> Soil Analysis
+            </a>
+            <a href="#" class="nav-item {% block nav_weather %}{% endblock %}">
+                <span class="material-symbols-outlined">wb_sunny</span> Weather
+            </a>
+            <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
+                <span class="material-symbols-outlined">forum</span> Community
+            </a>
+            <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
+                <span class="material-symbols-outlined">settings</span> Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="new-analysis-btn">
+                <span class="material-symbols-outlined">add</span> New Analysis
+            </button>
+            <a href="#" class="nav-item">
+                <span class="material-symbols-outlined">help</span> Help
+            </a>
+            <a href="{% url 'landing:landing' %}" class="nav-item">
+                <span class="material-symbols-outlined">logout</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="app-main">
+        <header class="app-topbar">
+            <h1>{% block page_title %}Dashboard Overview{% endblock %}</h1>
+
+            <div class="topbar-actions">
+                <div class="search-pill">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="Search analytics...">
+                </div>
+                <button class="icon-btn">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="notif-dot"></span>
+                </button>
+                <div class="user-chip">
+                    <div class="avatar">{{ user.username|slice:":2"|upper }}</div>
+                    <div>
+                        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="user-plan">Premium Plan</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-content">
+            {% block app_content %}{% endblock %}
+        </main>
+    </div>
+
+</div>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>
