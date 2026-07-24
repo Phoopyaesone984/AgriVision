@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "My Farms" %} | AgriVision{% endblock %}
+{% block page_title %}{% trans "My Farms" %}{% endblock %}
+{% block nav_agriculture %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== Page Header ===== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;  /* 👈 Increased from 32px to 40px */
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+    }
+    .page-header h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink);
+        margin: 0;
+        font-family: 'Newsreader', serif;
+    }
+    .page-header .subtitle {
+        font-size: 14px;
+        color: var(--ink-soft);
+        margin: 0;
+        font-weight: 400;
+    }
+
+    /* ===== Farms Grid ===== */
+    .farms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 28px;
+        margin-top: 8px;  /* 👈 Added extra space after header */
+    }
+
+    /* ===== Farm Cards ===== */
+    .farm-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px;
+        transition: all 0.2s ease;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+    .farm-card:hover {
+        border-color: var(--accent-green);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        transform: translateY(-3px);
+    }
+
+    .farm-card .farm-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink);
+        margin: 0 0 14px 0;
+        font-family: 'Newsreader', serif;
+    }
+
+    .farm-card .farm-details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 18px;
+        flex: 1;
+    }
+    .farm-card .farm-details span {
+        font-size: 14px;
+        color: var(--ink-soft);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .farm-card .farm-details .material-symbols-outlined {
+        font-size: 18px;
+        color: var(--ink-faint);
+    }
+
+    .farm-card .crop-count {
+        font-size: 13px;
+        color: var(--accent-green);
+        background: var(--accent-green-glow);
+        padding: 4px 14px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 20px;
+        align-self: flex-start;
+    }
+
+    .farm-card .farm-actions {
+        display: flex;
+        gap: 10px;
+        padding-top: 20px;
+        margin-top: 4px;
+        border-top: 1px solid var(--border);
+    }
+
+    /* ===== Buttons ===== */
+    .btn-sm {
+        padding: 8px 18px;
+        font-size: 13px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: transparent;
+    }
+    .btn-sm .material-symbols-outlined {
+        font-size: 16px;
+    }
+
+    .btn-edit {
+        color: var(--ink-soft);
+        border-color: var(--border);
+        background: var(--bg-page);
+    }
+    .btn-edit:hover {
+        background: var(--bg-card);
+        border-color: var(--accent-green);
+        color: var(--accent-green);
+    }
+
+    .btn-delete {
+        color: var(--rose-ink);
+        border-color: transparent;
+    }
+    .btn-delete:hover {
+        background: var(--rose-bg);
+        border-color: var(--rose-ink);
+    }
+
+    .btn-primary-sm {
+        background: var(--accent-green);
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .btn-primary-sm:hover {
+        background: var(--mint-deep);
+        color: #fff;
+    }
+    .btn-primary-sm .material-symbols-outlined {
+        font-size: 18px;
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: var(--bg-card);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+    .empty-state .material-symbols-outlined {
+        font-size: 56px;
+        color: var(--ink-faint);
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+    .empty-state h3 {
+        font-size: 20px;
+        color: var(--ink);
+        margin: 0 0 8px 0;
+        font-weight: 500;
+    }
+    .empty-state p {
+        color: var(--ink-soft);
+        margin: 0 0 24px 0;
+        font-size: 15px;
+    }
+
+    /* ===== Messages ===== */
+    .messages-container {
+        margin-bottom: 24px;
+    }
+    .alert {
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        border: 1px solid transparent;
+    }
+    .alert-success {
+        background: var(--accent-green-glow);
+        color: var(--accent-green);
+        border-color: var(--accent-green);
+    }
+    .alert-error {
+        background: var(--rose-bg);
+        color: var(--rose-ink);
+        border-color: var(--rose-ink);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 600px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .farms-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .farm-card .farm-actions {
+            flex-wrap: wrap;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="container-fluid">
+    <!-- Messages -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h2>{% trans "My Farms" %}</h2>
+            <p class="subtitle">{% trans "Manage all your farms in one place" %}</p>
+        </div>
+        <a href="{% url 'farms:farm_create' %}" class="btn-primary-sm">
+            <span class="material-symbols-outlined">add</span>
+            {% trans "New Farm" %}
+        </a>
+    </div>
+
+    <!-- Farms Grid -->
+    {% if farms %}
+        <div class="farms-grid">
+            {% for farm in farms %}
+            <div class="farm-card">
+                <h3 class="farm-name">{{ farm.name }}</h3>
+                
+                <div class="farm-details">
+                    <span>
+                        <span class="material-symbols-outlined">location_on</span>
+                        {{ farm.location }}
+                    </span>
+                    <span>
+                        <span class="material-symbols-outlined">straighten</span>
+                        {{ farm.size_acres }} {% trans "acres" %}
+                    </span>
+                    <span>
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        {{ farm.created_at|date:"M d, Y" }}
+                    </span>
+                </div>
+
+                <span class="crop-count">
+                    {{ farm.crops.count }} {% trans "crops" %}
+                </span>
+
+                <div class="farm-actions">
+                    <a href="{% url 'farms:farm_edit' farm.pk %}" class="btn-sm btn-edit">
+                        <span class="material-symbols-outlined">edit</span>
+                        {% trans "Edit" %}
+                    </a>
+                    <a href="{% url 'farms:farm_delete' farm.pk %}" class="btn-sm btn-delete">
+                        <span class="material-symbols-outlined">delete</span>
+                        {% trans "Delete" %}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <span class="material-symbols-outlined">agriculture</span>
+            <h3>{% trans "No farms yet" %}</h3>
+            <p>{% trans "Start by adding your first farm" %}</p>
+            <a href="{% url 'farms:farm_create' %}" class="btn-primary-sm">
+                <span class="material-symbols-outlined">add</span>
+                {% trans "Add Your First Farm" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

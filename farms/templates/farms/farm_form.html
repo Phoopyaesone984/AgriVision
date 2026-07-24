@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }} | AgriVision{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block nav_agriculture %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 480px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 32px;
+    }
+    .form-container .form-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--ink);
+        margin: 0 0 24px 0;
+        font-family: 'Newsreader', serif;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        color: var(--ink);
+        margin-bottom: 4px;
+        font-size: 14px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg-page);
+        color: var(--ink);
+        font-size: 15px;
+        font-family: inherit;
+        transition: border-color 0.2s ease;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 3px var(--accent-green-glow);
+    }
+    .form-group .helptext {
+        color: var(--ink-faint);
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    }
+    .errorlist {
+        color: var(--rose-ink);
+        list-style: none;
+        padding: 0;
+        margin: 4px 0 0;
+        font-size: 13px;
+    }
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+    }
+    .btn-save {
+        background: var(--accent-green);
+        color: #fff;
+        border: none;
+        padding: 10px 28px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .btn-save:hover {
+        background: var(--mint-deep);
+    }
+    .btn-cancel {
+        background: transparent;
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+        padding: 10px 28px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 15px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .btn-cancel:hover {
+        background: var(--bg-page);
+        color: var(--ink);
+    }
+
+    @media (max-width: 480px) {
+        .form-container {
+            margin: 20px 16px;
+            padding: 24px;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+        .btn-save,
+        .btn-cancel {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="form-container">
+    <h2 class="form-title">{{ title }}</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">{% trans "Farm Name" %}</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <ul class="errorlist">{{ form.name.errors }}</ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.location.id_for_label }}">{% trans "Location" %}</label>
+            {{ form.location }}
+            {% if form.location.errors %}
+                <ul class="errorlist">{{ form.location.errors }}</ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.size_acres.id_for_label }}">{% trans "Size (Acres)" %}</label>
+            {{ form.size_acres }}
+            <span class="helptext">{% trans "Total size of your farm in acres" %}</span>
+            {% if form.size_acres.errors %}
+                <ul class="errorlist">{{ form.size_acres.errors }}</ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-save">
+                <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                {{ button_text }}
+            </button>
+            <a href="{% url 'farms:farm_list' %}" class="btn-cancel">
+                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

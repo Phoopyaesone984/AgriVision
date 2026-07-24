@@ -1,6 +1,5 @@
-<!-- templates/base.html -->
 {% load static %}
-{% load i18n %}  <!-- ADD THIS LINE -->
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -13,69 +12,123 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <!-- Google Font -->
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0">
 
-    <!-- Custom CSS -->
     <style>
-        /* ----- CSS variables : light & dark (futuristic + agriculture) ----- */
+        /* ===== CSS Variables with Dark/Light Support ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background 0.3s ease, color 0.2s ease;
-            background: var(--bg-body);
-            color: var(--text-primary);
-        }
+
         :root {
-            /* light mode (default) */
-            --bg-body: #f2f7f5;
-            --bg-surface: #ffffff;
+            /* Light mode (default) */
+            --bg-page: #f7f6f2;
+            --bg-sidebar: #eeede8;
+            --bg-card: #ffffff;
             --bg-nav: rgba(255, 255, 255, 0.75);
             --bg-glass: rgba(255, 255, 255, 0.5);
-            --text-primary: #14281e;
-            --text-secondary: #2b4a3a;
-            --text-muted: #4d6a5a;
+            
+            --ink: #16201b;
+            --ink-soft: #5b6b60;
+            --ink-faint: #8a978e;
+            --border: rgba(20, 32, 24, 0.08);
             --border-light: rgba(32, 77, 62, 0.15);
+
+            --mint: #7ee8c4;
+            --mint-deep: #1f4e3d;
+            --forest: #16281f;
+            --forest-deep: #0c1a13;
+            
+            --accent-green: #0ea76a;
+            --accent-green-glow: rgba(14, 167, 106, 0.25);
+            --accent-cyan: #2fc7b0;
+
+            --amber-bg: #fbe8ae;
+            --amber-ink: #a9790f;
+            --rose-bg: #fbd9d6;
+            --rose-ink: #c0392b;
+
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --shadow-card: 0 10px 30px rgba(20, 32, 24, 0.05);
             --shadow-soft: 0 12px 40px rgba(20, 40, 30, 0.08);
             --shadow-glow: 0 8px 32px rgba(0, 180, 120, 0.12);
-            --accent-green: #0ea76a;
-            --accent-green-glow: #0ea76a40;
-            --accent-cyan: #2fc7b0;
-            --card-bg: rgba(255, 255, 255, 0.6);
-            --nav-link: #1f3d31;
+            
             --footer-bg: #0f261e;
             --footer-text: #bcd9ce;
             --mode-toggle-bg: #d4e3dd;
+            
+            --nav-link: #1f3d31;
+            --text-primary: #16201b;
+            --text-secondary: #2b4a3a;
+            --text-muted: #4d6a5a;
         }
+
         [data-theme="dark"] {
-            --bg-body: #0b1712;
-            --bg-surface: #14241d;
+            --bg-page: #0b1712;
+            --bg-sidebar: #0f1f18;
+            --bg-card: #14241d;
             --bg-nav: rgba(12, 28, 22, 0.85);
             --bg-glass: rgba(18, 38, 30, 0.5);
-            --text-primary: #dff3eb;
-            --text-secondary: #b6d9cb;
-            --text-muted: #8bb4a3;
+            
+            --ink: #dff3eb;
+            --ink-soft: #b6d9cb;
+            --ink-faint: #8bb4a3;
+            --border: rgba(80, 140, 120, 0.15);
             --border-light: rgba(80, 140, 120, 0.2);
+
+            --mint: #2edb92;
+            --mint-deep: #1f4e3d;
+            --forest: #16281f;
+            --forest-deep: #0c1a13;
+            
+            --accent-green: #2edb92;
+            --accent-green-glow: rgba(46, 219, 146, 0.25);
+            --accent-cyan: #4fe0cc;
+
+            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.4);
             --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.6);
             --shadow-glow: 0 8px 32px rgba(0, 220, 150, 0.15);
-            --accent-green: #2edb92;
-            --accent-green-glow: #2edb9240;
-            --accent-cyan: #4fe0cc;
-            --card-bg: rgba(20, 40, 30, 0.5);
-            --nav-link: #ccede2;
+            
             --footer-bg: #05100b;
             --footer-text: #8db8a8;
             --mode-toggle-bg: #1f3d31;
+            
+            --nav-link: #ccede2;
+            --text-primary: #dff3eb;
+            --text-secondary: #b6d9cb;
+            --text-muted: #8bb4a3;
         }
 
-        /* ----- global styles ----- */
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Noto Sans Myanmar', -apple-system, sans-serif;
+            background: var(--bg-page);
+            color: var(--ink);
+            transition: background 0.3s ease, color 0.2s ease;
+        }
+
+        h1, h2, .font-display {
+            font-family: 'Newsreader', Georgia, serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'opsz' 24, 'wght' 400, 'FILL' 0, 'GRAD' 0;
+            font-size: 20px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+
         a {
             color: var(--accent-green);
             text-decoration: none;
@@ -83,111 +136,277 @@
         a:hover {
             color: var(--accent-cyan);
         }
-        .navbar {
-            background: var(--bg-nav);
-            backdrop-filter: blur(14px) saturate(180%);
-            -webkit-backdrop-filter: blur(14px) saturate(180%);
-            border-bottom: 1px solid var(--border-light);
-            box-shadow: var(--shadow-soft);
-            padding: 0.7rem 0;
-            transition: all 0.25s ease;
+
+        /* ===== Layout ===== */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
         }
-        .navbar.scrolled {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            background: var(--bg-nav);
-            backdrop-filter: blur(18px) saturate(200%);
+
+        @media (max-width: 900px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .app-sidebar { display: none; }
         }
-        .navbar-brand {
+
+        /* ===== Sidebar ===== */
+        .app-sidebar {
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            transition: background 0.3s ease;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 8px 24px;
+        }
+
+        .sidebar-brand .logo-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--forest-deep);
+            color: var(--mint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar-brand h1 {
+            font-size: 16px;
             font-weight: 700;
-            font-size: 1.6rem;
-            letter-spacing: -0.5px;
-            color: var(--text-primary) !important;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            line-height: 1.2;
+            color: var(--ink);
+        }
+
+        .sidebar-brand p {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin: 0;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: var(--ink-soft);
+            text-decoration: none;
+            font-size: 14.5px;
+            font-weight: 500;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(20, 32, 24, 0.04);
+            color: var(--ink);
+        }
+
+        .nav-item.active {
+            background: var(--mint);
+            color: var(--mint-deep);
+            font-weight: 600;
+        }
+
+        .nav-item .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        .sidebar-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .new-analysis-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--forest-deep);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 11px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: opacity 0.15s ease;
+        }
+
+        .new-analysis-btn:hover { opacity: 0.88; }
+
+        /* ===== Topbar ===== */
+        .app-main {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .app-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 32px;
+            background: var(--bg-page);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            transition: background 0.3s ease;
+        }
+
+        .app-topbar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+            flex-shrink: 0;
+            color: var(--ink);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-glass);
+            border-radius: 50px;
+            padding: 9px 16px;
+            color: var(--ink-faint);
+            min-width: 220px;
+            border: 1px solid var(--border);
+            transition: background 0.3s ease;
+        }
+
+        .search-pill input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: var(--ink);
+            width: 100%;
+        }
+
+        .search-pill input::placeholder { color: var(--ink-faint); }
+
+        .icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--ink-soft);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .icon-btn:hover { color: var(--ink); }
+
+        .icon-btn .notif-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 7px;
+            height: 7px;
+            background: var(--rose-ink);
+            border-radius: 50%;
+            border: 1.5px solid var(--bg-page);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-chip .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--forest);
+            color: var(--mint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .user-chip .user-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--ink);
+        }
+
+        .user-chip .user-plan {
+            font-size: 11.5px;
+            color: var(--ink-faint);
+        }
+
+        .app-content {
+            padding: 28px 32px 48px;
+            flex: 1;
+        }
+
+        /* ===== Theme Toggle ===== */
+        .theme-toggle-topbar {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .navbar-brand i {
-            color: var(--accent-green);
-            font-size: 2rem;
-            filter: drop-shadow(0 0 6px var(--accent-green-glow));
-        }
-        .nav-link {
-            font-weight: 500;
-            color: var(--nav-link) !important;
-            padding: 0.5rem 0.9rem;
-            border-radius: 50px;
-            transition: 0.2s ease;
-            font-size: 0.95rem;
-        }
-        .nav-link:hover {
-            background: var(--accent-green-glow);
-            color: var(--accent-green) !important;
-            transform: translateY(-1px);
-        }
-        .btn-primary-nav, .btn-outline-nav {
-            display: inline-block;
-            padding: 0.4rem 1.2rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.2s ease;
-            border: 1px solid transparent;
-            background: transparent;
-            color: var(--nav-link);
-        }
-        .btn-primary-nav {
-            background: var(--accent-green);
-            color: #fff !important;
-            border-color: var(--accent-green);
-            box-shadow: 0 4px 12px rgba(14, 167, 106, 0.2);
-        }
-        .btn-primary-nav:hover {
-            background: #0b8b58;
-            transform: scale(0.97);
-            box-shadow: 0 6px 16px rgba(14, 167, 106, 0.3);
-            color: #fff !important;
-        }
-        .btn-outline-nav {
-            border: 1px solid var(--border-light);
-            background: var(--bg-glass);
-        }
-        .btn-outline-nav:hover {
-            background: var(--accent-green-glow);
-            border-color: var(--accent-green);
-            color: var(--accent-green) !important;
-        }
 
-        /* footer */
-        footer {
-            background: var(--footer-bg);
-            color: var(--footer-text);
-            border-top: 1px solid var(--border-light);
-            font-weight: 300;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(4px);
-            margin-top: 3rem;
-        }
-        /* toggle switch */
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: 12px;
-        }
-        .toggle-track {
-            width: 52px;
-            height: 28px;
+        .toggle-track-small {
+            width: 42px;
+            height: 24px;
             background: var(--mode-toggle-bg);
             border-radius: 40px;
             position: relative;
             cursor: pointer;
             transition: 0.25s ease;
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border);
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
-        .toggle-track .thumb {
-            width: 22px;
-            height: 22px;
+
+        .toggle-track-small .thumb {
+            width: 18px;
+            height: 18px;
             background: white;
             border-radius: 50%;
             position: absolute;
@@ -198,76 +417,206 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10px;
             color: #0d2b1e;
         }
-        [data-theme="dark"] .toggle-track .thumb {
-            left: 26px;
+
+        [data-theme="dark"] .toggle-track-small .thumb {
+            left: 20px;
             background: #d0f0e0;
         }
-        .toggle-track .thumb i {
-            font-size: 12px;
+
+        .toggle-track-small .thumb i {
+            font-size: 10px;
         }
-        .toggle-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            letter-spacing: 0.3px;
-        }
-        /* alerts */
-        .alert {
-            border-radius: 60px;
-            backdrop-filter: blur(10px);
+
+        /* ===== Language Selector ===== */
+        .lang-dropdown .dropdown-toggle {
             background: var(--bg-glass);
-            border: 1px solid var(--border-light);
-            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--ink-soft);
+            font-size: 13px;
+            padding: 6px 14px;
+            transition: background 0.2s ease;
         }
-        main {
-            min-height: 70vh;
+
+        .lang-dropdown .dropdown-toggle:hover {
+            background: var(--bg-card);
+            color: var(--ink);
         }
-        .badge-future {
+
+        .lang-dropdown .dropdown-menu {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+        }
+
+        .lang-dropdown .dropdown-item {
+            color: var(--ink);
+            font-size: 14px;
+            padding: 8px 20px;
+            transition: background 0.15s ease;
+        }
+
+        .lang-dropdown .dropdown-item:hover {
             background: var(--accent-green-glow);
             color: var(--accent-green);
-            padding: 6px 16px;
-            border-radius: 60px;
-            font-weight: 600;
-            backdrop-filter: blur(4px);
         }
 
-        /* Burmese font support */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', 'Noto Sans Myanmar', sans-serif;
-        }
-        
-        .lang-my {
-            font-family: 'Noto Sans Myanmar', sans-serif;
+        .lang-dropdown .dropdown-item.active {
+            background: var(--mint);
+            color: var(--mint-deep);
         }
 
-        @media (max-width: 992px) {
-            .navbar-brand { font-size: 1.3rem; }
+        /* ===== Footer ===== */
+        .app-footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            border-top: 1px solid var(--border);
+            padding: 16px 32px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            transition: background 0.3s ease;
+            margin-top: auto;
         }
+
+        .app-footer i {
+            color: var(--accent-green);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .app-topbar {
+                padding: 16px;
+            }
+            .app-content {
+                padding: 16px;
+            }
+            .search-pill {
+                min-width: 140px;
+                padding: 7px 12px;
+            }
+            .app-topbar h1 {
+                font-size: 17px;
+            }
+            .user-chip .user-name {
+                font-size: 12px;
+            }
+            .user-chip .user-plan {
+                font-size: 10px;
+            }
+            .topbar-actions {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .topbar-actions {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .search-pill {
+                min-width: 100%;
+            }
+            .user-chip .user-name {
+                display: none;
+            }
+            .user-chip .user-plan {
+                display: none;
+            }
+        }
+
+        /* ===== Utility ===== */
+        .text-accent { color: var(--accent-green); }
+        .bg-surface { background: var(--bg-card); }
+        .border-subtle { border-color: var(--border) !important; }
+
+        {% block extra_css %}{% endblock %}
     </style>
-    
-    {% block extra_css %}{% endblock %}
 </head>
-
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'landing:landing' %}">
-                <i class="bi bi-seedling"></i>
-                {% trans "AgriVision" %}
-            </a>
+<!-- ============================================================ -->
+<!--  CONDITIONAL LAYOUT: Sidebar ONLY if logged in              -->
+<!-- ============================================================ -->
+<div class="app-layout">
 
-            <div class="d-flex align-items-center gap-2">
-                <!-- Language Selector -->
-                <div class="dropdown me-2">
-                    <button class="btn btn-sm btn-outline-nav dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-globe2"></i> 
+    <!-- ===== SIDEBAR - ONLY SHOW IF LOGGED IN ===== -->
+    {% if user.is_authenticated %}
+    <aside class="app-sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-mark">
+                <span class="material-symbols-outlined">agriculture</span>
+            </div>
+            <div>
+                <h1>{% trans "AgriVision" %}</h1>
+                <p>{% trans "Smart Farming Suite" %}</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+         <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+    <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
+</a>
+            <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
+    <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
+</a>
+            <a href="#" class="nav-item {% block nav_crops %}{% endblock %}">
+                <span class="material-symbols-outlined">potted_plant</span> {% trans "Crop Growth" %}
+            </a>
+            <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
+                <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
+            </a>
+            <a href="#" class="nav-item {% block nav_weather %}{% endblock %}">
+                <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
+            </a>
+            <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
+                <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
+            </a>
+            <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
+                <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="new-analysis-btn">
+                <span class="material-symbols-outlined">add</span> {% trans "New Analysis" %}
+            </button>
+            <a href="#" class="nav-item">
+                <span class="material-symbols-outlined">help</span> {% trans "Help" %}
+            </a>
+            <a href="{% url 'landing:logout' %}" class="nav-item">
+                <span class="material-symbols-outlined">logout</span> {% trans "Logout" %}
+            </a>
+        </div>
+    </aside>
+    {% endif %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="app-main">
+
+        <!-- ===== TOPBAR - ONLY SHOW IF LOGGED IN ===== -->
+        {% if user.is_authenticated %}
+        <header class="app-topbar">
+            <h1>{% block page_title %}{% trans "Dashboard" %}{% endblock %}</h1>
+
+            <div class="topbar-actions">
+                <div class="search-pill">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="{% trans 'Search analytics...' %}">
+                </div>
+
+                <div class="lang-dropdown dropdown">
+                    <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-globe2"></i>
                         {% get_current_language as LANGUAGE_CODE %}
                         {% if LANGUAGE_CODE == 'my' %}
                             မြန်မာ
@@ -277,13 +626,13 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item lang-switch {% if LANGUAGE_CODE == 'en' %}active{% endif %}" 
+                            <a class="dropdown-item lang-switch {% if LANGUAGE_CODE == 'en' %}active{% endif %}"
                                href="#" data-language="en">
                                 🇬🇧 English
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item lang-switch {% if LANGUAGE_CODE == 'my' %}active{% endif %}" 
+                            <a class="dropdown-item lang-switch {% if LANGUAGE_CODE == 'my' %}active{% endif %}"
                                href="#" data-language="my">
                                 🇲🇲 မြန်မာ
                             </a>
@@ -291,194 +640,137 @@
                     </ul>
                 </div>
 
-                <!-- Theme toggle -->
-                <div class="theme-toggle">
-                    <span class="toggle-label" id="themeLabel">🌿</span>
-                    <div class="toggle-track" id="themeToggle">
-                        <span class="thumb" id="themeThumb"><i class="bi bi-moon-fill" id="themeIcon"></i></span>
+                <div class="theme-toggle-topbar">
+                    <div class="toggle-track-small" id="themeToggle">
+                        <span class="thumb" id="themeThumb">
+                            <i class="bi bi-moon-fill" id="themeIcon"></i>
+                        </span>
                     </div>
                 </div>
 
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
+                <button class="icon-btn">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="notif-dot"></span>
                 </button>
-            </div>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">{% trans "Features" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">{% trans "About" %}</a>
-                    </li>
-                    
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="nav-link text-muted">
-                                <i class="bi bi-person-circle"></i> {{ user.username }}
-                            </span>
-                        </li>
-                        <li class="nav-item">
-<<<<<<< HEAD
-                            <a class="nav-link" href="{% url 'landing:dashboard' %}">
-                                <i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}
-=======
-                            <a class="nav-link" href="{% url 'dashboard' %}">
-                                <i class="bi bi-speedometer2"></i> Dashboard
->>>>>>> 8f396ac0df5168879266ac4c9416d8e020514533
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-primary-nav" href="{% url 'landing:logout' %}">
-                                <i class="bi bi-box-arrow-right"></i> {% trans "Logout" %}
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-<<<<<<< HEAD
-                            <a class="nav-link btn-primary-nav" href="{% url 'landing:login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> {% trans "Login" %}
-=======
-                            <a class="nav-link btn-primary-nav" href="{% url 'login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> Login
->>>>>>> 8f396ac0df5168879266ac4c9416d8e020514533
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-outline-nav" href="{% url 'register' %}">
-                                <i class="bi bi-person-plus"></i> {% trans "Register" %}
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Messages -->
-    <div class="container mt-5 pt-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="user-chip">
+                    <div class="avatar">{{ user.username|slice:":2"|upper }}</div>
+                    <div>
+                        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="user-plan">{% trans "Premium Plan" %}</div>
+                    </div>
                 </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-
-    <!-- Main Content -->
-    <main>
-        {% block content %}
-        <!-- Default content can go here -->
-        <div class="container my-5">
-            <div class="text-center">
-                <h1>{% trans "Welcome to AgriVision" %}</h1>
-                <p>{% trans "Loading content..." %}</p>
             </div>
-        </div>
-        {% endblock %}
-    </main>
+        </header>
+        {% endif %}
 
-    <!-- Footer -->
-    <footer class="text-white text-center py-4">
-        <small>
-            <i class="bi bi-seedling me-1" style="color: var(--accent-green);"></i>
+        <!-- ===== MESSAGES (Always show) ===== -->
+        {% if messages %}
+            <div class="container-fluid px-4 pt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- ===== CONTENT (Always show) ===== -->
+        <main class="app-content">
+            {% block app_content %}
+            <!-- Content from child templates -->
+            {% endblock %}
+        </main>
+
+        <!-- ===== FOOTER (Always show) ===== -->
+        <footer class="app-footer">
+            <i class="bi bi-seedling me-1"></i>
             &copy; 2026 {% trans "AgriVision | Smart Agriculture Management System" %}
-        </small>
-    </footer>
+        </footer>
+    </div>
+</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Theme toggle
-            const toggleTrack = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const themeLabel = document.getElementById('themeLabel');
-            const root = document.documentElement;
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-            function setTheme(theme) {
-                if (theme === 'dark') {
-                    root.setAttribute('data-theme', 'dark');
-                    themeIcon.className = 'bi bi-sun-fill';
-                    themeLabel.textContent = '🌙';
-                } else {
-                    root.removeAttribute('data-theme');
-                    themeIcon.className = 'bi bi-moon-fill';
-                    themeLabel.textContent = '🌿';
-                }
-                localStorage.setItem('agri-theme', theme);
-            }
+<!-- Custom JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ===== Theme Toggle =====
+        const toggleTrack = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const root = document.documentElement;
 
-            const saved = localStorage.getItem('agri-theme');
-            if (saved) {
-                setTheme(saved);
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                root.setAttribute('data-theme', 'dark');
+                if (themeIcon) themeIcon.className = 'bi bi-sun-fill';
             } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    setTheme('dark');
-                } else {
-                    setTheme('light');
-                }
+                root.removeAttribute('data-theme');
+                if (themeIcon) themeIcon.className = 'bi bi-moon-fill';
             }
+            localStorage.setItem('agri-theme', theme);
+        }
 
+        const saved = localStorage.getItem('agri-theme');
+        if (saved) {
+            setTheme(saved);
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        }
+
+        if (toggleTrack) {
             toggleTrack.addEventListener('click', function() {
                 const current = root.getAttribute('data-theme');
                 const next = (current === 'dark') ? 'light' : 'dark';
                 setTheme(next);
             });
+        }
 
-            // Language switching
-            const langSwitches = document.querySelectorAll('.lang-switch');
-            langSwitches.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const lang = this.dataset.language;
-                    const currentPath = window.location.pathname;
-                    
-                    // Set language via cookie and reload
-                    fetch(`/set-language/?language=${lang}&next=${currentPath}`)
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                            } else {
-                                window.location.reload();
-                            }
-                        })
-                        .catch(() => {
+        // ===== Language Switching =====
+        const langSwitches = document.querySelectorAll('.lang-switch');
+        langSwitches.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const lang = this.dataset.language;
+                const currentPath = window.location.pathname;
+                
+                fetch(`/set-language/?language=${lang}&next=${currentPath}`)
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
                             window.location.reload();
-                        });
-                });
-            });
-
-            // Navbar scroll effect
-            const navbar = document.getElementById('navbar');
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
-
-            // Close mobile menu on link click
-            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            
-            navLinks.forEach(function(link) {
-                link.addEventListener('click', function() {
-                    if (navbarCollapse.classList.contains('show')) {
-                        const toggler = document.querySelector('.navbar-toggler');
-                        if (toggler) toggler.click();
-                    }
-                });
+                        }
+                    })
+                    .catch(() => {
+                        window.location.reload();
+                    });
             });
         });
-    </script>
-    
-    {% block extra_js %}{% endblock %}
+
+        // ===== Close dropdowns on mobile =====
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const dropdown = this.closest('.dropdown');
+                if (dropdown) {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    if (toggle) {
+                        const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
+                        if (bsDropdown) bsDropdown.hide();
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>
