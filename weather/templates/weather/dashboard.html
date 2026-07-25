@@ -139,12 +139,40 @@
         <div class="card-body p-4">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h3 class="font-display mb-0" style="color: var(--ink);">
-                        {{ weather_data.current.location }}
-                    </h3>
-                    <p class="small mb-3" style="color: var(--ink-faint);">
-                        {{ weather_data.current.region }}{% if weather_data.current.region and weather_data.current.country %}, {% endif %}{{ weather_data.current.country }}
-                    </p>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h3 class="font-display mb-0" style="color: var(--ink);">
+                                {{ weather_data.current.location }}
+                            </h3>
+                            <p class="small mb-0" style="color: var(--ink-faint);">
+                                {{ weather_data.current.region }}{% if weather_data.current.region and weather_data.current.country %}, {% endif %}{{ weather_data.current.country }}
+                            </p>
+                        </div>
+                        
+                        <!-- Farm Selector Dropdown -->
+                        {% if user_farms.count > 1 %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle" style="background: var(--bg-glass); border: 1px solid var(--border); color: var(--ink); border-radius: 8px; padding: 6px 12px; font-size: 0.8rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">swap_horiz</span>
+                                {% trans "Switch Farm" %}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" style="background: var(--bg-card); border: 1px solid var(--border);">
+                                {% for farm in user_farms %}
+                                <li>
+                                    <a class="dropdown-item {% if farm.id == selected_farm.id %}active{% endif %}" 
+                                       href="?farm_id={{ farm.id }}" 
+                                       style="color: var(--ink); {% if farm.id == selected_farm.id %}background: var(--accent-green-glow);{% endif %}">
+                                        {{ farm.name }}
+                                        {% if farm.id == selected_farm.id %}
+                                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; float: right;">check</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
                     
                     <div class="d-flex align-items-end gap-3">
                         <div style="font-size: 4.5rem; font-weight: 300; line-height: 1; color: var(--ink);">
@@ -162,7 +190,7 @@
                     
                     <div class="mt-2">
                         <span style="color: var(--ink-faint); font-size: 0.9rem;">
-                            Feels like {{ weather_data.current.feels_like }}°
+                            {% trans "Feels like" %} {{ weather_data.current.feels_like }}°
                         </span>
                         <span style="color: var(--ink-faint); font-size: 0.9rem; margin-left: 16px;">
                             H: {{ weather_data.forecast.0.max_temp }}° L: {{ weather_data.forecast.0.min_temp }}°
@@ -175,7 +203,7 @@
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center" style="background: var(--bg-glass);">
                                 <span class="material-symbols-outlined" style="font-size: 22px; color: var(--accent-cyan);">air</span>
-                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Wind</div>
+                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">{% trans "Wind" %}</div>
                                 <div style="color: var(--ink); font-weight: 500; font-size: 0.9rem;">
                                     {{ weather_data.current.wind_speed }} km/h
                                 </div>
@@ -184,7 +212,7 @@
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center" style="background: var(--bg-glass);">
                                 <span class="material-symbols-outlined" style="font-size: 22px; color: #60a5fa;">humidity_percentage</span>
-                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Humidity</div>
+                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">{% trans "Humidity" %}</div>
                                 <div style="color: var(--ink); font-weight: 500; font-size: 0.9rem;">
                                     {{ weather_data.current.humidity }}%
                                 </div>
@@ -193,7 +221,7 @@
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center" style="background: var(--bg-glass);">
                                 <span class="material-symbols-outlined" style="font-size: 22px; color: #fbbf24;">wb_sunny</span>
-                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">UV Index</div>
+                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">{% trans "UV Index" %}</div>
                                 <div style="color: var(--ink); font-weight: 500; font-size: 0.9rem;">
                                     {{ weather_data.current.uv_index }}
                                 </div>
@@ -202,7 +230,7 @@
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center" style="background: var(--bg-glass);">
                                 <span class="material-symbols-outlined" style="font-size: 22px; color: var(--ink-faint);">visibility</span>
-                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Visibility</div>
+                                <div style="color: var(--ink-faint); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">{% trans "Visibility" %}</div>
                                 <div style="color: var(--ink); font-weight: 500; font-size: 0.9rem;">
                                     {{ weather_data.current.visibility }} km
                                 </div>
@@ -222,9 +250,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0" style="color: var(--ink); font-weight: 600;">
                             <span class="material-symbols-outlined" style="font-size: 20px; vertical-align: middle; color: var(--ink);">map</span>
-                            Regional Forecast Map
+                            {% trans "Regional Forecast Map" %}
                         </h5>
-                        <span style="color: var(--ink-faint); font-size: 0.75rem;">{{ weather_data.current.location }} Region</span>
+                        <span style="color: var(--ink-faint); font-size: 0.75rem;">{{ weather_data.current.location }} {% trans "Region" %}</span>
                     </div>
                     
                     <div class="map-container">
@@ -237,37 +265,37 @@
                             <div class="map-region cloudy">
                                 <div class="weather-icon">⛅</div>
                                 <div class="temp">32°</div>
-                                <div class="name">Mandalay</div>
+                                <div class="name">{% trans "Mandalay" %}</div>
                             </div>
                             <div class="map-region rainy">
                                 <div class="weather-icon">🌧️</div>
                                 <div class="temp">29°</div>
-                                <div class="name">Yangon</div>
+                                <div class="name">{% trans "Yangon" %}</div>
                             </div>
                             <div class="map-region hot">
                                 <div class="weather-icon">🔥</div>
                                 <div class="temp">35°</div>
-                                <div class="name">Naypyidaw</div>
+                                <div class="name">{% trans "Naypyidaw" %}</div>
                             </div>
                             <div class="map-region clear">
                                 <div class="weather-icon">☀️</div>
                                 <div class="temp">31°</div>
-                                <div class="name">Bago</div>
+                                <div class="name">{% trans "Bago" %}</div>
                             </div>
                             <div class="map-region cloudy">
                                 <div class="weather-icon">⛅</div>
                                 <div class="temp">27°</div>
-                                <div class="name">Shan</div>
+                                <div class="name">{% trans "Shan" %}</div>
                             </div>
                             <div class="map-region hot">
                                 <div class="weather-icon">🔥</div>
                                 <div class="temp">38°</div>
-                                <div class="name">Magway</div>
+                                <div class="name">{% trans "Magway" %}</div>
                             </div>
                             <div class="map-region rainy">
                                 <div class="weather-icon">🌧️</div>
                                 <div class="temp">30°</div>
-                                <div class="name">Ayeyarwady</div>
+                                <div class="name">{% trans "Ayeyarwady" %}</div>
                             </div>
                         </div>
                     </div>
@@ -275,35 +303,36 @@
                     <div class="mt-3 d-flex gap-4 flex-wrap">
                         <div class="d-flex align-items-center gap-2">
                             <span style="display: inline-block; width: 14px; height: 14px; background: #4ade80; border-radius: 4px;"></span>
-                            <span style="color: var(--ink-faint); font-size: 0.75rem;">Clear</span>
+                            <span style="color: var(--ink-faint); font-size: 0.75rem;">{% trans "Clear" %}</span>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <span style="display: inline-block; width: 14px; height: 14px; background: #fbbf24; border-radius: 4px;"></span>
-                            <span style="color: var(--ink-faint); font-size: 0.75rem;">Partly Cloudy</span>
+                            <span style="color: var(--ink-faint); font-size: 0.75rem;">{% trans "Partly Cloudy" %}</span>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <span style="display: inline-block; width: 14px; height: 14px; background: #60a5fa; border-radius: 4px;"></span>
-                            <span style="color: var(--ink-faint); font-size: 0.75rem;">Rain</span>
+                            <span style="color: var(--ink-faint); font-size: 0.75rem;">{% trans "Rain" %}</span>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <span style="display: inline-block; width: 14px; height: 14px; background: #f87171; border-radius: 4px;"></span>
-                            <span style="color: var(--ink-faint); font-size: 0.75rem;">Heatwave</span>
+                            <span style="color: var(--ink-faint); font-size: 0.75rem;">{% trans "Heatwave" %}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
+        <!-- ===== ACTIVE ALERTS ===== -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm h-100" style="background: var(--bg-card); border-radius: 16px; border-left: 4px solid #dc3545;">
                 <div class="card-body p-4">
                     <h5 class="mb-3" style="color: #dc3545; font-weight: 600;">
                         <span class="material-symbols-outlined" style="font-size: 20px; vertical-align: middle; color: #dc3545;">warning</span>
-                        Active Alerts
+                        {% trans "Active Alerts" %}
                     </h5>
                     
-                    {% if weather_data.alerts %}
-                        {% for alert in weather_data.alerts %}
+                    {% if all_alerts %}
+                        {% for alert in all_alerts %}
                         <div class="p-3 mb-2 rounded-3" style="background: var(--bg-glass); border: 1px solid var(--border);">
                             <div class="d-flex align-items-start gap-2">
                                 <span class="material-symbols-outlined" style="color: #dc3545; font-size: 20px;">error</span>
@@ -312,15 +341,27 @@
                                         {{ alert.headline }}
                                     </h6>
                                     <p class="mb-1" style="color: var(--ink-soft); font-size: 0.8rem;">{{ alert.description }}</p>
+                                    {% if alert.instruction %}
+                                        <p class="mb-1" style="color: var(--ink-faint); font-size: 0.75rem;">
+                                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">info</span>
+                                            {{ alert.instruction }}
+                                        </p>
+                                    {% endif %}
                                     <div style="color: #dc3545; font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
                                         {% if alert.severity == 'warning' %}
-                                            ⚠️ URGENT
+                                            ⚠️ {% trans "URGENT ACTION REQUIRED" %}
                                         {% elif alert.severity == 'watch' %}
-                                            👀 WATCH
+                                            👀 {% trans "PREPARATION RECOMMENDED" %}
                                         {% else %}
-                                            📢 ADVISORY
+                                            📢 {% trans "ADVISORY" %}
                                         {% endif %}
                                     </div>
+                                    {% if alert.expires %}
+                                        <div style="color: var(--ink-faint); font-size: 0.6rem; margin-top: 4px;">
+                                            <span class="material-symbols-outlined" style="font-size: 12px; vertical-align: middle;">schedule</span>
+                                            {% trans "Expires" %}: {{ alert.expires }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -328,7 +369,7 @@
                     {% else %}
                         <div class="text-center py-4">
                             <span class="material-symbols-outlined" style="font-size: 36px; color: var(--ink-faint);">check_circle</span>
-                            <p style="color: var(--ink-faint); font-size: 0.85rem; margin-top: 8px;">No active alerts</p>
+                            <p style="color: var(--ink-faint); font-size: 0.85rem; margin-top: 8px;">{% trans "No active alerts" %}</p>
                         </div>
                     {% endif %}
                 </div>
@@ -343,7 +384,7 @@
                 <div class="card-body p-4">
                     <h5 class="mb-3" style="color: var(--ink); font-weight: 600;">
                         <span class="material-symbols-outlined" style="font-size: 20px; vertical-align: middle; color: var(--ink);">agriculture</span>
-                        My Farms
+                        {% trans "My Farms" %}
                     </h5>
                     
                     <div class="row g-3">
@@ -358,7 +399,7 @@
                                             {{ farm_weather.farm.crop_type|default:"Mixed" }}
                                         </div>
                                         <div style="color: var(--ink-faint); font-size: 0.8rem;">
-                                            {{ farm_weather.farm.size_acres|default:"0" }} Acres
+                                            {{ farm_weather.farm.size_acres|default:"0" }} {% trans "Acres" %}
                                         </div>
                                     </div>
                                     <div class="text-end">
@@ -377,7 +418,7 @@
                         {% else %}
                             <div class="col-12">
                                 <div class="text-center py-4">
-                                    <p style="color: var(--ink-faint);">No farms added yet</p>
+                                    <p style="color: var(--ink-faint);">{% trans "No farms added yet" %}</p>
                                 </div>
                             </div>
                         {% endif %}
@@ -387,40 +428,41 @@
         </div>
     </div>
 
-    <!-- ===== 7-DAY FORECAST - TABLE STYLE ===== -->
- <!-- ===== 7-DAY FORECAST - TABLE STYLE ===== -->
-<div class="row g-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm" style="background: var(--bg-card); border-radius: 16px;">
-            <div class="card-body p-4">
-                <h5 class="mb-3" style="color: var(--ink); font-weight: 600;">
-                    <span class="material-symbols-outlined" style="font-size: 20px; vertical-align: middle; color: var(--ink);">calendar_month</span>
-                    7-Day Forecast
-                </h5>
-                
-                <!-- ===== TABLE-STYLE HORIZONTAL ===== -->
-                <div class="forecast-table" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 12px; text-align: center; align-items: center;">
-                    {% for day in weather_data.forecast %}
-                    <div class="forecast-col" style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);">
-                        <div class="day" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">{{ day.day_name }}</div>
-                        <span class="icon" style="display: block; width: 36px; height: 36px; line-height: 36px; font-size: 1.5rem; margin-bottom: 6px;">
-                            {% if day.condition_icon %}
-                                <img src="{{ day.condition_icon }}" alt="{{ day.condition }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                            {% else %}
-                                ☀️
+    <!-- ===== 7-DAY FORECAST ===== -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="background: var(--bg-card); border-radius: 16px;">
+                <div class="card-body p-4">
+                    <h5 class="mb-3" style="color: var(--ink); font-weight: 600;">
+                        <span class="material-symbols-outlined" style="font-size: 20px; vertical-align: middle; color: var(--ink);">calendar_month</span>
+                        {% trans "7-Day Forecast" %}
+                    </h5>
+                    
+                    <div class="forecast-table" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 12px; text-align: center; align-items: center;">
+                        {% for day in weather_data.forecast %}
+                        <div class="forecast-col" style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);">
+                           <div class="day" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">
+    {% trans day.day_name %}
+</div>
+                            <span class="icon" style="display: block; width: 36px; height: 36px; line-height: 36px; font-size: 1.5rem; margin-bottom: 6px;">
+                                {% if day.condition_icon %}
+                                    <img src="{{ day.condition_icon }}" alt="{{ day.condition }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                {% else %}
+                                    ☀️
+                                {% endif %}
+                            </span>
+                            <div class="max" style="font-weight: 700; font-size: 1rem;">{{ day.max_temp }}°</div>
+                            <div class="min" style="opacity: 0.7; font-size: 0.85rem;">{{ day.min_temp }}°</div>
+                            {% if day.chance_of_rain > 0 %}
+                                <div class="rain" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; margin-top: 4px;">💧 {{ day.chance_of_rain }}%</div>
                             {% endif %}
-                        </span>
-                        <div class="max" style="font-weight: 700; font-size: 1rem;">{{ day.max_temp }}°</div>
-                        <div class="min" style="opacity: 0.7; font-size: 0.85rem;">{{ day.min_temp }}°</div>
-                        {% if day.chance_of_rain > 0 %}
-                            <div class="rain" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; margin-top: 4px;">💧 {{ day.chance_of_rain }}%</div>
-                        {% endif %}
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
-</div>
+
 </div>
 {% endblock %}

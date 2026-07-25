@@ -199,3 +199,1029 @@ msgstr "အခမဲ့ အကောင့်ဖွင့်ရန်"
 #: templates/landing/index.html:175
 msgid "Sign In"
 msgstr "အကောင့်ဝင်ရန်"
+
+# ===== WEATHER TRANSLATIONS =====
+
+#: weather/templates/weather/dashboard.html:4
+msgid "Weather Overview"
+msgstr "ရာသီဥတု အခြေအနေ"
+
+#: weather/templates/weather/dashboard.html:6
+msgid "Weather Overview"
+msgstr "ရာသီဥတု အခြေအနေ"
+
+#: weather/templates/weather/dashboard.html:113
+msgid "Regional Forecast Map"
+msgstr "ဒေသအလိုက် ရာသီဥတု မြေပုံ"
+
+#: weather/templates/weather/dashboard.html:157
+msgid "Active Alerts"
+msgstr "သတိပေးချက်များ"
+
+#: weather/templates/weather/dashboard.html:167
+msgid "No active alerts"
+msgstr "သတိပေးချက်မရှိပါ"
+
+#: weather/templates/weather/dashboard.html:179
+msgid "My Farms"
+msgstr "ကျွန်ုပ်၏ လယ်ယာများ"
+
+#: weather/templates/weather/dashboard.html:198
+msgid "No farms added yet"
+msgstr "လယ်ယာများ မရှိသေးပါ"
+
+#: weather/templates/weather/dashboard.html:209
+msgid "7-Day Forecast"
+msgstr "၇ ရက်စာ ရာသီဥတု ခန့်မှန်းချက်"
+
+#: weather/templates/weather/dashboard.html:221
+msgid "Switch Farm"
+msgstr "လယ်ယာပြောင်းရန်"
+
+#: weather/templates/weather/dashboard.html:233
+msgid "Feels like"
+msgstr "ခံစားရသည့် အပူချိန်"
+
+#: weather/templates/weather/dashboard.html:235
+msgid "Updated"
+msgstr "နောက်ဆုံးမွမ်းမံချိန်"
+
+#: weather/templates/weather/dashboard.html:246
+msgid "Wind"
+msgstr "လေတိုက်နှုန်း"
+
+#: weather/templates/weather/dashboard.html:256
+msgid "Humidity"
+msgstr "စိုထိုင်းဆ"
+
+#: weather/templates/weather/dashboard.html:266
+msgid "UV Index"
+msgstr "ခရမ်းလွန်ရောင်ခြည် ညွှန်းကိန်း"
+
+#: weather/templates/weather/dashboard.html:276
+msgid "Visibility"
+msgstr "မြင်နိုင်မှုအကွာအဝေး"
+
+#: weather/templates/weather/dashboard.html:312
+msgid "URGENT ACTION REQUIRED"
+msgstr "အရေးပေါ် ဆောင်ရွက်ရန်"
+
+#: weather/templates/weather/dashboard.html:314
+msgid "PREPARATION RECOMMENDED"
+msgstr "ကြိုတင်ပြင်ဆင်ရန် အကြံပြုချက်"
+
+#: weather/templates/weather/dashboard.html:316
+msgid "ADVISORY"
+msgstr "သတိပေးချက်"
+
+#: weather/templates/weather/dashboard.html:320
+msgid "Expires"
+msgstr "သက်တမ်းကုန်ဆုံးမည့်ရက်"
+
+#: weather/templates/weather/dashboard.html:332
+msgid "No active weather alerts"
+msgstr "ရာသီဥတုသတိပေးချက်များ မရှိပါ"
+
+#: weather/templates/weather/dashboard.html:333
+msgid "All clear for"
+msgstr "အားလုံးပုံမှန်ဖြစ်သည်"
+
+#: weather/templates/weather/dashboard.html:347
+msgid "Quick Stats"
+msgstr "အမြန်စာရင်းအင်း"
+
+#: weather/templates/weather/dashboard.html:350
+msgid "Farms"
+msgstr "လယ်ယာများ"
+
+#: weather/templates/weather/dashboard.html:354
+msgid "Weather Status"
+msgstr "ရာသီဥတုအခြေအနေ"
+
+#: weather/templates/weather/dashboard.html:358
+msgid "Wind Speed"
+msgstr "လေတိုက်နှုန်း"
+
+#: weather/templates/weather/dashboard.html:364
+msgid "Clear"
+msgstr "ကြည်လင်သည်"
+
+#: weather/templates/weather/dashboard.html:367
+msgid "Partly Cloudy"
+msgstr "တစ်ပိုင်းတိမ်ထူသည်"
+
+#: weather/templates/weather/dashboard.html:370
+msgid "Rain"
+msgstr "မိုးရွာသည်"
+
+#: weather/templates/weather/dashboard.html:373
+msgid "Heatwave"
+msgstr "အပူလှိုင်း"
+
+#: weather/templates/weather/dashboard.html:403
+msgid "Acres"
+msgstr "ဧက"
+
+#: weather/templates/weather/dashboard.html:421
+msgid "rain"
+msgstr "မိုးရွာနှုန်း"
+
+#: weather/services/weather_service.py:156
+msgid "Weather Alert"
+msgstr "ရာသီဥတုသတိပေးချက်"
+
+#: weather/services/weather_service.py:169
+msgid "Partly cloudy"
+msgstr "တိမ်အနည်းငယ်ထူသည်"
+
+#: weather/services/weather_service.py:222
+msgid "Sunny"
+msgstr "နေသာသည်"
+
+#: weather/services/weather_service.py:222
+msgid "Cloudy"
+msgstr "တိမ်ထူသည်"
+
+#: weather/services/weather_service.py:222
+msgid "Light rain"
+msgstr "မိုးဖွဲဖွဲရွာသည်"
+
+#: weather/services/weather_service.py:222
+msgid "Clear"
+msgstr "ကြည်လင်သည်"
+
+#: weather/templates/weather/dashboard.html
+msgid "Mon"
+msgstr "တနင်္လာ"
+
+#: weather/templates/weather/dashboard.html
+msgid "Tue"
+msgstr "အင်္ဂါ"
+
+#: weather/templates/weather/dashboard.html
+msgid "Wed"
+msgstr "ဗုဒ္ဓဟူး"
+
+#: weather/templates/weather/dashboard.html
+msgid "Thu"
+msgstr "ကြာသပတေး"
+
+#: weather/templates/weather/dashboard.html
+msgid "Fri"
+msgstr "သောကြာ"
+
+#: weather/templates/weather/dashboard.html
+msgid "Sat"
+msgstr "စနေ"
+
+#: weather/templates/weather/dashboard.html
+msgid "Sun"
+msgstr "တနင်္ဂနွေ"
+
+# ===== FULL DAY NAMES =====
+#: weather/templates/weather/dashboard.html
+msgid "Monday"
+msgstr "တနင်္လာနေ့"
+
+#: weather/templates/weather/dashboard.html
+msgid "Tuesday"
+msgstr "အင်္ဂါနေ့"
+
+#: weather/templates/weather/dashboard.html
+msgid "Wednesday"
+msgstr "ဗုဒ္ဓဟူးနေ့"
+
+#: weather/templates/weather/dashboard.html
+msgid "Thursday"
+msgstr "ကြာသပတေးနေ့"
+
+#: weather/templates/weather/dashboard.html
+msgid "Friday"
+msgstr "သောကြာနေ့"
+
+#: weather/templates/weather/dashboard.html
+msgid "Saturday"
+msgstr "စနေနေ့"
+
+#: weather/templates/weather/dashboard.html
+msgid "Sunday"
+msgstr "တနင်္ဂနွေနေ့"
+
+
+# ===== CROP MANAGEMENT TRANSLATIONS =====
+
+#: crops/templates/crops/crop_list.html:5
+msgid "Crop Management"
+msgstr "သီးနှံစီမံခန့်ခွဲမှု"
+
+#: crops/templates/crops/crop_list.html:10
+msgid "Crops"
+msgstr "သီးနှံများ"
+
+#: crops/templates/crops/crop_list.html:11
+msgid "Manage your farm crops and track their progress"
+msgstr "သင့်လယ်ယာမှ သီးနှံများကို စီမံပြီး တိုးတက်မှုကို ခြေရာခံပါ"
+
+#: crops/templates/crops/crop_list.html:14
+msgid "Add New Crop"
+msgstr "သီးနှံအသစ်ထည့်ရန်"
+
+#: crops/templates/crops/crop_list.html:24
+msgid "All"
+msgstr "အားလုံး"
+
+#: crops/templates/crops/crop_list.html:34
+msgid "Name"
+msgstr "အမည်"
+
+#: crops/templates/crops/crop_list.html:35
+msgid "Farm"
+msgstr "လယ်ယာ"
+
+#: crops/templates/crops/crop_list.html:36
+msgid "Type"
+msgstr "အမျိုးအစား"
+
+#: crops/templates/crops/crop_list.html:37
+msgid "Planting Date"
+msgstr "စိုက်ပျိုးရက်"
+
+#: crops/templates/crops/crop_list.html:38
+msgid "Harvest Date"
+msgstr "ရိတ်သိမ်းရက်"
+
+#: crops/templates/crops/crop_list.html:39
+msgid "Area (Acres)"
+msgstr "ဧရိယာ (ဧက)"
+
+#: crops/templates/crops/crop_list.html:40
+msgid "Status"
+msgstr "အခြေအနေ"
+
+#: crops/templates/crops/crop_list.html:41
+msgid "Active"
+msgstr "လုပ်ဆောင်နေဆဲ"
+
+#: crops/templates/crops/crop_list.html:42
+msgid "Actions"
+msgstr "လုပ်ဆောင်ချက်များ"
+
+#: crops/templates/crops/crop_list.html:56
+msgid "Active"
+msgstr "လုပ်ဆောင်နေဆဲ"
+
+#: crops/templates/crops/crop_list.html:58
+msgid "Inactive"
+msgstr "ရပ်နားထား"
+
+#: crops/templates/crops/crop_list.html:73
+msgid "No crops found"
+msgstr "သီးနှံမရှိသေးပါ"
+
+#: crops/templates/crops/crop_list.html:74
+msgid "Start by adding your first crop to track it."
+msgstr "စတင်ခြေရာခံရန် သင့်ပထမဆုံးသီးနှံကို ထည့်ပါ"
+
+#: crops/templates/crops/crop_list.html:77
+msgid "Add Your First Crop"
+msgstr "သင့်ပထမဆုံးသီးနှံထည့်ရန်"
+
+#: crops/templates/crops/crop_form.html:4
+msgid "Add New Crop"
+msgstr "သီးနှံအသစ်ထည့်ရန်"
+
+#: crops/templates/crops/crop_form.html:4
+msgid "Edit Crop"
+msgstr "သီးနှံပြင်ရန်"
+
+#: crops/templates/crops/crop_form.html:17
+msgid "Farm"
+msgstr "လယ်ယာ"
+
+#: crops/templates/crops/crop_form.html:25
+msgid "Crop Name"
+msgstr "သီးနှံအမည်"
+
+#: crops/templates/crops/crop_form.html:33
+msgid "Crop Type"
+msgstr "သီးနှံအမျိုးအစား"
+
+#: crops/templates/crops/crop_form.html:41
+msgid "Area (Acres)"
+msgstr "ဧရိယာ (ဧက)"
+
+#: crops/templates/crops/crop_form.html:49
+msgid "Planting Date"
+msgstr "စိုက်ပျိုးရက်"
+
+#: crops/templates/crops/crop_form.html:57
+msgid "Expected Harvest Date"
+msgstr "မျှော်မှန်းရိတ်သိမ်းရက်"
+
+#: crops/templates/crops/crop_form.html:66
+msgid "Status"
+msgstr "အခြေအနေ"
+
+#: crops/templates/crops/crop_form.html:74
+msgid "Active"
+msgstr "လုပ်ဆောင်နေဆဲ"
+
+#: crops/templates/crops/crop_form.html:75
+msgid "Inactive crops won't appear in active lists"
+msgstr "ရပ်နားထားသော သီးနှံများကို စာရင်းများတွင် မပြပါ"
+
+#: crops/templates/crops/crop_form.html:83
+msgid "Cancel"
+msgstr "မလုပ်တော့ပါ"
+
+#: crops/templates/crops/crop_form.html:86
+msgid "Save Crop"
+msgstr "သီးနှံသိမ်းရန်"
+
+#: crops/templates/crops/crop_confirm_delete.html:4
+msgid "Delete Crop"
+msgstr "သီးနှံဖျက်ရန်"
+
+#: crops/templates/crops/crop_confirm_delete.html:12
+msgid "Confirm Deletion"
+msgstr "ဖျက်ကြောင်းအတည်ပြုရန်"
+
+#: crops/templates/crops/crop_confirm_delete.html:19
+msgid "Are you sure you want to delete this crop?"
+msgstr "ဒီသီးနှံကို ဖျက်မှာသေချာလား"
+
+#: crops/templates/crops/crop_confirm_delete.html:24
+msgid "Name:"
+msgstr "အမည်:"
+
+#: crops/templates/crops/crop_confirm_delete.html:27
+msgid "Farm:"
+msgstr "လယ်ယာ:"
+
+#: crops/templates/crops/crop_confirm_delete.html:30
+msgid "Type:"
+msgstr "အမျိုးအစား:"
+
+#: crops/templates/crops/crop_confirm_delete.html:33
+msgid "Area:"
+msgstr "ဧရိယာ:"
+
+#: crops/templates/crops/crop_confirm_delete.html:36
+msgid "Status:"
+msgstr "အခြေအနေ:"
+
+#: crops/templates/crops/crop_confirm_delete.html:38
+msgid "acres"
+msgstr "ဧက"
+
+#: crops/templates/crops/crop_confirm_delete.html:43
+msgid "This action cannot be undone!"
+msgstr "ဒီလုပ်ဆောင်ချက်ကို ပြန်ပြင်လို့မရနိုင်ပါ"
+
+#: crops/templates/crops/crop_confirm_delete.html:51
+msgid "Delete Permanently"
+msgstr "အပြီးအပိုင်ဖျက်ရန်"
+
+#: crops/templates/crops/crop_detail.html:4
+msgid "Crop Details"
+msgstr "သီးနှံအသေးစိတ်"
+
+#: crops/templates/crops/crop_detail.html:12
+msgid "Back"
+msgstr "နောက်သို့"
+
+#: crops/templates/crops/crop_detail.html:17
+msgid "Edit"
+msgstr "ပြင်ရန်"
+
+#: crops/templates/crops/crop_detail.html:26
+msgid "Crop Type:"
+msgstr "သီးနှံအမျိုးအစား:"
+
+#: crops/templates/crops/crop_detail.html:29
+msgid "Status:"
+msgstr "အခြေအနေ:"
+
+#: crops/templates/crops/crop_detail.html:33
+msgid "Area:"
+msgstr "ဧရိယာ:"
+
+#: crops/templates/crops/crop_detail.html:34
+msgid "acres"
+msgstr "ဧက"
+
+#: crops/templates/crops/crop_detail.html:38
+msgid "Planting Date:"
+msgstr "စိုက်ပျိုးရက်:"
+
+#: crops/templates/crops/crop_detail.html:39
+msgid "Expected Harvest:"
+msgstr "မျှော်မှန်းရိတ်သိမ်းရက်:"
+
+#: crops/templates/crops/crop_detail.html:40
+msgid "Active:"
+msgstr "လုပ်ဆောင်နေဆဲ:"
+
+#: crops/templates/crops/crop_detail.html:42
+msgid "Yes"
+msgstr "ဟုတ်ကဲ့"
+
+#: crops/templates/crops/crop_detail.html:44
+msgid "No"
+msgstr "မဟုတ်ပါ"
+
+#: crops/templates/crops/crop_detail.html:52
+msgid "Quick Actions"
+msgstr "အမြန်ဆောင်ရွက်ချက်များ"
+
+#: crops/templates/crops/crop_detail.html:58
+msgid "Edit Crop"
+msgstr "သီးနှံပြင်ရန်"
+
+#: crops/templates/crops/crop_detail.html:61
+msgid "Delete Crop"
+msgstr "သီးနှံဖျက်ရန်"
+
+# ===== CROP STATUS TRANSLATIONS =====
+
+#: crops/models.py
+msgid "Planned"
+msgstr "စီစဉ်ထား"
+
+#: crops/models.py
+msgid "Planted"
+msgstr "စိုက်ပြီး"
+
+#: crops/models.py
+msgid "Growing"
+msgstr "ကြီးထွားနေ"
+
+#: crops/models.py
+msgid "Harvested"
+msgstr "ရိတ်သိမ်းပြီး"
+
+#: crops/models.py
+msgid "Failed"
+msgstr "မအောင်မြင်"
+
+# ===== CROP TYPE TRANSLATIONS =====
+
+#: crops/models.py
+msgid "Corn"
+msgstr "ပြောင်း"
+
+#: crops/models.py
+msgid "Wheat"
+msgstr "ဂျုံ"
+
+#: crops/models.py
+msgid "Soybean"
+msgstr "ပဲပုပ်"
+
+#: crops/models.py
+msgid "Rice"
+msgstr "စပါး"
+
+#: crops/models.py
+msgid "Cotton"
+msgstr "ဝါ"
+
+#: crops/models.py
+msgid "Vegetable"
+msgstr "ဟင်းသီးဟင်းရွက်"
+
+#: crops/models.py
+msgid "Fruit"
+msgstr "သစ်သီး"
+
+#: crops/models.py
+msgid "Other"
+msgstr "အခြား"
+
+# ===== AI CROP RECOMMENDATION TRANSLATIONS =====
+
+#: farms/templates/crop_recommendation.html:5
+msgid "AI Crop Recommendation"
+msgstr "AI သီးနှံအကြံပြုချက်"
+
+#: farms/templates/crop_recommendation.html:13
+msgid "Enter Soil & Weather Data"
+msgstr "မြေဆီနှင့် ရာသီဥတုအချက်အလက်များ ထည့်ပါ"
+
+#: farms/templates/crop_recommendation.html:15
+msgid "Enter your soil test results and weather data"
+msgstr "သင့်မြေဆီစစ်ဆေးမှုရလဒ်နှင့် ရာသီဥတုအချက်အလက်များကို ထည့်ပါ"
+
+#: farms/templates/crop_recommendation.html:19
+msgid "Quick Demo Scenarios"
+msgstr "နမူနာမြင်ကွင်းများ"
+
+#: farms/templates/crop_recommendation.html:25
+msgid "Rice Field"
+msgstr "စပါးခင်း"
+
+#: farms/templates/crop_recommendation.html:28
+msgid "Wheat Field"
+msgstr "ဂျုံခင်း"
+
+#: farms/templates/crop_recommendation.html:31
+msgid "Maize Field"
+msgstr "ပြောင်းခင်း"
+
+#: farms/templates/crop_recommendation.html:34
+msgid "Cotton Field"
+msgstr "ဝါခင်း"
+
+#: farms/templates/crop_recommendation.html:38
+msgid "Click to auto-fill sample data"
+msgstr "နမူနာအချက်အလက်များ အလိုအလျောက်ဖြည့်ရန် နှိပ်ပါ"
+
+#: farms/templates/crop_recommendation.html:49
+msgid "Nitrogen (ppm)"
+msgstr "နိုက်ထရိုဂျင် (ppm)"
+
+#: farms/templates/crop_recommendation.html:57
+msgid "Phosphorus (ppm)"
+msgstr "ဖော့စဖရပ် (ppm)"
+
+#: farms/templates/crop_recommendation.html:67
+msgid "Potassium (ppm)"
+msgstr "ပိုတက်စီယမ် (ppm)"
+
+#: farms/templates/crop_recommendation.html:75
+msgid "Temperature (°C)"
+msgstr "အပူချိန် (°C)"
+
+#: farms/templates/crop_recommendation.html:85
+msgid "Humidity (%)"
+msgstr "စိုထိုင်းဆ (%)"
+
+#: farms/templates/crop_recommendation.html:93
+msgid "pH Level"
+msgstr "pH ပမာဏ"
+
+#: farms/templates/crop_recommendation.html:103
+msgid "Rainfall (mm)"
+msgstr "မိုးရေချိန် (မီလီမီတာ)"
+
+#: farms/templates/crop_recommendation.html:110
+msgid "Get Crop Recommendation"
+msgstr "သီးနှံအကြံပြုချက်ရယူရန်"
+
+#: farms/templates/crop_recommendation.html:121
+msgid "AI Recommendation Result"
+msgstr "AI အကြံပြုချက်ရလဒ်"
+
+#: farms/templates/crop_recommendation.html:126
+msgid "Confidence"
+msgstr "ယုံကြည်မှုနှုန်း"
+
+#: farms/templates/crop_recommendation.html:138
+msgid "High confidence"
+msgstr "ယုံကြည်မှုမြင့်မားသည်"
+
+#: farms/templates/crop_recommendation.html:139
+msgid "Moderate confidence"
+msgstr "ယုံကြည်မှုအသင့်အတင့်"
+
+#: farms/templates/crop_recommendation.html:140
+msgid "Low confidence - consider more data"
+msgstr "ယုံကြည်မှုနည်းသည် - အချက်အလက်များထပ်မံသုံးသပ်ပါ"
+
+#: farms/templates/crop_recommendation.html:146
+msgid "Farming Tips"
+msgstr "စိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+#: farms/templates/crop_recommendation.html:150
+msgid "Description:"
+msgstr "ရှင်းလင်းချက်:"
+
+#: farms/templates/crop_recommendation.html:151
+msgid "Soil:"
+msgstr "မြေဆီလွှာ:"
+
+#: farms/templates/crop_recommendation.html:152
+msgid "Water:"
+msgstr "ရေ:"
+
+#: farms/templates/crop_recommendation.html:153
+msgid "Temperature:"
+msgstr "အပူချိန်:"
+
+#: farms/templates/crop_recommendation.html:154
+msgid "Fertilizer:"
+msgstr "မြေသြဇာ:"
+
+#: farms/templates/crop_recommendation.html:156
+msgid "Season:"
+msgstr "ရာသီ:"
+
+#: farms/templates/crop_recommendation.html:159
+msgid "Duration:"
+msgstr "ကြာချိန်:"
+
+#: farms/templates/crop_recommendation.html:167
+msgid "All Crop Probabilities"
+msgstr "သီးနှံအားလုံး၏ ဖြစ်နိုင်ခြေ"
+
+#: farms/templates/crop_recommendation.html:184
+msgid "Ready for AI Recommendation"
+msgstr "AI အကြံပြုချက်အတွက် အဆင်သင့်ဖြစ်နေပါပြီ"
+
+#: farms/templates/crop_recommendation.html:185
+msgid "Enter your soil data and click the button above"
+msgstr "သင့်မြေဆီအချက်အလက်များကိုထည့်ပြီး အထက်ပါခလုတ်ကိုနှိပ်ပါ"
+
+#: farms/templates/crop_recommendation.html:186
+msgid "Or use one of the demo scenarios to see it in action!"
+msgstr "သို့မဟုတ် နမူနာမြင်ကွင်းများထဲမှ တစ်ခုကိုရွေးပြီး လက်တွေ့မြင်ကြည့်ပါ"
+
+
+# ===== LANDING PAGE / BASE HTML TRANSLATIONS =====
+
+#: templates/base.html:7
+msgid "AgriVision - Smart Farming for Myanmar Farmers"
+msgstr "AgriVision - မြန်မာ့လယ်သမားများအတွက် စမတ်စိုက်ပျိုးရေး"
+
+#: templates/base.html:10
+msgid "AgriVision"
+msgstr "AgriVision"
+
+#: templates/base.html:42
+msgid "AgriVision"
+msgstr "AgriVision"
+
+#: templates/base.html:49
+msgid "Dashboard"
+msgstr "ဒက်ရှ်ဘုတ်"
+
+#: templates/base.html:52
+msgid "Logout"
+msgstr "အကောင့်ထွက်ရန်"
+
+#: templates/base.html:56
+msgid "Login"
+msgstr "အကောင့်ဝင်ရန်"
+
+#: templates/base.html:59
+msgid "Register"
+msgstr "အကောင့်ဖွင့်ရန်"
+
+#: templates/base.html:79
+msgid "AgriVision | Smart Agriculture Management System"
+msgstr "AgriVision | စမတ်စိုက်ပျိုးရေး စီမံခန့်ခွဲမှုစနစ်"
+
+# ===== FARM MANAGEMENT TRANSLATIONS =====
+
+#: farms/templates/farm_list.html:5
+msgid "My Farms"
+msgstr "ကျွန်ုပ်၏ လယ်ယာများ"
+
+#: farms/templates/farm_list.html:6
+msgid "Manage all your farms in one place"
+msgstr "သင့်လယ်ယာများအားလုံးကို တစ်နေရာတည်းတွင် စီမံပါ"
+
+#: farms/templates/farm_list.html:14
+msgid "New Farm"
+msgstr "လယ်ယာအသစ်"
+
+#: farms/templates/farm_list.html:26
+msgid "acres"
+msgstr "ဧက"
+
+#: farms/templates/farm_list.html:29
+msgid "Added"
+msgstr "ထည့်သွင်းခဲ့သည်"
+
+#: farms/templates/farm_list.html:33
+msgid "crops"
+msgstr "သီးနှံများ"
+
+#: farms/templates/farm_list.html:40
+msgid "Edit"
+msgstr "ပြင်ရန်"
+
+#: farms/templates/farm_list.html:43
+msgid "Delete"
+msgstr "ဖျက်ရန်"
+
+#: farms/templates/farm_list.html:52
+msgid "No farms yet"
+msgstr "လယ်ယာမရှိသေးပါ"
+
+#: farms/templates/farm_list.html:53
+msgid "Start by adding your first farm"
+msgstr "သင့်ပထမဆုံးလယ်ယာကို စတင်ထည့်သွင်းပါ"
+
+#: farms/templates/farm_list.html:56
+msgid "Add Your First Farm"
+msgstr "သင့်ပထမဆုံးလယ်ယာထည့်ရန်"
+
+# ===== FARM FORM TRANSLATIONS =====
+
+#: farms/templates/farm_form.html:5
+msgid "Add New Farm"
+msgstr "လယ်ယာအသစ်ထည့်ရန်"
+
+#: farms/templates/farm_form.html:5
+msgid "Edit Farm"
+msgstr "လယ်ယာပြင်ရန်"
+
+#: farms/templates/farm_form.html:18
+msgid "Farm Name"
+msgstr "လယ်ယာအမည်"
+
+#: farms/templates/farm_form.html:25
+msgid "Location"
+msgstr "တည်နေရာ"
+
+#: farms/templates/farm_form.html:32
+msgid "Size (Acres)"
+msgstr "အရွယ်အစား (ဧက)"
+
+#: farms/templates/farm_form.html:34
+msgid "Total size of your farm in acres"
+msgstr "သင့်လယ်ယာ၏ စုစုပေါင်းဧရိယာ (ဧက)"
+
+#: farms/templates/farm_form.html:44
+msgid "Create Farm"
+msgstr "လယ်ယာဖန်တီးရန်"
+
+#: farms/templates/farm_form.html:44
+msgid "Update Farm"
+msgstr "လယ်ယာမွမ်းမံရန်"
+
+#: farms/templates/farm_form.html:47
+msgid "Cancel"
+msgstr "မလုပ်တော့ပါ"
+
+# ===== FARM DELETE CONFIRMATION =====
+
+#: farms/templates/farm_confirm_delete.html:5
+msgid "Delete Farm"
+msgstr "လယ်ယာဖျက်ရန်"
+
+#: farms/templates/farm_confirm_delete.html:16
+msgid "Delete Farm"
+msgstr "လယ်ယာဖျက်ရန်"
+
+#: farms/templates/farm_confirm_delete.html:19
+msgid "Are you sure you want to delete"
+msgstr "သင်ဖျက်မှာသေချာလား"
+
+#: farms/templates/farm_confirm_delete.html:25
+msgid "This action cannot be undone"
+msgstr "ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍မရပါ"
+
+#: farms/templates/farm_confirm_delete.html:34
+msgid "Delete"
+msgstr "ဖျက်ရန်"
+
+#: farms/templates/farm_confirm_delete.html:37
+msgid "Cancel"
+msgstr "မလုပ်တော့ပါ"
+
+# ===== SUCCESS/ERROR MESSAGES =====
+
+#: farms/views.py:72
+msgid "Farm \"{name}\" created successfully!"
+msgstr "လယ်ယာ \"{name}\" အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။"
+
+#: farms/views.py:89
+msgid "Farm \"{name}\" updated successfully!"
+msgstr "လယ်ယာ \"{name}\" အောင်မြင်စွာ မွမ်းမံပြီးပါပြီ။"
+
+#: farms/views.py:105
+msgid "Farm \"{name}\" deleted successfully!"
+msgstr "လယ်ယာ \"{name}\" အောင်မြင်စွာ ဖျက်ပြီးပါပြီ။"
+
+
+# ===== DASHBOARD TRANSLATIONS =====
+
+#: templates/dashboard.html:5
+msgid "Dashboard Overview"
+msgstr "ဒက်ရှ်ဘုတ် ခြုံငုံသုံးသပ်ချက်"
+
+#: templates/dashboard.html:6
+msgid "Dashboard Overview"
+msgstr "ဒက်ရှ်ဘုတ် ခြုံငုံသုံးသပ်ချက်"
+
+# ===== HERO CARD =====
+
+#: templates/dashboard.html:218
+msgid "Good morning"
+msgstr "မင်္ဂလာနံနက်ခင်းပါ"
+
+#: templates/dashboard.html:219
+msgid "Your farm in"
+msgstr "သင့်လယ်ယာသည်"
+
+#: templates/dashboard.html:219
+msgid "is showing excellent soil moisture today. It's a great time to schedule the next fertilization cycle for your coffee crops."
+msgstr "တွင် ယနေ့ မြေဆီလွှာအစိုဓာတ် ကောင်းမွန်နေပါသည်။ ကော်ဖီသီးနှံများအတွက် နောက်အကြိမ် မြေသြဇာကျွေးချိန်ကို စီစဉ်ရန် သင့်တော်သောအချိန်ဖြစ်ပါသည်။"
+
+#: templates/dashboard.html:223
+msgid "Schedule Task"
+msgstr "လုပ်ငန်းစီစဉ်ရန်"
+
+#: templates/dashboard.html:225
+msgid "View Report"
+msgstr "အစီရင်ခံစာကြည့်ရန်"
+
+# ===== WEATHER CARD =====
+
+#: templates/dashboard.html:234
+msgid "Mostly Sunny"
+msgstr "နေသာသည်"
+
+#: templates/dashboard.html:246
+msgid "Mon"
+msgstr "တနင်္လာ"
+
+#: templates/dashboard.html:247
+msgid "Tue"
+msgstr "အင်္ဂါ"
+
+#: templates/dashboard.html:248
+msgid "Wed"
+msgstr "ဗုဒ္ဓဟူး"
+
+#: templates/dashboard.html:249
+msgid "Thu"
+msgstr "ကြာသပတေး"
+
+#: templates/dashboard.html:250
+msgid "Fri"
+msgstr "သောကြာ"
+
+# ===== STAT TILES =====
+
+#: templates/dashboard.html:264
+msgid "this month"
+msgstr "ယခုလ"
+
+#: templates/dashboard.html:266
+msgid "Total Farms"
+msgstr "စုစုပေါင်းလယ်ယာ"
+
+#: templates/dashboard.html:274
+msgid "Across 4 zones"
+msgstr "ဇုန် ၄ ခုမှ"
+
+#: templates/dashboard.html:276
+msgid "Active Crops"
+msgstr "လုပ်ဆောင်နေသော သီးနှံများ"
+
+#: templates/dashboard.html:284
+msgid "Soil Health Score"
+msgstr "မြေဆီလွှာကျန်းမာရေးအညွှန်း"
+
+#: templates/dashboard.html:292
+msgid "URGENT"
+msgstr "အရေးပေါ်"
+
+#: templates/dashboard.html:294
+msgid "Weather Alerts"
+msgstr "ရာသီဥတုသတိပေးချက်များ"
+
+# ===== BOTTOM GRID - CHART =====
+
+#: templates/dashboard.html:309
+msgid "Crop Yield Trends"
+msgstr "သီးနှံအထွက်နှုန်းလမ်းကြောင်း"
+
+#: templates/dashboard.html:310
+msgid "Projected vs Actual harvest (Tonnes)"
+msgstr "ခန့်မှန်းနှင့် အမှန်တကယ် ရိတ်သိမ်းမှု (တန်)"
+
+#: templates/dashboard.html:312
+msgid "Last 6 Months"
+msgstr "လွန်ခဲ့သော ၆ လ"
+
+#: templates/dashboard.html:349
+msgid "Projected"
+msgstr "ခန့်မှန်းထားသော"
+
+#: templates/dashboard.html:350
+msgid "Actual"
+msgstr "အမှန်တကယ်"
+
+#: templates/dashboard.html:351
+msgid "Current month"
+msgstr "ယခုလ"
+
+# ===== ACTIVITY FEED =====
+
+#: templates/dashboard.html:366
+msgid "Recent Activity"
+msgstr "မကြာသေးမီက လုပ်ဆောင်ချက်များ"
+
+#: templates/dashboard.html:385
+msgid "No recent activities"
+msgstr "မကြာသေးမီက လုပ်ဆောင်ချက်များ မရှိပါ"
+
+#: templates/dashboard.html:386
+msgid "Add activities through the admin panel"
+msgstr "အက်ဒမင်ပန်မှတစ်ဆင့် လုပ်ဆောင်ချက်များကို ထည့်ပါ"
+
+#: templates/dashboard.html:396
+msgid "ago"
+msgstr "အကြာက"
+
+# ===== SEARCH =====
+
+#: templates/base.html:304
+msgid "Search analytics..."
+msgstr "ခွဲခြမ်းစိတ်ဖြာမှုများကို ရှာဖွေရန်..."
+
+# ===== FOOTER =====
+
+#: templates/base.html:443
+msgid "AgriVision | Smart Agriculture Management System"
+msgstr "AgriVision | စမတ်စိုက်ပျိုးရေး စီမံခန့်ခွဲမှုစနစ်"
+
+
+
+# ===== BASE_LANDING.HTML TRANSLATIONS =====
+
+#: templates/base_landing.html:7
+msgid "AgriVision - Smart Farming for Myanmar Farmers"
+msgstr "AgriVision - မြန်မာ့လယ်သမားများအတွက် စမတ်စိုက်ပျိုးရေး"
+
+#: templates/base_landing.html:10
+msgid "AgriVision"
+msgstr "AgriVision"
+
+#: templates/base_landing.html:56
+msgid "AgriVision"
+msgstr "AgriVision"
+
+#: templates/base_landing.html:109
+msgid "Dashboard"
+msgstr "ဒက်ရှ်ဘုတ်"
+
+#: templates/base_landing.html:112
+msgid "Logout"
+msgstr "အကောင့်ထွက်ရန်"
+
+#: templates/base_landing.html:116
+msgid "Login"
+msgstr "အကောင့်ဝင်ရန်"
+
+#: templates/base_landing.html:119
+msgid "Register"
+msgstr "အကောင့်ဖွင့်ရန်"
+
+#: templates/base_landing.html:154
+msgid "AgriVision | Smart Agriculture Management System"
+msgstr "AgriVision | စမတ်စိုက်ပျိုးရေး စီမံခန့်ခွဲမှုစနစ်"
+
+# ===== SIDEBAR NAVIGATION TRANSLATIONS =====
+
+#: templates/base.html:143
+msgid "AgriVision"
+msgstr "AgriVision"
+
+#: templates/base.html:144
+msgid "Smart Farming Suite"
+msgstr "စမတ်စိုက်ပျိုးရေး စနစ်အစုံ"
+
+#: templates/base.html:151
+msgid "Dashboard"
+msgstr "ဒက်ရှ်ဘုတ်"
+
+#: templates/base.html:154
+msgid "Farm Management"
+msgstr "လယ်ယာစီမံခန့်ခွဲမှု"
+
+#: templates/base.html:157
+msgid "Crop Growth"
+msgstr "သီးနှံကြီးထွားမှု"
+
+#: templates/base.html:160
+msgid "Soil Analysis"
+msgstr "မြေဆီလွှာခွဲခြမ်းစိတ်ဖြာမှု"
+
+#: templates/base.html:163
+msgid "Weather"
+msgstr "ရာသီဥတု"
+
+#: templates/base.html:166
+msgid "Community"
+msgstr "လယ်သူလယ်သားအသိုင်းအဝိုင်း"
+
+#: templates/base.html:169
+msgid "Settings"
+msgstr "ဆက်တင်များ"
+
+#: templates/base.html:178
+msgid "New Analysis"
+msgstr "ခွဲခြမ်းစိတ်ဖြာမှုအသစ်"
+
+#: templates/base.html:181
+msgid "Help"
+msgstr "အကူအညီ"
+
+#: templates/base.html:184
+msgid "Logout"
+msgstr "အကောင့်ထွက်ရန်"
