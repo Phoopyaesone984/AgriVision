@@ -1,0 +1,175 @@
+# weather/services/weather_service.py
+import requests
+import logging
+from datetime import datetime, timedelta
+from django.core.cache import cache
+from django.conf import settings
+from decouple import config
+
+logger = logging.getLogger(__name__)
+
+class WeatherService:
+    """Service class for fetching weather data from WeatherAPI.com"""
+    
+    CACHE_TIMEOUT = 3600  # 1 hour cache
+    
+    def __init__(self):
+        self.api_key = config('WEATHER_API_KEY', default='')
+        self.base_url = config('WEATHER_API_BASE_URL', default='http://api.weatherapi.com/v1')
+        self.default_location = config('DEFAULT_LOCATION', default='Yangon')
+        
+    def get_weather_data(self, location=None):
+        """Get current weather and 7-day forecast for a location"""
+        if not location:
+            location = self.default_location
+            
+        # Check cache
+        cache_key = f'weather_data_{location.lower().replace(" ", "_")}'
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            logger.info(f"Returning cached weather data for {location}")
+            return cached_data
+            
+        try:
+            # Make API request
+            url = f"{self.base_url}/forecast.json"
+            params = {
+                'key': self.api_key,
+                'q': location,
+                'days': 7,
+                'aqi': 'no',
+                'alerts': 'yes'
+            }
+            
+            logger.info(f"Fetching weather data for {location}")
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            formatted_data = self._format_weather_data(data, location)
+            
+            # Cache for 1 hour
+            cache.set(cache_key, formatted_data, self.CACHE_TIMEOUT)
+            
+            return formatted_data
+            
+        except Exception as e:
+            logger.error(f"Weather API error: {str(e)}")
+            return self._get_fallback_data(location)
+    
+    def _format_weather_data(self, raw_data, location):
+        """Format raw API response"""
+        try:
+            current = raw_data.get('current', {})
+            location_data = raw_data.get('location', {})
+            forecast = raw_data.get('forecast', {}).get('forecastday', [])
+            
+            # Current weather
+            current_weather = {
+                'location': location_data.get('name', location),
+                'region': location_data.get('region', ''),
+                'country': location_data.get('country', ''),
+                'temperature': current.get('temp_c', 28),
+                'feels_like': current.get('feelslike_c', 27),
+                'condition': current.get('condition', {}).get('text', 'Partly cloudy'),
+                'condition_icon': current.get('condition', {}).get('icon', ''),
+                'humidity': current.get('humidity', 65),
+                'wind_speed': current.get('wind_kph', 12),
+                'uv_index': current.get('uv', 6),
+                'visibility': current.get('vis_km', 10),
+                'last_updated': current.get('last_updated', datetime.now().strftime('%Y-%m-%d %H:%M')),
+            }
+            
+            # 7-day forecast
+            forecast_data = []
+            for day in forecast[:7]:
+                day_data = day.get('day', {})
+                date_obj = datetime.strptime(day.get('date', ''), '%Y-%m-%d') if day.get('date') else datetime.now()
+                
+                forecast_data.append({
+                    'date': day.get('date', ''),
+                    'day_name': date_obj.strftime('%a'),
+                    'day_full': date_obj.strftime('%A'),
+                    'max_temp': round(day_data.get('maxtemp_c', 25)),
+                    'min_temp': round(day_data.get('mintemp_c', 18)),
+                    'condition': day_data.get('condition', {}).get('text', 'Clear'),
+                    'condition_icon': day_data.get('condition', {}).get('icon', ''),
+                    'chance_of_rain': day_data.get('daily_chance_of_rain', 0),
+                    'humidity': day_data.get('avghumidity', 60),
+                })
+            
+            # Extract alerts
+            alerts = self._extract_alerts(raw_data)
+            
+            return {
+                'current': current_weather,
+                'forecast': forecast_data,
+                'alerts': alerts,
+                'success': True,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error formatting weather data: {str(e)}")
+            return self._get_fallback_data(location)
+    
+    def _extract_alerts(self, raw_data):
+        """Extract weather alerts"""
+        alerts = []
+        alert_data = raw_data.get('alerts', {}).get('alert', [])
+        
+        for alert in alert_data:
+            alerts.append({
+                'headline': alert.get('headline', 'Weather Alert'),
+                'severity': alert.get('severity', 'moderate'),
+                'description': alert.get('desc', ''),
+                'instruction': alert.get('instruction', ''),
+                'effective': alert.get('effective', ''),
+                'expires': alert.get('expires', ''),
+            })
+            
+        return alerts
+    
+    def _get_fallback_data(self, location):
+        """Fallback data when API fails"""
+        return {
+            'current': {
+                'location': location,
+                'region': '',
+                'country': '',
+                'temperature': 28,
+                'feels_like': 27,
+                'condition': 'Partly cloudy',
+                'condition_icon': '//cdn.weatherapi.com/weather/64x64/day/116.png',
+                'humidity': 65,
+                'wind_speed': 12,
+                'uv_index': 6,
+                'visibility': 10,
+                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M'),
+            },
+            'forecast': self._get_fallback_forecast(),
+            'alerts': [],
+            'success': False,
+            'timestamp': datetime.now().isoformat()
+        }
+    
+    def _get_fallback_forecast(self):
+        """Generate fallback 7-day forecast"""
+        forecast = []
+        conditions = ['Sunny', 'Partly cloudy', 'Cloudy', 'Light rain', 'Clear', 'Sunny', 'Partly cloudy']
+        
+        for i in range(7):
+            date_obj = datetime.now() + timedelta(days=i)
+            forecast.append({
+                'date': date_obj.strftime('%Y-%m-%d'),
+                'day_name': date_obj.strftime('%a'),
+                'day_full': date_obj.strftime('%A'),
+                'max_temp': 30 - i,
+                'min_temp': 22 - i,
+                'condition': conditions[i % len(conditions)],
+                'condition_icon': '//cdn.weatherapi.com/weather/64x64/day/116.png',
+                'chance_of_rain': 20 + (i * 5) % 30,
+                'humidity': 60 + i * 2,
+            })
+        return forecast

@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'landing',
     'farms',
     'crops',
+    'weather',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/app/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+# ===== WEATHER API CONFIGURATION =====
+from decouple import config
+
+WEATHER_API_KEY = config('WEATHER_API_KEY', default='')
+WEATHER_API_BASE_URL = config('WEATHER_API_BASE_URL', default='http://api.weatherapi.com/v1')
+DEFAULT_LOCATION = config('DEFAULT_LOCATION', default='Yangon')
+
+# Cache settings for weather
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'weather-cache',
+    }
+}
