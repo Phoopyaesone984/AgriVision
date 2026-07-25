@@ -1,35 +1,27 @@
 from django.contrib import admin
-from .models import Farm, Crop, Activity, SoilReading, Harvest
+from .models import Farm, Activity, SoilReading, Harvest
+# Remove Crop from import - it's now in crops app
 
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
     list_display = ['name', 'owner', 'location', 'size_acres', 'created_at']
     list_filter = ['owner']
     search_fields = ['name', 'location']
-    date_hierarchy = 'created_at'
-
-@admin.register(Crop)
-class CropAdmin(admin.ModelAdmin):
-    list_display = ['name', 'farm', 'crop_type', 'planting_date', 'status', 'is_active']
-    list_filter = ['crop_type', 'status', 'farm', 'is_active']
-    search_fields = ['name']
-    date_hierarchy = 'planting_date'
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ['title', 'farm', 'due_date', 'priority', 'status']
+    list_display = ['title', 'farm', 'crop', 'due_date', 'priority', 'status']
     list_filter = ['priority', 'status', 'farm']
-    search_fields = ['title']
-    date_hierarchy = 'due_date'
+    search_fields = ['title', 'description']
 
 @admin.register(SoilReading)
 class SoilReadingAdmin(admin.ModelAdmin):
     list_display = ['crop', 'reading_date', 'moisture_percent', 'ph_level']
-    list_filter = ['crop__farm']
-    date_hierarchy = 'reading_date'
+    list_filter = ['crop']
+    search_fields = ['crop__name', 'notes']
 
 @admin.register(Harvest)
 class HarvestAdmin(admin.ModelAdmin):
-    list_display = ['crop', 'harvest_date', 'quantity_tonnes']
-    list_filter = ['crop__farm']
-    date_hierarchy = 'harvest_date'
+    list_display = ['crop', 'harvest_date', 'quantity_tonnes', 'quality_grade']
+    list_filter = ['crop']
+    search_fields = ['crop__name', 'quality_grade']

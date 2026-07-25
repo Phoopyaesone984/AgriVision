@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block nav_tasks %}active{% endblock %}
+{% block page_title %}{% trans "Task Management" %}{% endblock %}
+
+{% block app_content %}
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1" style="color: var(--ink);">{% trans "Tasks" %}</h2>
+            <p class="text-muted mb-0" style="color: var(--ink-soft);">{% trans "Manage your farm tasks and activities" %}</p>
+        </div>
+        <a href="{% url 'farms:activity_create' %}" class="btn" style="background: var(--accent-green); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; display: flex; align-items: center; gap: 8px; text-decoration: none;">
+            <span class="material-symbols-outlined" style="font-size: 20px;">add</span> {% trans "Add New Task" %}
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-3 d-flex gap-2 flex-wrap">
+        <a href="{% url 'farms:activity_list' %}" 
+           class="btn btn-sm" 
+           style="{% if not status_filter and not priority_filter %}background: var(--accent-green); color: #fff;{% else %}background: var(--bg-glass); color: var(--ink); border: 1px solid var(--border);{% endif %} border-radius: 20px; padding: 6px 16px; text-decoration: none; transition: all 0.2s;">
+            {% trans "All" %}
+        </a>
+        
+        {% for status_code, status_label in status_choices %}
+        <a href="?status={{ status_code }}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}" 
+           class="btn btn-sm" 
+           style="{% if status_filter == status_code %}background: var(--accent-green); color: #fff;{% else %}background: var(--bg-glass); color: var(--ink); border: 1px solid var(--border);{% endif %} border-radius: 20px; padding: 6px 16px; text-decoration: none; transition: all 0.2s;">
+            {{ status_label }}
+        </a>
+        {% endfor %}
+        
+        {% for priority_code, priority_label in priority_choices %}
+        <a href="?priority={{ priority_code }}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+           class="btn btn-sm" 
+           style="{% if priority_filter == priority_code %}background: var(--accent-green); color: #fff;{% else %}background: var(--bg-glass); color: var(--ink); border: 1px solid var(--border);{% endif %} border-radius: 20px; padding: 6px 16px; text-decoration: none; transition: all 0.2s;">
+            {{ priority_label }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if activities %}
+    <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden;">
+        <table class="table" style="margin-bottom: 0; color: var(--ink); background: var(--bg-card);">
+            <thead style="background: var(--bg-glass); border-bottom: 1px solid var(--border);">
+                <tr>
+                    <th style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Title" %}</th>
+                    <th style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Farm" %}</th>
+                    <th style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Crop" %}</th>
+                    <th style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Due Date" %}</th>
+                    <th style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Priority" %}</th>
+                    <th style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Status" %}</th>
+                    <th class="text-center" style="color: var(--ink); padding: 14px 16px; font-weight: 600;">{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in activities %}
+                <tr style="border-bottom: 1px solid var(--border); background: var(--bg-card);">
+                    <td style="padding: 14px 16px; color: var(--ink);"><strong style="color: var(--ink);">{{ activity.title }}</strong></td>
+                    <td style="padding: 14px 16px; color: var(--ink-soft);">{{ activity.farm.name }}</td>
+                    <td style="padding: 14px 16px; color: var(--ink-soft);">{{ activity.crop.name|default:"—" }}</td>
+                    <td style="padding: 14px 16px; color: var(--ink-soft);">
+                        {% if activity.due_date < today and activity.status != 'completed' %}
+                            <span style="color: var(--rose-ink); font-weight: 600;">{{ activity.due_date|date:"M d, Y" }}</span>
+                        {% else %}
+                            {{ activity.due_date|date:"M d, Y" }}
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px 16px;">
+                        <span style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--bg-glass); color: var(--ink); border: 1px solid var(--border);">
+                            {{ activity.get_priority_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 14px 16px;">
+                        <span style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--bg-glass); color: var(--ink); border: 1px solid var(--border);">
+                            {{ activity.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 14px 16px;">
+                        <div class="d-flex justify-content-center gap-2">
+                            {% if activity.status != 'completed' %}
+                            <form action="{% url 'farms:activity_complete' activity.pk %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm" title="Mark Complete" style="background: var(--accent-green); color: #fff; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: opacity 0.2s;">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'farms:activity_edit' activity.pk %}" class="btn btn-sm" title="Edit" style="background: var(--amber-bg); color: var(--amber-ink); border: none; border-radius: 8px; padding: 6px 10px; text-decoration: none; transition: opacity 0.2s;">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                            </a>
+                            <a href="{% url 'farms:activity_delete' activity.pk %}" class="btn btn-sm" title="Delete" style="background: var(--rose-bg); color: var(--rose-ink); border: none; border-radius: 8px; padding: 6px 10px; text-decoration: none; transition: opacity 0.2s;">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5" style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+        <span class="material-symbols-outlined" style="font-size: 64px; color: var(--ink-faint);">task</span>
+        <h4 class="mt-3" style="color: var(--ink);">{% trans "No tasks found" %}</h4>
+        <p class="text-muted" style="color: var(--ink-soft);">{% trans "Start by adding your first task." %}</p>
+        <a href="{% url 'farms:activity_create' %}" class="btn mt-2" style="background: var(--accent-green); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+            <span class="material-symbols-outlined">add</span> {% trans "Add Your First Task" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
