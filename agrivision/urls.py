@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('landing.urls')),
     path('farms/', include('farms.urls')),  # Changed from 'app/' to 'farms/'
     path('crops/', include('crops.urls')), 
+    path('weather/', include('weather.urls')), 
     path('auth/', include('authentication.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('set-language/', set_language, name='set_language'),
