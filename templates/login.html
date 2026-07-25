@@ -1,78 +1,104 @@
-{% extends "base.html" %}
+{% extends "base_landing.html" %}
+{% load static %}
+{% load i18n %}
 
-{% block content %}
+{% block title %}{% trans "Sign In" %} | AgriVision{% endblock %}
+
+{% block app_content %}
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-
-        <div class="col-md-5">
-
-            <div class="card shadow p-4">
-
-                <h2 class="text-center mb-4">
-                    🌱 Welcome Back
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow p-4" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);">
+                <h2 class="text-center mb-4" style="color: var(--accent-green); font-weight: 700;">
+                    <i class="bi bi-box-arrow-in-right"></i> {% trans "Welcome Back" %}
                 </h2>
-
 
                 <!-- Display form errors -->
                 {% if form.errors %}
                     <div class="alert alert-danger">
-                        <strong> Please check your username and password.!</strong>
-
+                        <strong>{% trans "Please check your username and password." %}</strong>
                     </div>
                 {% endif %}
 
-
-                <form method="POST">
+                <form method="POST" action="{% url 'login' %}">
                     {% csrf_token %}
 
-
                     <div class="mb-3">
-                        <label class="form-label">
-                            Username
+                        <label for="{{ form.username.id_for_label }}" class="form-label" style="color: var(--ink); font-weight: 500;">
+                            {% trans "Username" %}
                         </label>
-
                         {{ form.username }}
-
                         {% if form.username.errors %}
-                            <div class="text-danger">
-                                {{ form.username.errors }}
-                            </div>
+                            <div class="text-danger small mt-1">{{ form.username.errors }}</div>
                         {% endif %}
-
                     </div>
-
-
 
                     <div class="mb-3">
-                        <label class="form-label">
-                            Password
+                        <label for="{{ form.password.id_for_label }}" class="form-label" style="color: var(--ink); font-weight: 500;">
+                            {% trans "Password" %}
                         </label>
-
                         {{ form.password }}
-
                         {% if form.password.errors %}
-                            <div class="text-danger">
-                                {{ form.password.errors }}
-                            </div>
+                            <div class="text-danger small mt-1">{{ form.password.errors }}</div>
                         {% endif %}
-
                     </div>
 
-
-
-                    <button type="submit" class="btn btn-success w-100">
-                        LogIn
+                    <button type="submit" class="btn w-100" style="background: var(--accent-green); color: #fff; font-weight: 600; padding: 12px; border: none; border-radius: 50px; transition: all 0.3s ease;">
+                        <i class="bi bi-box-arrow-in-right"></i> {% trans "Sign In" %}
                     </button>
 
-
+                    <div class="text-center mt-3">
+                        <p style="color: var(--ink-soft);">
+                            {% trans "Don't have an account?" %}
+                            <a href="{% url 'register' %}" style="color: var(--accent-green); text-decoration: none; font-weight: 600;">
+                                {% trans "Create Account" %}
+                            </a>
+                        </p>
+                    </div>
                 </form>
-
             </div>
-
         </div>
-
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Form styling to match your theme */
+    .form-control {
+        background: var(--bg-page);
+        border: 1px solid var(--border);
+        color: var(--ink);
+        border-radius: var(--radius-md);
+        padding: 12px 16px;
+        transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 3px var(--accent-green-glow);
+        background: var(--bg-page);
+        color: var(--ink);
+    }
+    .form-control::placeholder {
+        color: var(--ink-faint);
+    }
+    .card {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-lg) !important;
+        box-shadow: var(--shadow-soft) !important;
+    }
+    label {
+        color: var(--ink) !important;
+    }
+    .alert-danger {
+        background: var(--rose-bg);
+        color: var(--rose-ink);
+        border: 1px solid var(--rose-ink);
+        border-radius: var(--radius-md);
+        padding: 12px 16px;
+    }
+</style>
 {% endblock %}

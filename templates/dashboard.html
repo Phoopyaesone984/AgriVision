@@ -1,56 +1,71 @@
-{% extends 'app_base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
 
-{% block title %}Dashboard Overview | AgriVision{% endblock %}
+{% block title %}{% trans "Dashboard Overview" %} | AgriVision{% endblock %}
+{% block page_title %}{% trans "Dashboard Overview" %}{% endblock %}
 {% block nav_dashboard %}active{% endblock %}
 
 {% block extra_css %}
 <style>
+    /* ===== Increased spacing throughout ===== */
+    
+    /* Main content padding - increased */
+    .app-content {
+        padding: 32px 40px 60px !important;
+    }
+
+    /* Top grid spacing - increased gap */
     .dash-grid-top {
         display: grid;
         grid-template-columns: 2.1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 28px;
+        margin-bottom: 32px;
     }
 
     @media (max-width: 1100px) {
         .dash-grid-top { grid-template-columns: 1fr; }
     }
 
-    /* ---- Hero card ---- */
+    /* ---- Hero card - more padding ---- */
     .hero-card {
         background: radial-gradient(circle at 100% 0%, #1c3a2c 0%, var(--forest-deep) 60%);
         border-radius: var(--radius-lg);
-        padding: 32px;
+        padding: 40px 36px;
         color: #fff;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        min-height: 260px;
+        min-height: 280px;
     }
 
     .hero-card h2 {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 600;
-        margin: 0 0 10px;
+        margin: 0 0 12px;
     }
 
     .hero-card p {
-        font-size: 14.5px;
-        line-height: 1.7;
-        color: rgba(255, 255, 255, 0.68);
+        font-size: 15px;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.72);
         max-width: 520px;
-        margin: 0 0 24px;
+        margin: 0 0 28px;
     }
 
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-actions { 
+        display: flex; 
+        gap: 14px; 
+        flex-wrap: wrap; 
+    }
 
     .btn-mint, .btn-dark-outline {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         border: none;
         border-radius: 50px;
-        padding: 11px 22px;
+        padding: 13px 26px;
         font-family: inherit;
         font-size: 14px;
         font-weight: 600;
@@ -66,18 +81,18 @@
     .btn-dark-outline {
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .btn-mint:hover, .btn-dark-outline:hover { transform: translateY(-1px); opacity: 0.92; }
+    .btn-mint:hover, .btn-dark-outline:hover { transform: translateY(-2px); opacity: 0.92; }
 
-    /* ---- Weather card ---- */
+    /* ---- Weather card - more padding ---- */
     .weather-card {
         background: var(--bg-card);
         border-radius: var(--radius-lg);
         border: 1px solid var(--border);
         box-shadow: var(--shadow-card);
-        padding: 24px;
+        padding: 28px 30px;
         display: flex;
         flex-direction: column;
     }
@@ -86,23 +101,24 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        margin-bottom: 12px;
     }
 
     .weather-location {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 16px;
+        font-weight: 700;
         color: var(--ink);
         line-height: 1.4;
     }
 
     .weather-desc {
-        font-size: 13px;
+        font-size: 14px;
         color: var(--ink-soft);
-        margin-top: 2px;
+        margin-top: 4px;
     }
 
     .weather-temp {
-        font-size: 30px;
+        font-size: 36px;
         font-weight: 800;
         color: var(--ink);
         text-align: right;
@@ -110,7 +126,7 @@
 
     .weather-icon-amber {
         color: var(--amber-ink);
-        font-size: 22px;
+        font-size: 26px;
         display: block;
         text-align: right;
         margin-bottom: 2px;
@@ -119,43 +135,48 @@
     .weather-forecast {
         display: flex;
         justify-content: space-between;
-        margin-top: 20px;
-        padding-top: 16px;
+        margin-top: 24px;
+        padding-top: 20px;
         border-top: 1px solid var(--border);
-        gap: 6px;
+        gap: 8px;
     }
 
     .weather-day {
         text-align: center;
-        font-size: 12px;
+        font-size: 13px;
         color: var(--ink-soft);
         flex: 1;
+        padding: 4px 0;
     }
 
     .weather-day .material-symbols-outlined {
         display: block;
         color: var(--amber-ink);
-        margin: 4px auto;
-        font-size: 18px;
+        margin: 6px auto;
+        font-size: 22px;
     }
 
     .weather-day strong {
         display: block;
         color: var(--ink);
-        font-size: 13px;
-        margin-top: 2px;
+        font-size: 15px;
+        margin-top: 4px;
     }
 
-    /* ---- Stat tiles ---- */
+    /* ---- Stat tiles - more padding and spacing ---- */
     .stat-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 24px;
+        margin-bottom: 32px;
     }
 
     @media (max-width: 900px) {
         .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 500px) {
+        .stat-grid { grid-template-columns: 1fr; }
     }
 
     .stat-tile {
@@ -163,23 +184,33 @@
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-card);
-        padding: 22px;
+        padding: 28px 24px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-tile:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-soft);
     }
 
     .stat-tile-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
     }
 
     .stat-badge-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .stat-badge-icon .material-symbols-outlined {
+        font-size: 24px;
     }
 
     .stat-badge-icon.mint-light { background: #ddf3ea; color: var(--mint-deep); }
@@ -188,14 +219,17 @@
     .stat-badge-icon.rose { background: var(--rose-bg); color: var(--rose-ink); }
 
     .stat-delta {
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--mint-deep);
+        padding: 4px 12px;
+        background: rgba(46, 219, 146, 0.1);
+        border-radius: 20px;
     }
 
     .stat-progress-track {
-        width: 60px;
-        height: 6px;
+        width: 70px;
+        height: 8px;
         background: var(--border);
         border-radius: 10px;
         overflow: hidden;
@@ -210,33 +244,34 @@
     .urgent-pill {
         background: var(--rose-ink);
         color: #fff;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.5px;
-        padding: 3px 9px;
+        padding: 4px 12px;
         border-radius: 50px;
     }
 
     .stat-label {
-        font-size: 13px;
+        font-size: 14px;
         color: var(--ink-soft);
-        margin-bottom: 4px;
+        margin-bottom: 6px;
+        font-weight: 500;
     }
 
     .stat-value {
-        font-size: 26px;
+        font-size: 30px;
         font-weight: 800;
         color: var(--ink);
-        letter-spacing: -0.3px;
+        letter-spacing: -0.5px;
     }
 
     .stat-value.rose-text { color: var(--rose-ink); }
 
-    /* ---- Bottom grid: chart + activity ---- */
+    /* ---- Bottom grid - more spacing ---- */
     .dash-grid-bottom {
         display: grid;
         grid-template-columns: 2.1fr 1fr;
-        gap: 20px;
+        gap: 28px;
     }
 
     @media (max-width: 1100px) {
@@ -248,26 +283,27 @@
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-card);
-        padding: 24px;
+        padding: 28px 30px;
     }
 
     .panel-head {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 22px;
+        margin-bottom: 28px;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 12px;
     }
 
     .panel-head h3 {
-        font-size: 15.5px;
+        font-size: 18px;
         font-weight: 700;
-        margin: 0 0 2px;
+        margin: 0 0 4px;
+        color: var(--ink);
     }
 
     .panel-head p {
-        font-size: 12.5px;
+        font-size: 13.5px;
         color: var(--ink-soft);
         margin: 0;
     }
@@ -275,22 +311,27 @@
     .range-select {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         background: rgba(20, 32, 24, 0.05);
-        border-radius: 10px;
-        padding: 8px 14px;
-        font-size: 13px;
+        border-radius: 12px;
+        padding: 10px 18px;
+        font-size: 14px;
         font-weight: 500;
         color: var(--ink);
         cursor: pointer;
+        transition: background 0.2s ease;
     }
 
-    /* Bar chart */
+    .range-select:hover {
+        background: rgba(20, 32, 24, 0.08);
+    }
+
+    /* Bar chart - more spacing */
     .chart-area {
         display: flex;
         align-items: flex-end;
-        gap: 22px;
-        height: 220px;
+        gap: 28px;
+        height: 240px;
         padding-top: 10px;
     }
 
@@ -299,14 +340,16 @@
         display: flex;
         align-items: flex-end;
         justify-content: center;
-        gap: 6px;
+        gap: 8px;
         height: 100%;
         position: relative;
     }
 
     .bar {
-        width: 22px;
-        border-radius: 6px 6px 0 0;
+        width: 26px;
+        border-radius: 8px 8px 0 0;
+        transition: height 0.3s ease;
+        min-height: 8px;
     }
 
     .bar.projected { background: #e7e6e1; }
@@ -315,30 +358,30 @@
 
     .chart-legend {
         display: flex;
-        gap: 20px;
-        margin-top: 18px;
-        font-size: 12.5px;
+        gap: 24px;
+        margin-top: 22px;
+        font-size: 13px;
         color: var(--ink-soft);
     }
 
     .chart-legend span {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
     }
 
     .legend-dot {
-        width: 9px;
-        height: 9px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         display: inline-block;
     }
 
-    /* Activity feed */
+    /* Activity feed - more spacing */
     .activity-row {
         display: flex;
-        gap: 14px;
-        padding: 14px 0;
+        gap: 16px;
+        padding: 16px 0;
         border-bottom: 1px solid var(--border);
     }
 
@@ -346,8 +389,8 @@
     .activity-row:first-child { padding-top: 0; }
 
     .activity-icon {
-        width: 36px;
-        height: 36px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -355,33 +398,151 @@
         flex-shrink: 0;
     }
 
+    .activity-icon .material-symbols-outlined {
+        font-size: 22px;
+    }
+
     .activity-icon.mint { background: var(--mint); color: var(--mint-deep); }
     .activity-icon.rose { background: var(--rose-bg); color: var(--rose-ink); }
 
-    .activity-text { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
-    .activity-time { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+    .activity-text { 
+        font-size: 14px; 
+        color: var(--ink); 
+        line-height: 1.6; 
+        margin-bottom: 2px;
+    }
+    
+    .activity-time { 
+        font-size: 12.5px; 
+        color: var(--ink-faint); 
+        margin-top: 2px;
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .stat-badge-icon.mint-light { 
+        background: rgba(46, 219, 146, 0.2); 
+        color: var(--mint);
+    }
+    [data-theme="dark"] .bar.projected { background: #2a3a32; }
+    [data-theme="dark"] .range-select { background: rgba(255, 255, 255, 0.05); }
+    [data-theme="dark"] .stat-delta { background: rgba(46, 219, 146, 0.15); }
+    [data-theme="dark"] .range-select:hover { background: rgba(255, 255, 255, 0.08); }
+
+    /* Additional spacing for mobile */
+    @media (max-width: 768px) {
+        .app-content {
+            padding: 20px 16px 40px !important;
+        }
+        .hero-card {
+            padding: 28px 24px;
+            min-height: 220px;
+        }
+        .hero-card h2 {
+            font-size: 22px;
+        }
+        .hero-card p {
+            font-size: 14px;
+        }
+        .weather-card {
+            padding: 20px 22px;
+        }
+        .stat-tile {
+            padding: 20px 18px;
+        }
+        .panel-card {
+            padding: 20px 18px;
+        }
+        .chart-area {
+            gap: 16px;
+            height: 180px;
+        }
+        .bar {
+            width: 18px;
+        }
+        .dash-grid-top,
+        .dash-grid-bottom {
+            gap: 20px;
+        }
+        .stat-grid {
+            gap: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-card {
+            padding: 24px 18px;
+            min-height: 200px;
+        }
+        .hero-card h2 {
+            font-size: 20px;
+        }
+        .hero-actions .btn-mint,
+        .hero-actions .btn-dark-outline {
+            padding: 10px 18px;
+            font-size: 13px;
+        }
+        .stat-value {
+            font-size: 24px;
+        }
+        .stat-tile {
+            padding: 16px 14px;
+        }
+        .weather-forecast {
+            gap: 4px;
+        }
+        .weather-day {
+            font-size: 11px;
+        }
+        .weather-day .material-symbols-outlined {
+            font-size: 18px;
+        }
+        .weather-day strong {
+            font-size: 13px;
+        }
+        .chart-area {
+            gap: 12px;
+            height: 150px;
+        }
+        .bar {
+            width: 14px;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block app_content %}
 
+<!-- 🔍 DEBUG: Show what data we have -->
+<div style="background: yellow; padding: 20px; margin-bottom: 20px; border-radius: 10px; border: 3px solid red; color: black;">
+    <h3 style="color: black;">🔍 DEBUG DATA FROM VIEW</h3>
+    <p style="color: black;"><strong>Total Farms:</strong> {{ stats.total_farms|default:"NOT SET" }}</p>
+    <p style="color: black;"><strong>Active Crops:</strong> {{ stats.active_crops|default:"NOT SET" }}</p>
+    <p style="color: black;"><strong>Soil Score:</strong> {{ stats.soil_score|default:"NOT SET" }}</p>
+    <p style="color: black;"><strong>Weather Alerts:</strong> {{ stats.weather_alerts|default:"NOT SET" }}</p>
+    <p style="color: black;"><strong>Farm Location:</strong> {{ farm_location|default:"NOT SET" }}</p>
+    <p style="color: black;"><strong>User:</strong> {{ user.username|default:"NOT SET" }}</p>
+    <p style="color: black;"><strong>Recent Activities Count:</strong> {{ recent_activities|length|default:"0" }}</p>
+</div>
+
 <div class="dash-grid-top">
+    <!-- Hero Card -->
     <div class="hero-card">
-        <h2 class="font-display">Good morning, {{ user.first_name|default:user.username }}!</h2>
-        <p>Your farm in {{ farm_location|default:"Pyin Oo Lwin" }} is showing excellent soil moisture today. It's a great time to schedule the next fertilization cycle for your coffee crops.</p>
+        <h2 class="font-display">{% trans "Good morning" %}, {{ user.first_name|default:user.username }}! 👋</h2>
+        <p>{% trans "Your farm in" %} {{ farm_location|default:"Pyin Oo Lwin" }} {% trans "is showing excellent soil moisture today. It's a great time to schedule the next fertilization cycle for your coffee crops." %}</p>
         <div class="hero-actions">
             <button class="btn-mint">
-                <span class="material-symbols-outlined">schedule</span> Schedule Task
+                <span class="material-symbols-outlined">schedule</span> {% trans "Schedule Task" %}
             </button>
-            <button class="btn-dark-outline">View Report</button>
+            <button class="btn-dark-outline">{% trans "View Report" %}</button>
         </div>
     </div>
 
+    <!-- Weather Card -->
     <div class="weather-card">
         <div class="weather-top">
             <div>
                 <div class="weather-location">{{ farm_location|default:"Pyin Oo Lwin" }}</div>
-                <div class="weather-desc">Mostly Sunny</div>
+                <div class="weather-desc">{% trans "Mostly Sunny" %}</div>
             </div>
             <div>
                 <span class="material-symbols-outlined weather-icon-amber">wb_sunny</span>
@@ -390,62 +551,64 @@
         </div>
 
         <div class="weather-forecast">
-            <div class="weather-day">Mon <span class="material-symbols-outlined">cloud</span><strong>24°</strong></div>
-            <div class="weather-day">Tue <span class="material-symbols-outlined">rainy</span><strong>22°</strong></div>
-            <div class="weather-day">Wed <span class="material-symbols-outlined">wb_sunny</span><strong>29°</strong></div>
-            <div class="weather-day">Thu <span class="material-symbols-outlined">wb_sunny</span><strong>30°</strong></div>
-            <div class="weather-day">Fri <span class="material-symbols-outlined">partly_cloudy_day</span><strong>27°</strong></div>
+            <div class="weather-day">{% trans "Mon" %} <span class="material-symbols-outlined">cloud</span><strong>24°</strong></div>
+            <div class="weather-day">{% trans "Tue" %} <span class="material-symbols-outlined">rainy</span><strong>22°</strong></div>
+            <div class="weather-day">{% trans "Wed" %} <span class="material-symbols-outlined">wb_sunny</span><strong>29°</strong></div>
+            <div class="weather-day">{% trans "Thu" %} <span class="material-symbols-outlined">wb_sunny</span><strong>30°</strong></div>
+            <div class="weather-day">{% trans "Fri" %} <span class="material-symbols-outlined">partly_cloudy_day</span><strong>27°</strong></div>
         </div>
     </div>
 </div>
 
+<!-- Stat Grid -->
 <div class="stat-grid">
     <div class="stat-tile">
         <div class="stat-tile-head">
             <div class="stat-badge-icon mint-light"><span class="material-symbols-outlined">house</span></div>
-            <span class="stat-delta">+2 this month</span>
+            <span class="stat-delta">+2 {% trans "this month" %}</span>
         </div>
-        <div class="stat-label">Total Farms</div>
-        <div class="stat-value">{{ stats.total_farms|default:"12" }}</div>
+        <div class="stat-label">{% trans "Total Farms" %}</div>
+        <div class="stat-value">{{ stats.total_farms|default:"0" }}</div>
     </div>
 
     <div class="stat-tile">
         <div class="stat-tile-head">
             <div class="stat-badge-icon mint-solid"><span class="material-symbols-outlined">potted_plant</span></div>
-            <span class="stat-delta" style="color: var(--ink-soft); font-weight: 500;">Across 4 zones</span>
+            <span class="stat-delta" style="color: var(--ink-soft); font-weight: 500; background: transparent; padding: 0;">{% trans "Across 4 zones" %}</span>
         </div>
-        <div class="stat-label">Active Crops</div>
-        <div class="stat-value">{{ stats.active_crops|default:"2,480" }}</div>
+        <div class="stat-label">{% trans "Active Crops" %}</div>
+        <div class="stat-value">{{ stats.active_crops|default:"0" }}</div>
     </div>
 
     <div class="stat-tile">
         <div class="stat-tile-head">
             <div class="stat-badge-icon amber"><span class="material-symbols-outlined">analytics</span></div>
-            <div class="stat-progress-track"><div class="stat-progress-fill" style="width: 85%;"></div></div>
+            <div class="stat-progress-track"><div class="stat-progress-fill" style="width: {{ stats.soil_score|default:0 }}%;"></div></div>
         </div>
-        <div class="stat-label">Soil Health Score</div>
-        <div class="stat-value">{{ stats.soil_score|default:"85" }}<span style="font-size:15px; color:var(--ink-soft); font-weight:600;">/100</span></div>
+        <div class="stat-label">{% trans "Soil Health Score" %}</div>
+        <div class="stat-value">{{ stats.soil_score|default:"0" }}<span style="font-size:16px; color:var(--ink-soft); font-weight:600; margin-left:2px;">/100</span></div>
     </div>
 
     <div class="stat-tile">
         <div class="stat-tile-head">
             <div class="stat-badge-icon rose"><span class="material-symbols-outlined">warning</span></div>
-            <span class="urgent-pill">URGENT</span>
+            <span class="urgent-pill">{% trans "URGENT" %}</span>
         </div>
-        <div class="stat-label">Weather Alerts</div>
-        <div class="stat-value rose-text">{{ stats.weather_alerts|default:"02" }}</div>
+        <div class="stat-label">{% trans "Weather Alerts" %}</div>
+        <div class="stat-value rose-text">{{ stats.weather_alerts|default:"0" }}</div>
     </div>
 </div>
 
+<!-- Bottom Grid -->
 <div class="dash-grid-bottom">
     <div class="panel-card">
         <div class="panel-head">
             <div>
-                <h3 class="font-display">Crop Yield Trends</h3>
-                <p>Projected vs Actual harvest (Tonnes)</p>
+                <h3 class="font-display">{% trans "Crop Yield Trends" %}</h3>
+                <p>{% trans "Projected vs Actual harvest (Tonnes)" %}</p>
             </div>
             <div class="range-select">
-                Last 6 Months <span class="material-symbols-outlined" style="font-size:16px;">expand_more</span>
+                {% trans "Last 6 Months" %} <span class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
             </div>
         </div>
 
@@ -477,43 +640,63 @@
         </div>
 
         <div class="chart-legend">
-            <span><span class="legend-dot" style="background: #e7e6e1;"></span> Projected</span>
-            <span><span class="legend-dot" style="background: var(--mint-deep);"></span> Actual</span>
-            <span><span class="legend-dot" style="background: var(--mint);"></span> Current month</span>
+            <span><span class="legend-dot" style="background: #e7e6e1;"></span> {% trans "Projected" %}</span>
+            <span><span class="legend-dot" style="background: var(--mint-deep);"></span> {% trans "Actual" %}</span>
+            <span><span class="legend-dot" style="background: var(--mint);"></span> {% trans "Current month" %}</span>
         </div>
     </div>
 
     <div class="panel-card">
         <div class="panel-head">
             <div>
-                <h3 class="font-display">Recent Activity</h3>
+                <h3 class="font-display">{% trans "Recent Activity" %}</h3>
             </div>
         </div>
 
-        <div class="activity-row">
-            <div class="activity-icon mint"><span class="material-symbols-outlined">potted_plant</span></div>
-            <div>
-                <div class="activity-text">Harvest scheduled for <strong>Zone B</strong></div>
-                <div class="activity-time">2 hours ago</div>
+        {% if recent_activities %}
+            {% for activity in recent_activities %}
+            <div class="activity-row">
+                <div class="activity-icon {% if activity.priority == 'high' %}rose{% else %}mint{% endif %}">
+                    <span class="material-symbols-outlined">
+                        {% if activity.priority == 'high' %}priority_high{% else %}task{% endif %}
+                    </span>
+                </div>
+                <div>
+                    <div class="activity-text">{{ activity.title }}</div>
+                    <div class="activity-time">{{ activity.created_at|timesince }} {% trans "ago" %}</div>
+                </div>
             </div>
-        </div>
-
-        <div class="activity-row">
-            <div class="activity-icon rose"><span class="material-symbols-outlined">water_drop</span></div>
-            <div>
-                <div class="activity-text">Critical low moisture in <strong>North Plot</strong></div>
-                <div class="activity-time">5 hours ago</div>
+            {% endfor %}
+        {% else %}
+            <div class="activity-row">
+                <div class="activity-icon mint">
+                    <span class="material-symbols-outlined">check_circle</span>
+                </div>
+                <div>
+                    <div class="activity-text">{% trans "No recent activities" %}</div>
+                    <div class="activity-time">{% trans "Add activities through the admin panel" %}</div>
+                </div>
             </div>
-        </div>
-
-        <div class="activity-row">
-            <div class="activity-icon mint"><span class="material-symbols-outlined">check_circle</span></div>
-            <div>
-                <div class="activity-text">Fertilization completed on <strong>South Field</strong></div>
-                <div class="activity-time">1 day ago</div>
-            </div>
-        </div>
+        {% endif %}
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Range selector interaction
+        document.querySelector('.range-select')?.addEventListener('click', function() {
+            console.log('Range selector clicked');
+        });
+
+        // Add hover effect to stat tiles for better UX
+        document.querySelectorAll('.stat-tile').forEach(tile => {
+            tile.addEventListener('mouseenter', function() {
+                this.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+            });
+        });
+    });
+</script>
 {% endblock %}

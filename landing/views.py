@@ -1,7 +1,7 @@
-# landing/views.py
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.contrib import messages
 from django.utils.translation import activate
 from django.conf import settings
 
@@ -19,13 +19,13 @@ def landing_page(request):
 @login_required
 def dashboard(request):
     """
-    Dashboard view - main entry point after login
+    Dashboard view - redirects to farm app dashboard
     """
-    context = {
-        'page_title': 'AgriVision Dashboard',
-        'user': request.user,
-    }
-    return render(request, 'landing/dashboard.html', context)
+    print("="*60)
+    print("🔴 LANDING DASHBOARD: REDIRECTING TO FARMS DASHBOARD")
+    print("   Going to: /app/")
+    print("="*60)
+    return redirect('farms:dashboard')
 
 def set_language(request):
     """
@@ -41,3 +41,11 @@ def set_language(request):
         response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
         return response
     return redirect(next_url)
+
+def logout_view(request):
+    """
+    Custom logout view that redirects to landing page with a success message
+    """
+    logout(request)
+    messages.success(request, 'You have been logged out successfully. See you soon! 👋')
+    return redirect('landing:landing')
