@@ -3,10 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
 from django.utils import timezone
-from .models import Farm, Activity, SoilReading  # Remove Crop from here
-from crops.models import Crop  # Import Crop from crops app
-from .forms import FarmForm
+from .models import Farm, Activity, SoilReading
+from crops.models import Crop
 from .forms import FarmForm, ActivityForm
+
+# Import weather service
+from weather.services import WeatherService
 
 
 # ============================================================
@@ -73,6 +75,97 @@ def dashboard(request):
     print("="*60)
     
     return render(request, 'dashboard.html', context)
+
+
+# ============================================================
+# WEATHER DASHBOARD VIEW
+# ============================================================
+@login_required
+def weather_dashboard(request):
+    """Weather dashboard with farm switching and alerts"""
+    user = request.user
+    user_farms = Farm.objects.filter(owner=user)
+    
+    # ===== GET SELECTED FARM =====
+    selected_farm_id = request.GET.get('farm_id')
+    
+    if selected_farm_id:
+        try:
+            selected_farm = user_farms.get(id=selected_farm_id)
+            request.session['selected_farm_id'] = str(selected_farm_id)
+        except Farm.DoesNotExist:
+            selected_farm = user_farms.first()
+            if selected_farm:
+                request.session['selected_farm_id'] = str(selected_farm.id)
+    else:
+        # Get from session or use first farm
+        session_farm_id = request.session.get('selected_farm_id')
+        if session_farm_id:
+            try:
+                selected_farm = user_farms.get(id=int(session_farm_id))
+            except Farm.DoesNotExist:
+                selected_farm = user_farms.first()
+        else:
+            selected_farm = user_farms.first()
+    
+    # ===== GET LOCATION =====
+    if selected_farm and hasattr(selected_farm, 'location'):
+        location = selected_farm.location
+    else:
+        location = None
+    
+    # ===== GET WEATHER DATA =====
+    weather_service = WeatherService()
+    
+    # Get weather for selected farm
+    weather_data = weather_service.get_weather_data(location)
+    
+    # Get weather for ALL farms (for farm cards)
+    farms_weather = []
+    all_alerts = []
+    
+    for farm in user_farms:
+        farm_location = farm.location if hasattr(farm, 'location') else None
+        farm_weather = weather_service.get_weather_data(farm_location)
+        
+        # Get alerts for this farm
+        farm_alerts = farm_weather.get('alerts', [])
+        
+        farms_weather.append({
+            'farm': farm,
+            'weather': farm_weather.get('current', {}),
+            'alerts': farm_alerts,
+            'has_alerts': len(farm_alerts) > 0,
+            'is_selected': farm.id == selected_farm.id if selected_farm else False,
+        })
+        
+        # Collect all alerts
+        if farm_alerts:
+            all_alerts.extend(farm_alerts)
+    
+    # ===== SORT ALERTS BY SEVERITY =====
+    severity_order = {'warning': 0, 'watch': 1, 'advisory': 2}
+    all_alerts.sort(key=lambda x: severity_order.get(x.get('severity', 'advisory'), 3))
+    
+    # Limit to 10 most severe alerts
+    all_alerts = all_alerts[:10]
+    
+    # ===== GET FORECAST FOR SELECTED FARM =====
+    forecast = weather_data.get('forecast', [])
+    
+    # ===== BUILD CONTEXT =====
+    context = {
+        'weather_data': weather_data,
+        'farms_weather': farms_weather,
+        'user_farms': user_farms,
+        'selected_farm': selected_farm,
+        'all_alerts': all_alerts,
+        'has_alerts': len(all_alerts) > 0,
+        'current_location': location or 'Yangon',
+        'forecast': forecast,
+    }
+    
+    return render(request, 'weather/dashboard.html', context)
 
 
 # ============================================================
