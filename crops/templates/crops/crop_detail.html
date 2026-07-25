@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block nav_crops %}active{% endblock %}
+{% block page_title %}{{ crop.name }}{% endblock %}
+
+{% block app_content %}
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">{{ crop.name }}</h2>
+            <p class="text-muted mb-0">
+                {% trans "Farm:" %} <strong>{{ crop.farm.name }}</strong>
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'crops:crop_edit' crop.pk %}" class="btn btn-warning">
+                <span class="material-symbols-outlined">edit</span> {% trans "Edit" %}
+            </a>
+            <a href="{% url 'crops:crop_list' %}" class="btn btn-secondary">
+                <span class="material-symbols-outlined">arrow_back</span> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Crop Type:" %}</strong> {{ crop.get_crop_type_display }}</p>
+                            <p><strong>{% trans "Status:" %}</strong> 
+                                <span class="badge {% if crop.status == 'PLANNED' %}bg-secondary{% elif crop.status == 'PLANTED' %}bg-primary{% elif crop.status == 'GROWING' %}bg-warning{% elif crop.status == 'HARVESTED' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ crop.get_status_display }}
+                                </span>
+                            </p>
+                            <p><strong>{% trans "Area:" %}</strong> {{ crop.area_acres }} {% trans "acres" %}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Planting Date:" %}</strong> {{ crop.planting_date|date:"F d, Y" }}</p>
+                            <p><strong>{% trans "Expected Harvest:" %}</strong> {{ crop.expected_harvest_date|date:"F d, Y" }}</p>
+                            <p><strong>{% trans "Active:" %}</strong> 
+                                {% if crop.is_active %}
+                                    <span class="badge bg-success">{% trans "Yes" %}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{% trans "No" %}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">{% trans "Quick Actions" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'crops:crop_edit' crop.pk %}" class="btn btn-outline-warning">
+                            <span class="material-symbols-outlined">edit</span> {% trans "Edit Crop" %}
+                        </a>
+                        <a href="{% url 'crops:crop_delete' crop.pk %}" class="btn btn-outline-danger">
+                            <span class="material-symbols-outlined">delete</span> {% trans "Delete Crop" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

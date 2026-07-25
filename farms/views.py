@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
 from django.utils import timezone
-from .models import Farm, Crop, Activity, SoilReading
+from .models import Farm, Activity, SoilReading  # Remove Crop from here
+from crops.models import Crop  # Import Crop from crops app
 from .forms import FarmForm
+from .forms import FarmForm, ActivityForm
 
 
 # ============================================================
@@ -139,3 +141,107 @@ def farm_delete(request, pk):
         return redirect('farms:farm_list')
     
     return render(request, 'farm_confirm_delete.html', {'farm': farm})
+
+
+# ============================================================
+# ACTIVITY/TASK MANAGEMENT VIEWS
+# ============================================================
+
+@login_required
+def activity_list(request):
+    """Display all activities for the logged-in user's farms"""
+    farms = Farm.objects.filter(owner=request.user)
+    activities = Activity.objects.filter(farm__in=farms).select_related('farm', 'crop')
+    
+    # Apply filters
+    status_filter = request.GET.get('status')
+    priority_filter = request.GET.get('priority')
+    
+    if status_filter:
+        activities = activities.filter(status=status_filter)
+    if priority_filter:
+        activities = activities.filter(priority=priority_filter)
+    
+    return render(request, 'activity_list.html', {
+        'activities': activities,
+        'status_filter': status_filter,
+        'priority_filter': priority_filter,
+        'status_choices': Activity.STATUS_CHOICES,
+        'priority_choices': Activity.PRIORITY_CHOICES,
+        'today': timezone.now().date(),
+    })
+
+
+@login_required
+def activity_create(request):
+    """Add a new activity"""
+    # Check if user has any farms
+    if not Farm.objects.filter(owner=request.user).exists():
+        messages.warning(request, 'Please create a farm first before adding tasks.')
+        return redirect('farms:farm_list')
+    
+    if request.method == 'POST':
+        form = ActivityForm(request.POST, user=request.user)
+        if form.is_valid():
+            activity = form.save()
+            messages.success(request, f'✅ Task "{activity.title}" created successfully!')
+            return redirect('farms:activity_list')
+    else:
+        form = ActivityForm(user=request.user)
+    
+    return render(request, 'activity_form.html', {
+        'form': form,
+        'title': 'Add New Task',
+        'submit_text': 'Create Task'
+    })
+
+
+@login_required
+def activity_edit(request, pk):
+    """Edit an existing activity"""
+    activity = get_object_or_404(Activity, pk=pk, farm__owner=request.user)
+    
+    if request.method == 'POST':
+        form = ActivityForm(request.POST, instance=activity, user=request.user)
+        if form.is_valid():
+            activity = form.save()
+            messages.success(request, f'✅ Task "{activity.title}" updated successfully!')
+            return redirect('farms:activity_list')
+    else:
+        form = ActivityForm(instance=activity, user=request.user)
+    
+    return render(request, 'activity_form.html', {
+        'form': form,
+        'title': 'Edit Task',
+        'submit_text': 'Update Task',
+        'activity': activity
+    })
+
+
+@login_required
+def activity_delete(request, pk):
+    """Delete an activity"""
+    activity = get_object_or_404(Activity, pk=pk, farm__owner=request.user)
+    
+    if request.method == 'POST':
+        activity_title = activity.title
+        activity.delete()
+        messages.success(request, f'🗑️ Task "{activity_title}" deleted successfully!')
+        return redirect('farms:activity_list')
+    
+    return render(request, 'activity_confirm_delete.html', {'activity': activity})
+
+
+@login_required
+def activity_complete(request, pk):
+    """Mark an activity as completed"""
+    activity = get_object_or_404(Activity, pk=pk, farm__owner=request.user)
+    
+    if request.method == 'POST':
+        activity.status = 'completed'
+        activity.completed_date = timezone.now().date()
+        activity.save()
+        messages.success(request, f'✅ Task "{activity.title}" marked as completed!')
+        return redirect('farms:activity_list')
+    
+    return render(request, 'activity_complete_confirm.html', {'activity': activity})

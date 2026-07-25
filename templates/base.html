@@ -488,6 +488,67 @@
             color: var(--accent-green);
         }
 
+        /* ===== Table Styling for Dark/Light Theme ===== */
+.table {
+    background: var(--bg-card) !important;
+    color: var(--ink) !important;
+    border-collapse: collapse !important;
+}
+
+.table thead th {
+    background: var(--bg-glass) !important;
+    color: var(--ink) !important;
+    border-bottom: 1px solid var(--border) !important;
+    font-weight: 600 !important;
+}
+
+.table tbody td {
+    background: var(--bg-card) !important;
+    color: var(--ink) !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.table tbody tr {
+    background: var(--bg-card) !important;
+    transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-glass) !important;
+}
+
+/* ===== Filter Buttons ===== */
+.btn-filter {
+    background: var(--bg-glass) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 20px !important;
+    padding: 6px 16px !important;
+    transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+    background: var(--border) !important;
+    transform: translateY(-1px);
+}
+
+.btn-filter.active {
+    background: var(--accent-green) !important;
+    color: #fff !important;
+    border-color: var(--accent-green) !important;
+}
+
+/* ===== Badges in Table ===== */
+.badge-theme {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--bg-glass);
+    color: var(--ink);
+    border: 1px solid var(--border);
+}
         /* ===== Responsive ===== */
         @media (max-width: 768px) {
             .app-topbar {
@@ -563,28 +624,32 @@
         </div>
 
         <nav class="sidebar-nav">
-         <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
-    <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
-</a>
-            <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
-    <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
-</a>
-            <a href="#" class="nav-item {% block nav_crops %}{% endblock %}">
-                <span class="material-symbols-outlined">potted_plant</span> {% trans "Crop Growth" %}
-            </a>
-            <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
-                <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
-            </a>
-            <a href="#" class="nav-item {% block nav_weather %}{% endblock %}">
-                <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
-            </a>
-            <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
-                <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
-            </a>
-            <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
-                <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
-            </a>
-        </nav>
+    <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+        <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
+    </a>
+    <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
+        <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
+    </a>
+    <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
+        <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
+    </a>
+    <!-- ADD THE TASKS LINK RIGHT HERE -->
+    <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
+        <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
+    </a>
+    <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
+        <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
+    </a>
+    <a href="#" class="nav-item {% block nav_weather %}{% endblock %}">
+        <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
+    </a>
+    <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
+        <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
+    </a>
+    <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
+        <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
+    </a>
+</nav>
 
         <div class="sidebar-bottom">
             <button class="new-analysis-btn">

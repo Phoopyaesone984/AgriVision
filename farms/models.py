@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.apps import apps  # Add this import
 
 class Farm(models.Model):
     """Farm owned by a user"""
@@ -16,40 +17,6 @@ class Farm(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-class Crop(models.Model):
-    """Crops planted on a farm"""
-    CROP_TYPES = [
-        ('rice', 'Rice'),
-        ('corn', 'Corn'),
-        ('wheat', 'Wheat'),
-        ('coffee', 'Coffee'),
-        ('vegetable', 'Vegetable'),
-        ('fruit', 'Fruit'),
-        ('other', 'Other'),
-    ]
-    
-    STATUS_CHOICES = [
-        ('planted', 'Planted'),
-        ('growing', 'Growing'),
-        ('harvesting', 'Harvesting'),
-        ('completed', 'Completed'),
-    ]
-    
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='crops')
-    name = models.CharField(max_length=100)
-    crop_type = models.CharField(max_length=20, choices=CROP_TYPES, default='other')
-    planting_date = models.DateField()
-    expected_harvest_date = models.DateField(null=True, blank=True)
-    area_acres = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planted')
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"{self.name} ({self.farm.name})"
-    
-    class Meta:
-        ordering = ['-planting_date']
 
 class Activity(models.Model):
     """Tasks and activities on the farm"""
@@ -67,7 +34,8 @@ class Activity(models.Model):
     ]
     
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='activities')
-    crop = models.ForeignKey(Crop, on_delete=models.SET_NULL, null=True, blank=True, related_name='activities')
+    # Use string reference instead of importing Crop directly
+    crop = models.ForeignKey('crops.Crop', on_delete=models.SET_NULL, null=True, blank=True, related_name='activities')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     due_date = models.DateField()
@@ -83,9 +51,11 @@ class Activity(models.Model):
         ordering = ['due_date', '-priority']
         verbose_name_plural = 'Activities'
 
+
 class SoilReading(models.Model):
     """Soil health measurements"""
-    crop = models.ForeignKey(Crop, on_delete=models.CASCADE, related_name='soil_readings')
+    # Use string reference instead of importing Crop directly
+    crop = models.ForeignKey('crops.Crop', on_delete=models.CASCADE, related_name='soil_readings')
     reading_date = models.DateTimeField(auto_now_add=True)
     moisture_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     ph_level = models.DecimalField(max_digits=4, decimal_places=2, default=7.0)
@@ -101,9 +71,11 @@ class SoilReading(models.Model):
     class Meta:
         ordering = ['-reading_date']
 
+
 class Harvest(models.Model):
     """Harvest records"""
-    crop = models.ForeignKey(Crop, on_delete=models.CASCADE, related_name='harvests')
+    # Use string reference instead of importing Crop directly
+    crop = models.ForeignKey('crops.Crop', on_delete=models.CASCADE, related_name='harvests')
     harvest_date = models.DateField()
     quantity_tonnes = models.DecimalField(max_digits=10, decimal_places=2)
     quality_grade = models.CharField(max_length=20, blank=True)

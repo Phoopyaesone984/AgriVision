@@ -7,7 +7,8 @@ from landing.views import set_language
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('landing.urls')),
-    path('app/', include('farms.urls')),  # 👈 THIS MUST BE HERE
+    path('farms/', include('farms.urls')),  # Changed from 'app/' to 'farms/'
+    path('crops/', include('crops.urls')), 
     path('auth/', include('authentication.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('set-language/', set_language, name='set_language'),

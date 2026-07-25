@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block nav_tasks %}active{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block app_content %}
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm" style="background: var(--bg-card); border-color: var(--border);">
+                <div class="card-header bg-transparent" style="border-bottom-color: var(--border);">
+                    <h4 class="mb-0" style="color: var(--ink);">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.farm.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                    {% trans "Farm" %} *
+                                </label>
+                                {{ form.farm }}
+                                {% if form.farm.errors %}
+                                <div class="text-danger small">{{ form.farm.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.crop.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                    {% trans "Crop" %}
+                                </label>
+                                {{ form.crop }}
+                                <div class="form-text" style="color: var(--ink-faint);">{% trans "Optional - link task to a specific crop" %}</div>
+                                {% if form.crop.errors %}
+                                <div class="text-danger small">{{ form.crop.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                {% trans "Task Title" %} *
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                {% trans "Description" %}
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.due_date.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                    {% trans "Due Date" %} *
+                                </label>
+                                {{ form.due_date }}
+                                {% if form.due_date.errors %}
+                                <div class="text-danger small">{{ form.due_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.priority.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                    {% trans "Priority" %} *
+                                </label>
+                                {{ form.priority }}
+                                {% if form.priority.errors %}
+                                <div class="text-danger small">{{ form.priority.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold" style="color: var(--ink);">
+                                    {% trans "Status" %} *
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                <div class="text-danger small">{{ form.status.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4 pt-3" style="border-top-color: var(--border);">
+                            <a href="{% url 'farms:activity_list' %}" class="btn" style="background: var(--bg-glass); color: var(--ink-soft); border: 1px solid var(--border);">
+                                <span class="material-symbols-outlined">arrow_back</span> {% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn" style="background: var(--accent-green); color: white; border: none;">
+                                <span class="material-symbols-outlined">save</span> {{ submit_text }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

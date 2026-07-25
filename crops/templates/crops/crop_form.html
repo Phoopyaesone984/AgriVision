@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block nav_crops %}active{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block app_content %}
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h4 class="mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.farm.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Farm" %} *
+                                </label>
+                                {{ form.farm }}
+                                {% if form.farm.errors %}
+                                <div class="text-danger small">{{ form.farm.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Crop Name" %} *
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="text-danger small">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.crop_type.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Crop Type" %} *
+                                </label>
+                                {{ form.crop_type }}
+                                {% if form.crop_type.errors %}
+                                <div class="text-danger small">{{ form.crop_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.area_acres.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Area (Acres)" %} *
+                                </label>
+                                {{ form.area_acres }}
+                                {% if form.area_acres.errors %}
+                                <div class="text-danger small">{{ form.area_acres.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.planting_date.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Planting Date" %} *
+                                </label>
+                                {{ form.planting_date }}
+                                {% if form.planting_date.errors %}
+                                <div class="text-danger small">{{ form.planting_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.expected_harvest_date.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Expected Harvest Date" %} *
+                                </label>
+                                {{ form.expected_harvest_date }}
+                                {% if form.expected_harvest_date.errors %}
+                                <div class="text-danger small">{{ form.expected_harvest_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold">
+                                    {% trans "Status" %} *
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                <div class="text-danger small">{{ form.status.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mt-4 pt-2">
+                                    {{ form.is_active }}
+                                    <label for="{{ form.is_active.id_for_label }}" class="form-check-label fw-semibold">
+                                        {% trans "Active" %}
+                                    </label>
+                                    <div class="form-text">{% trans "Inactive crops won't appear in active lists" %}</div>
+                                    {% if form.is_active.errors %}
+                                    <div class="text-danger small">{{ form.is_active.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <a href="{% url 'crops:crop_list' %}" class="btn btn-secondary">
+                                <span class="material-symbols-outlined">arrow_back</span> {% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="material-symbols-outlined">save</span> {{ submit_text }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-calculate harvest date based on crop type (optional)
+    document.addEventListener('DOMContentLoaded', function() {
+        const cropTypeSelect = document.getElementById('{{ form.crop_type.id_for_label }}');
+        const plantingDateInput = document.getElementById('{{ form.planting_date.id_for_label }}');
+        const harvestDateInput = document.getElementById('{{ form.expected_harvest_date.id_for_label }}');
+        
+        // You can add auto-calculations here if needed
+    });
+</script>
+{% endblock %}
