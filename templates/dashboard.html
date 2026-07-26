@@ -526,38 +526,109 @@
 
 <div class="dash-grid-top">
     <!-- Hero Card -->
-    <div class="hero-card">
-        <h2 class="font-display">{% trans "Good morning" %}, {{ user.first_name|default:user.username }}! 👋</h2>
-        <p>{% trans "Your farm in" %} {{ farm_location|default:"Pyin Oo Lwin" }} {% trans "is showing excellent soil moisture today. It's a great time to schedule the next fertilization cycle for your coffee crops." %}</p>
-        <div class="hero-actions">
-            <button class="btn-mint">
-                <span class="material-symbols-outlined">schedule</span> {% trans "Schedule Task" %}
+ <!-- ===== HERO CARD ===== -->
+<div class="hero-card">
+    <h2 class="font-display">
+        {% trans "Good morning" %}, {{ user.first_name|default:user.username }}! 👋
+    </h2>
+    <p>
+        {% trans "Your farm in" %} 
+        <strong>{{ weather.location|default:farm_location|default:"Pyin Oo Lwin" }}</strong> 
+        {% if weather.condition %}
+            {% trans "is currently" %} {{ weather.condition|lower }} 
+            {% trans "with" %} {{ weather.temperature|default:28 }}°C
+            {% if weather.humidity %}
+                {% trans "and" %} {{ weather.humidity }}% {% trans "humidity" %}.
+            {% endif %}
+        {% else %}
+            {% trans "is showing excellent soil moisture today." %}
+        {% endif %}
+        <br>
+        {% if weather.condition == "Sunny" or weather.condition == "Clear" %}
+            {% trans "It's a great day for outdoor farming activities!" %}
+        {% elif 'rain' in weather.condition|lower %}
+            {% trans "Consider postponing spraying and protect young plants from heavy rain." %}
+        {% elif weather.temperature and weather.temperature > 30 %}
+            {% trans "It's hot today! Ensure workers stay hydrated and crops have enough water." %}
+        {% else %}
+            {% trans "It's a great time to schedule the next fertilization cycle for your crops." %}
+        {% endif %}
+    </p>
+    <div class="hero-actions">
+        <button class="btn-mint" onclick="location.href='{% url 'farms:activity_create' %}'">
+            <span class="material-symbols-outlined">schedule</span> {% trans "Schedule Task" %}
+        </button>
+        <button class="btn-dark-outline" onclick="location.href='{% url 'farms:farm_list' %}'">
+            {% trans "View Report" %}
+        </button>
+        {% if farms.count > 1 %}
+        <div class="dropdown d-inline-block">
+            <button class="btn-dark-outline" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="material-symbols-outlined">swap_horiz</span>
+                {% trans "Switch Farm" %}
             </button>
-            <button class="btn-dark-outline">{% trans "View Report" %}</button>
+            <ul class="dropdown-menu dropdown-menu-end" style="background: var(--bg-card); border: 1px solid var(--border);">
+                {% for farm in farms %}
+                <li>
+                    <a class="dropdown-item {% if farm.id == selected_farm.id %}active{% endif %}" 
+                       href="?farm_id={{ farm.id }}" 
+                       style="color: var(--ink); {% if farm.id == selected_farm.id %}background: var(--accent-green-glow);{% endif %}">
+                        {{ farm.name }}
+                        {% if farm.id == selected_farm.id %}
+                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; float: right;">check</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
+        {% endif %}
     </div>
+</div>
 
     <!-- Weather Card -->
-    <div class="weather-card">
-        <div class="weather-top">
-            <div>
-                <div class="weather-location">{{ farm_location|default:"Pyin Oo Lwin" }}</div>
-                <div class="weather-desc">{% trans "Mostly Sunny" %}</div>
-            </div>
-            <div>
-                <span class="material-symbols-outlined weather-icon-amber">wb_sunny</span>
-                <div class="weather-temp">28°C</div>
-            </div>
+<div class="weather-card">
+    <div class="weather-top">
+        <div>
+            <div class="weather-location">{{ weather.location|default:"Pyin Oo Lwin" }}</div>
+            <div class="weather-desc">{{ weather.condition|default:"Mostly Sunny" }}</div>
         </div>
-
-        <div class="weather-forecast">
-            <div class="weather-day">{% trans "Mon" %} <span class="material-symbols-outlined">cloud</span><strong>24°</strong></div>
-            <div class="weather-day">{% trans "Tue" %} <span class="material-symbols-outlined">rainy</span><strong>22°</strong></div>
-            <div class="weather-day">{% trans "Wed" %} <span class="material-symbols-outlined">wb_sunny</span><strong>29°</strong></div>
-            <div class="weather-day">{% trans "Thu" %} <span class="material-symbols-outlined">wb_sunny</span><strong>30°</strong></div>
-            <div class="weather-day">{% trans "Fri" %} <span class="material-symbols-outlined">partly_cloudy_day</span><strong>27°</strong></div>
+        <div>
+            {% if weather.condition_icon %}
+                <img src="{{ weather.condition_icon }}" alt="{{ weather.condition }}" style="width: 24px; height: 24px; opacity: 0.8;">
+            {% else %}
+                <span class="material-symbols-outlined weather-icon-amber">wb_sunny</span>
+            {% endif %}
+            <div class="weather-temp">{{ weather.temperature|default:28 }}°C</div>
         </div>
     </div>
+
+    <div class="weather-forecast">
+        {% for day in forecast %}
+        <div class="weather-day">
+            {% trans day.day_name %}
+            {% if day.condition_icon %}
+                <img src="{{ day.condition_icon }}" alt="{{ day.condition }}" style="width: 18px; height: 18px; opacity: 0.7; vertical-align: middle;">
+            {% else %}
+                {% with condition=day.condition|lower %}
+                    {% if 'rain' in condition or 'shower' in condition %}
+                        <span class="material-symbols-outlined">rainy</span>
+                    {% elif 'cloud' in condition or 'overcast' in condition %}
+                        <span class="material-symbols-outlined">cloud</span>
+                    {% elif 'sun' in condition or 'clear' in condition %}
+                        <span class="material-symbols-outlined">wb_sunny</span>
+                    {% elif 'partly cloudy' in condition %}
+                        <span class="material-symbols-outlined">partly_cloudy_day</span>
+                    {% else %}
+                        <span class="material-symbols-outlined">wb_sunny</span>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            <strong>{{ day.max_temp }}°</strong>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 </div>
 
 <!-- Stat Grid -->

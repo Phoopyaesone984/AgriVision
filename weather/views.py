@@ -21,7 +21,6 @@ def weather_dashboard(request):
         except Farm.DoesNotExist:
             selected_farm = user_farms.first()
     else:
-        # Get from session or use first farm
         session_farm_id = request.session.get('selected_farm_id')
         if session_farm_id:
             try:
@@ -37,9 +36,22 @@ def weather_dashboard(request):
     else:
         location = None
     
+    print("="*60)
+    print(f"📍 WEATHER DASHBOARD DEBUG")
+    print(f"👤 User: {request.user.username}")
+    print(f"🏠 Selected Farm: {selected_farm.name if selected_farm else 'None'}")
+    print(f"📍 Location: {location}")
+    print("="*60)
+    
     # Get weather data for SELECTED farm
     weather_service = WeatherService()
     weather_data = weather_service.get_weather_data(location)
+    
+    # DEBUG: Print forecast data
+    print("📊 FORECAST DATA:")
+    for day in weather_data.get('forecast', []):
+        print(f"  {day.get('day_name')}: {day.get('condition')} - Rain: {day.get('chance_of_rain')}%")
+    print("="*60)
     
     # Get weather for ALL farms AND collect alerts
     farms_weather = []
@@ -50,7 +62,6 @@ def weather_dashboard(request):
             farm.location if hasattr(farm, 'location') else None
         )
         
-        # Get alerts for this farm
         farm_alerts = farm_weather.get('alerts', [])
         
         farms_weather.append({
@@ -61,15 +72,12 @@ def weather_dashboard(request):
             'is_selected': farm.id == selected_farm.id if selected_farm else False,
         })
         
-        # Collect all alerts
         if farm_alerts:
             all_alerts.extend(farm_alerts)
     
     # ===== SORT ALERTS BY SEVERITY =====
     severity_order = {'warning': 0, 'watch': 1, 'advisory': 2}
     all_alerts.sort(key=lambda x: severity_order.get(x.get('severity', 'advisory'), 3))
-    
-    # Limit to 10 most severe alerts
     all_alerts = all_alerts[:10]
     
     context = {

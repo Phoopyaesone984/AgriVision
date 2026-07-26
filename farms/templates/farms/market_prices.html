@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %}{% trans "Market Prices" %}{% endblock %}
+{% block nav_market_prices %}active{% endblock %}
+
+{% block page_title %}{% trans "Market Prices" %}{% endblock %}
+
+{% block app_content %}
+<div class="container-fluid px-0">
+    <!-- Header with Unit Switcher -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <p class="text-muted small mb-0">{% trans "Current crop prices across Myanmar markets" %}</p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <!-- Unit Selector Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm rounded-pill px-3 dropdown-toggle" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false"
+                        style="border-color: var(--border); color: var(--ink);">
+                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">scale</span>
+                    {{ unit_symbol }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" style="background: var(--bg-card); border-color: var(--border);">
+                    {% for unit_key, unit_name in all_units.items %}
+                    <li>
+                        <a class="dropdown-item {% if preferred_unit == unit_key %}active{% endif %}" 
+                           href="?unit={{ unit_key }}"
+                           style="color: var(--ink);">
+                            {{ unit_name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <a href="#" class="btn btn-success btn-sm rounded-pill px-4" style="background: var(--accent-green); border: none;">
+                <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">notifications_active</span>
+                {% trans "Set Alert" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Price Cards -->
+    <div class="row g-4">
+        {% for crop_data in price_data %}
+        <div class="col-xl-6 col-lg-6 col-md-12">
+            <div class="card shadow-sm border-0 rounded-3 h-100" style="background: var(--bg-card);">
+                <div class="card-header bg-transparent border-0 pt-3 px-4" style="color: var(--ink);">
+                    <h5 class="mb-0 fw-semibold">{{ crop_data.crop.name }}</h5>
+                </div>
+                <div class="card-body pt-0 px-4 pb-3">
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-hover align-middle mb-0" style="color: var(--ink);">
+                            <thead style="color: var(--ink-faint);">
+                                <tr>
+                                    <th class="fw-semibold small text-uppercase">{% trans "Market" %}</th>
+                                    <th class="fw-semibold small text-uppercase text-end">
+                                        {% trans "Price" %} ({{ unit_symbol }})
+                                    </th>
+                                    <th class="fw-semibold small text-uppercase text-end">{% trans "Trend" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for price_info in crop_data.prices %}
+                                <tr>
+                                    <td class="fw-medium" style="color: var(--ink);">{{ price_info.market }}</td>
+                                    <td class="text-end font-monospace" style="color: var(--ink);">
+                                        {{ price_info.converted_price|floatformat:0|intcomma }}
+                                    </td>
+                                    <td class="text-end">
+                                        {% if price_info.trend.direction == 'up' %}
+                                            <span class="badge px-3 py-1 rounded-pill" style="background: rgba(14, 167, 106, 0.15); color: var(--accent-green);">
+                                                ↑ {{ price_info.trend.change|floatformat:1 }}%
+                                            </span>
+                                        {% elif price_info.trend.direction == 'down' %}
+                                            <span class="badge px-3 py-1 rounded-pill" style="background: rgba(192, 57, 43, 0.15); color: #c0392b;">
+                                                ↓ {{ price_info.trend.change|floatformat:1 }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="badge px-3 py-1 rounded-pill" style="background: var(--bg-glass); color: var(--ink-faint);">
+                                                → {% trans "Stable" %}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert rounded-3" style="background: var(--bg-glass); color: var(--ink); border: 1px solid var(--border);">
+                <i class="bi bi-info-circle me-2"></i>
+                {% trans "No price data available. Please load sample data or add prices manually." %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Market News -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3" style="background: var(--bg-card);">
+                <div class="card-header bg-transparent border-0 pt-3 px-4" style="color: var(--ink);">
+                    <h5 class="mb-0 fw-semibold">📰 {% trans "Market News" %}</h5>
+                </div>
+                <div class="card-body pt-0 px-4 pb-3">
+                    {% for news in recent_news %}
+                    <div class="py-2 {% if not forloop.last %}border-bottom{% endif %}" style="border-color: var(--border) !important;">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1 fw-semibold" style="color: var(--ink);">
+                                    {{ news.title }}
+                                    {% if news.is_important %}
+                                    <span class="badge bg-danger ms-2 small">{% trans "Important" %}</span>
+                                    {% endif %}
+                                </h6>
+                                <p class="small mb-1" style="color: var(--ink-soft);">{{ news.content|truncatewords:25 }}</p>
+                                <small style="color: var(--ink-faint);">
+                                    <i class="bi bi-building me-1"></i>{{ news.source }}
+                                    <span class="mx-1">•</span>
+                                    <i class="bi bi-calendar3 me-1"></i>{{ news.published_date|date:"M d, Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="small mb-0" style="color: var(--ink-faint);">{% trans "No news available." %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        background-color: var(--bg-card) !important;
+        border-color: var(--border) !important;
+    }
+    .card-header {
+        background-color: transparent !important;
+        color: var(--ink) !important;
+    }
+    .table {
+        color: var(--ink) !important;
+    }
+    .table td, .table th {
+        color: var(--ink) !important;
+        border-color: var(--border) !important;
+    }
+    .table-hover tbody tr:hover {
+        background-color: var(--bg-glass) !important;
+    }
+    .table thead th {
+        background-color: transparent !important;
+        color: var(--ink-faint) !important;
+        border-bottom-color: var(--border) !important;
+    }
+    .table tbody td {
+        background-color: transparent !important;
+        border-bottom-color: var(--border) !important;
+    }
+    .table tbody tr {
+        background-color: transparent !important;
+    }
+    .text-muted {
+        color: var(--ink-faint) !important;
+    }
+    .btn-success {
+        background: var(--accent-green) !important;
+        border: none !important;
+    }
+    .btn-success:hover {
+        opacity: 0.85;
+    }
+    .btn-outline-secondary {
+        border-color: var(--border) !important;
+        color: var(--ink) !important;
+    }
+    .btn-outline-secondary:hover {
+        background: var(--bg-glass) !important;
+        border-color: var(--border) !important;
+    }
+    .dropdown-item.active {
+        background: var(--mint) !important;
+        color: var(--mint-deep) !important;
+    }
+    .dropdown-item:hover {
+        background: var(--bg-glass) !important;
+    }
+    .alert {
+        background-color: var(--bg-glass) !important;
+        color: var(--ink) !important;
+        border-color: var(--border) !important;
+    }
+</style>
+{% endblock %}
