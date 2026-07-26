@@ -22,5 +22,9 @@ class Profile(models.Model):
         blank=True
     )
 
+    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    role_title = models.CharField(max_length=80, blank=True,
+                                  help_text="e.g. 'Senior Agronomist' or 'Farmer, Bago Region'")
+
     def __str__(self):
         return self.user.username
