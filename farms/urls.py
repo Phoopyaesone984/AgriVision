@@ -19,4 +19,6 @@ urlpatterns = [
     path('activities/<int:pk>/edit/', views.activity_edit, name='activity_edit'),
     path('activities/<int:pk>/delete/', views.activity_delete, name='activity_delete'),
     path('activities/<int:pk>/complete/', views.activity_complete, name='activity_complete'),
+     path('price-alert/create/', views.price_alert_create, name='price_alert_create'),
+     path('market-prices/', views.market_prices, name='market_prices'),
 ]

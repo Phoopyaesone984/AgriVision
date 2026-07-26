@@ -1,6 +1,6 @@
 {% load static %}
 {% load i18n %}
-
+{% load humanize %} 
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -677,6 +677,10 @@
    <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
         <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
     </a>
+    <!-- Add this right after the weather link -->
+<a href="{% url 'farms:market_prices' %}" class="nav-item {% block nav_market_prices %}{% endblock %}">
+    <span class="material-symbols-outlined">trending_up</span> {% trans "Market Prices" %}
+</a>
     <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
         <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
     </a>

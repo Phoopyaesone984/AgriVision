@@ -1225,3 +1225,211 @@ msgstr "အကူအညီ"
 #: templates/base.html:184
 msgid "Logout"
 msgstr "အကောင့်ထွက်ရန်"
+
+
+# ===== WEATHER EDUCATION TRANSLATIONS =====
+msgid "What this means"
+msgstr "ဆိုလိုချက်"
+
+msgid "Wind affects crop evaporation and pollination."
+msgstr "လေတိုက်နှုန်းသည် သီးနှံများ၏ ရေငွေ့ပျံမှုနှင့် ဝတ်မှုန်ကူးခြင်းကို သက်ရောက်မှုရှိသည်။"
+
+msgid "Strong winds! Protect young plants and delay spraying."
+msgstr "လေပြင်းတိုက်နေသည်။ အပင်ငယ်များကို ကာကွယ်ရန်၊ ဆေးဖျန်းခြင်းကို ရွှေ့ဆိုင်းပါ။"
+
+msgid "Moderate winds. Avoid pesticide application."
+msgstr "လေတိုက်နှုန်းအသင့်အတင့်။ ပိုးသတ်ဆေးဖျန်းခြင်းကို ရှောင်ကြဉ်ပါ။"
+
+msgid "Good conditions for farming activities."
+msgstr "စိုက်ပျိုးရေးလုပ်ငန်းများအတွက် သင့်တော်သော အခြေအနေ။"
+
+msgid "Humidity affects plant transpiration and disease risk."
+msgstr "စိုထိုင်းဆသည် အပင်၏ ရေစုပ်ယူမှုနှင့် ရောဂါကျရောက်နိုင်ခြေကို သက်ရောက်မှုရှိသည်။"
+
+msgid "High humidity! Risk of fungal diseases. Avoid watering."
+msgstr "စိုထိုင်းဆမြင့်မားနေ။ မှိုရောဂါကျရောက်နိုင်ခြေရှိသည်။ ရေသွင်းခြင်းကို ရှောင်ကြဉ်ပါ။"
+
+msgid "Moderate humidity. Monitor for pests."
+msgstr "စိုထိုင်းဆအသင့်အတင့်။ ပိုးမွှားများကို စောင့်ကြည့်ပါ။"
+
+msgid "Good conditions. Ideal for harvesting."
+msgstr "သင့်တော်သော အခြေအနေ။ ရိတ်သိမ်းရန် အသင့်တော်ဆုံး။"
+
+msgid "UV intensity affects crop growth and worker safety."
+msgstr "ခရမ်းလွန်ရောင်ခြည် ပြင်းအားသည် သီးနှံကြီးထွားမှုနှင့် အလုပ်သမားများ၏ ဘေးကင်းလုံခြုံမှုကို သက်ရောက်မှုရှိသည်။"
+
+msgid "Extreme UV! Protect workers. Shade sensitive crops."
+msgstr "ခရမ်းလွန်ရောင်ခြည် အန္တရာယ်များနေ။ အလုပ်သမားများကို ကာကွယ်ပါ။ ထိလွယ်သောသီးနှံများကို အရိပ်ပေးပါ။"
+
+msgid "High UV. Schedule work early morning or evening."
+msgstr "ခရမ်းလွန်ရောင်ခြည် ပြင်းထန်နေ။ နံနက်စောစော သို့မဟုတ် ညနေပိုင်းတွင် အလုပ်လုပ်ပါ။"
+
+msgid "Safe UV levels. Good for outdoor work."
+msgstr "ခရမ်းလွန်ရောင်ခြည် ဘေးကင်းသောအဆင့်။ ပြင်ပအလုပ်အတွက် သင့်တော်သည်။"
+
+msgid "Visibility affects farm operations and safety."
+msgstr "မြင်နိုင်မှုအကွာအဝေးသည် လယ်ယာလုပ်ငန်းများနှင့် ဘေးကင်းမှုကို သက်ရောက်မှုရှိသည်။"
+
+msgid "Poor visibility! Take caution with machinery."
+msgstr "မြင်နိုင်မှုအားနည်းနေ။ စက်ယန္တရားများသုံးစွဲရာတွင် သတိထားပါ။"
+
+msgid "Limited visibility. Use lights if needed."
+msgstr "မြင်နိုင်မှုအကန့်အသတ်ရှိနေ။ လိုအပ်ပါက မီးများဖွင့်ပါ။"
+
+msgid "Good visibility. Normal operations."
+msgstr "မြင်နိုင်မှုကောင်းမွန်နေ။ ပုံမှန်လုပ်ငန်းများ ဆောင်ရွက်နိုင်ပါသည်။"
+
+
+# ===== DASHBOARD HERO CARD TRANSLATIONS =====
+
+#: templates/dashboard.html
+msgid "Good morning"
+msgstr "မင်္ဂလာနံနက်ခင်းပါ"
+
+#: templates/dashboard.html
+msgid "Your farm in"
+msgstr "သင့်လယ်ယာသည်"
+
+#: templates/dashboard.html
+msgid "is currently"
+msgstr "လက်ရှိတွင်"
+
+#: templates/dashboard.html
+msgid "with"
+msgstr "ဖြင့်"
+
+#: templates/dashboard.html
+msgid "and"
+msgstr "နှင့်"
+
+#: templates/dashboard.html
+msgid "humidity"
+msgstr "စိုထိုင်းဆ"
+
+#: templates/dashboard.html
+msgid "is showing excellent soil moisture today."
+msgstr "ယနေ့တွင် မြေဆီလွှာအစိုဓာတ် ကောင်းမွန်နေပါသည်။"
+
+#: templates/dashboard.html
+msgid "It's a great day for outdoor farming activities!"
+msgstr "ပြင်ပစိုက်ပျိုးရေးလုပ်ငန်းများအတွက် အကောင်းဆုံးနေ့ပါ။"
+
+#: templates/dashboard.html
+msgid "Consider postponing spraying and protect young plants from heavy rain."
+msgstr "ဆေးဖျန်းခြင်းကို ရွှေ့ဆိုင်းရန် စဉ်းစားပြီး အပင်ငယ်များကို မိုးသည်းထန်စွာရွာခြင်းမှ ကာကွယ်ပါ။"
+
+#: templates/dashboard.html
+msgid "It's hot today! Ensure workers stay hydrated and crops have enough water."
+msgstr "ယနေ့ပူပြင်းနေပါသည်။ အလုပ်သမားများ ရေဓာတ်ပြည့်ဝစေရန်နှင့် သီးနှံများ ရေအလုံအလောက်ရရှိရန် သေချာပါစေ။"
+
+#: templates/dashboard.html
+msgid "It's a great time to schedule the next fertilization cycle for your crops."
+msgstr "သင့်သီးနှံများအတွက် နောက်ထပ် မြေသြဇာကျွေးချိန်ကို စီစဉ်ရန် အကောင်းဆုံးအချိန်ဖြစ်ပါသည်။"
+
+#: templates/dashboard.html
+msgid "Rain is expected. Plan indoor tasks and protect sensitive crops."
+msgstr "မိုးရွာနိုင်ခြေရှိပါသည်။ အိမ်တွင်းလုပ်ငန်းများကို စီစဉ်ပြီး ထိလွယ်သောသီးနှံများကို ကာကွယ်ပါ။"
+
+#: templates/dashboard.html
+msgid "Hot weather today. Ensure proper irrigation and worker safety."
+msgstr "ယနေ့ရာသီဥတုပူပြင်းပါသည်။ ရေသွင်းခြင်းနှင့် အလုပ်သမားများ၏ ဘေးကင်းမှုကို သေချာစေပါ။"
+
+#: templates/dashboard.html
+msgid "Cool weather. Good for planting and transplanting."
+msgstr "ရာသီဥတုအေးမြပါသည်။ စိုက်ပျိုးခြင်းနှင့် အစားထိုးစိုက်ပျိုးခြင်းအတွက် ကောင်းမွန်ပါသည်။"
+
+#: templates/dashboard.html
+msgid "Excellent conditions for farming activities. Consider fertilization or planting."
+msgstr "စိုက်ပျိုးရေးလုပ်ငန်းများအတွက် အကောင်းဆုံးအခြေအနေများဖြစ်ပါသည်။ မြေသြဇာကျွေးခြင်း သို့မဟုတ် စိုက်ပျိုးခြင်းကို စဉ်းစားပါ။"
+
+#: templates/dashboard.html
+msgid "Perfect conditions for farming. Have a productive day!"
+msgstr "စိုက်ပျိုးရေးအတွက် အကောင်းဆုံးအခြေအနေများပါ။ ဖြစ်ထွန်းသောနေ့ဖြစ်ပါစေ!"
+
+#: templates/dashboard.html
+msgid "Consider postponing outdoor activities."
+msgstr "ပြင်ပလုပ်ငန်းများကို ရွှေ့ဆိုင်းရန် စဉ်းစားပါ။"
+
+#: templates/dashboard.html
+msgid "Remember to hydrate your workers and check irrigation."
+msgstr "အလုပ်သမားများ ရေဓာတ်ပြည့်ဝစေရန်နှင့် ရေသွင်းခြင်းကို စစ်ဆေးရန် သတိရပါ။"
+
+#: templates/dashboard.html
+msgid "Schedule Task"
+msgstr "လုပ်ငန်းစီစဉ်ရန်"
+
+#: templates/dashboard.html
+msgid "View Report"
+msgstr "အစီရင်ခံစာကြည့်ရန်"
+
+#: templates/dashboard.html
+msgid "Fertilization"
+msgstr "မြေသြဇာကျွေးခြင်း"
+
+#: templates/dashboard.html
+msgid "Planting"
+msgstr "စိုက်ပျိုးခြင်း"
+
+#: templates/dashboard.html
+msgid "Irrigation"
+msgstr "ရေသွင်းခြင်း"
+
+#: templates/dashboard.html
+msgid "Harvesting"
+msgstr "ရိတ်သိမ်းခြင်း"
+
+#: templates/dashboard.html
+msgid "Pest Control"
+msgstr "�ိုးမွှားကာကွယ်ခြင်း"
+
+#: templates/dashboard.html
+msgid "Weeding"
+msgstr "ပေါင်းမြက်ရှင်းလင်းခြင်း"
+
+# ===== WEATHER CONDITION TRANSLATIONS =====
+
+#: templates/dashboard.html
+msgid "Sunny"
+msgstr "နေသာသည်"
+
+#: templates/dashboard.html
+msgid "Partly cloudy"
+msgstr "တစ်ပိုင်းတိမ်ထူသည်"
+
+#: templates/dashboard.html
+msgid "Cloudy"
+msgstr "တိမ်ထူသည်"
+
+#: templates/dashboard.html
+msgid "Light rain shower"
+msgstr "မိုးဖွဲဖွဲရွာသည်"
+
+#: templates/dashboard.html
+msgid "Light rain"
+msgstr "မိုးဖွဲဖွဲရွာသည်"
+
+#: templates/dashboard.html
+msgid "Heavy rain"
+msgstr "မိုးသည်းထန်စွာရွာသည်"
+
+#: templates/dashboard.html
+msgid "Clear"
+msgstr "ကြည်လင်သည်"
+
+#: templates/dashboard.html
+msgid "Patchy rain nearby"
+msgstr "အနီးတစ်ဝိုက်တွင် မိုးဖွဲဖွဲရွာသည်"
+
+#: templates/dashboard.html
+msgid "Thunderstorm"
+msgstr "မိုးကြိုးပစ်သည်"
+
+# ===== WEATHER CARD TRANSLATIONS =====
+
+#: templates/dashboard.html
+msgid "Feels like"
+msgstr "ခံစားရသည့် အပူချိန်"
+
+#: templates/base.html
+msgid "Market Prices"
+msgstr "စျေးကွက်"

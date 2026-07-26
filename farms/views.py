@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
 from django.utils import timezone
-from .models import Farm, Activity, SoilReading
+from .models import Farm, Activity, SoilReading, MarketPrice, PriceAlert, MarketNews
 from crops.models import Crop
 from .forms import FarmForm, ActivityForm
+from .services.market_price import MarketPriceService
 
 # Import weather service
 from weather.services import WeatherService
@@ -20,14 +21,24 @@ def dashboard(request):
     user = request.user
     farms = Farm.objects.filter(owner=user)
     
-    # ===== DEBUG: Force print to terminal =====
-    print("="*60)
-    print("🔍 FARMS DASHBOARD VIEW CALLED")
-    print(f"👤 User: {user.username} (ID: {user.id})")
-    print(f"📊 Farms found: {farms.count()}")
-    for farm in farms:
-        print(f"   - {farm.name} (ID: {farm.id})")
-    print("="*60)
+    # ===== GET SELECTED FARM =====
+    selected_farm_id = request.GET.get('farm_id')
+    
+    if selected_farm_id:
+        try:
+            selected_farm = farms.get(id=selected_farm_id)
+            request.session['dashboard_farm_id'] = str(selected_farm_id)
+        except Farm.DoesNotExist:
+            selected_farm = farms.first()
+    else:
+        session_farm_id = request.session.get('dashboard_farm_id')
+        if session_farm_id:
+            try:
+                selected_farm = farms.get(id=int(session_farm_id))
+            except Farm.DoesNotExist:
+                selected_farm = farms.first()
+        else:
+            selected_farm = farms.first()
     
     # ===== CALCULATE STATISTICS =====
     total_farms = farms.count()
@@ -50,7 +61,17 @@ def dashboard(request):
         farm__in=farms
     ).order_by('-created_at')[:5]
     
-    farm_location = farms.first().location if farms.exists() else 'Pyin Oo Lwin'
+    # ===== GET WEATHER FOR SELECTED FARM =====
+    if selected_farm and hasattr(selected_farm, 'location'):
+        location = selected_farm.location
+    else:
+        location = 'Yangon'
+    
+    weather_service = WeatherService()
+    weather_data = weather_service.get_weather_data(location)
+    
+    current_weather = weather_data.get('current', {})
+    forecast = weather_data.get('forecast', [])[:5]
     
     # ===== BUILD CONTEXT =====
     context = {
@@ -61,18 +82,13 @@ def dashboard(request):
             'weather_alerts': weather_alerts,
         },
         'recent_activities': recent_activities,
-        'farm_location': farm_location,
+        'farm_location': location,
+        'selected_farm': selected_farm,
         'user': user,
+        'weather': current_weather,
+        'forecast': forecast,
+        'farms': farms,
     }
-    
-    # ===== DEBUG: Print context =====
-    print("📤 CONTEXT BEING SENT:")
-    print(f"   total_farms: {context['stats']['total_farms']}")
-    print(f"   active_crops: {context['stats']['active_crops']}")
-    print(f"   soil_score: {context['stats']['soil_score']}")
-    print(f"   weather_alerts: {context['stats']['weather_alerts']}")
-    print(f"   farm_location: {context['farm_location']}")
-    print("="*60)
     
     return render(request, 'dashboard.html', context)
 
@@ -98,7 +114,6 @@ def weather_dashboard(request):
             if selected_farm:
                 request.session['selected_farm_id'] = str(selected_farm.id)
     else:
-        # Get from session or use first farm
         session_farm_id = request.session.get('selected_farm_id')
         if session_farm_id:
             try:
@@ -116,11 +131,9 @@ def weather_dashboard(request):
     
     # ===== GET WEATHER DATA =====
     weather_service = WeatherService()
-    
-    # Get weather for selected farm
     weather_data = weather_service.get_weather_data(location)
     
-    # Get weather for ALL farms (for farm cards)
+    # Get weather for ALL farms
     farms_weather = []
     all_alerts = []
     
@@ -128,7 +141,6 @@ def weather_dashboard(request):
         farm_location = farm.location if hasattr(farm, 'location') else None
         farm_weather = weather_service.get_weather_data(farm_location)
         
-        # Get alerts for this farm
         farm_alerts = farm_weather.get('alerts', [])
         
         farms_weather.append({
@@ -139,21 +151,17 @@ def weather_dashboard(request):
             'is_selected': farm.id == selected_farm.id if selected_farm else False,
         })
         
-        # Collect all alerts
         if farm_alerts:
             all_alerts.extend(farm_alerts)
     
     # ===== SORT ALERTS BY SEVERITY =====
     severity_order = {'warning': 0, 'watch': 1, 'advisory': 2}
     all_alerts.sort(key=lambda x: severity_order.get(x.get('severity', 'advisory'), 3))
-    
-    # Limit to 10 most severe alerts
     all_alerts = all_alerts[:10]
     
-    # ===== GET FORECAST FOR SELECTED FARM =====
+    # ===== GET FORECAST =====
     forecast = weather_data.get('forecast', [])
     
-    # ===== BUILD CONTEXT =====
     context = {
         'weather_data': weather_data,
         'farms_weather': farms_weather,
@@ -171,7 +179,6 @@ def weather_dashboard(request):
 # ============================================================
 # FARM MANAGEMENT VIEWS
 # ============================================================
-
 @login_required
 def farm_list(request):
     """Display all farms for the logged-in user"""
@@ -239,14 +246,12 @@ def farm_delete(request, pk):
 # ============================================================
 # ACTIVITY/TASK MANAGEMENT VIEWS
 # ============================================================
-
 @login_required
 def activity_list(request):
     """Display all activities for the logged-in user's farms"""
     farms = Farm.objects.filter(owner=request.user)
     activities = Activity.objects.filter(farm__in=farms).select_related('farm', 'crop')
     
-    # Apply filters
     status_filter = request.GET.get('status')
     priority_filter = request.GET.get('priority')
     
@@ -268,7 +273,6 @@ def activity_list(request):
 @login_required
 def activity_create(request):
     """Add a new activity"""
-    # Check if user has any farms
     if not Farm.objects.filter(owner=request.user).exists():
         messages.warning(request, 'Please create a farm first before adding tasks.')
         return redirect('farms:farm_list')
@@ -338,3 +342,101 @@ def activity_complete(request, pk):
         return redirect('farms:activity_list')
     
     return render(request, 'activity_complete_confirm.html', {'activity': activity})
+
+
+# ============================================================
+# MARKET PRICE VIEWS
+# ============================================================
+@login_required
+@login_required
+def market_prices(request):
+    """Market Price Dashboard with real data"""
+    
+    # Get user's preferred unit
+    try:
+        user_profile = request.user.farm_profile
+        
+        # Check if user selected a unit from the dropdown
+        selected_unit = request.GET.get('unit')
+        if selected_unit and selected_unit in ['tonne', 'kg', 'viss', 'pyi', 'basket']:
+            preferred_unit = selected_unit
+            # Save to user profile for next time
+            user_profile.preferred_unit = selected_unit
+            user_profile.save()
+        else:
+            preferred_unit = user_profile.preferred_unit
+            
+    except UserProfile.DoesNotExist:
+        preferred_unit = 'tonne'  # Default
+    
+    # Get all crops with prices
+    crops_with_prices = Crop.objects.filter(market_prices__isnull=False).distinct()
+    
+    # Get latest prices for each crop
+    price_data = []
+    for crop in crops_with_prices:
+        crop_info = {
+            'crop': crop,
+            'prices': []
+        }
+        
+        # Get latest price for each market
+        markets = ['Yangon', 'Mandalay', 'Nay Pyi Taw', 'Mawlamyine']
+        for market in markets:
+            latest = MarketPrice.objects.filter(
+                crop=crop,
+                market_name=market
+            ).order_by('-recorded_date').first()
+            
+            if latest:
+                # Convert price to user's preferred unit
+                from .services.market_price import UnitConverter
+                converted_price = UnitConverter.convert_price(
+                    float(latest.price_per_tonne), 
+                    'tonne', 
+                    preferred_unit
+                )
+                
+                # Calculate trend
+                from .services.market_price import MarketPriceService
+                trend = MarketPriceService.calculate_trend(crop.id, market)
+                crop_info['prices'].append({
+                    'market': market,
+                    'price': latest,
+                    'converted_price': converted_price,
+                    'unit': preferred_unit,
+                    'trend': trend
+                })
+        
+        if crop_info['prices']:
+            price_data.append(crop_info)
+    
+    # Get recent news
+    recent_news = MarketNews.objects.all()[:5]
+    
+    # Get user alerts
+    user_alerts = PriceAlert.objects.filter(user=request.user, is_active=True)
+    
+    # Get all available units for the dropdown
+    from .services.market_price import UnitConverter
+    all_units = UnitConverter.UNIT_NAMES
+    unit_symbol = UnitConverter.get_unit_symbol(preferred_unit)
+    
+    context = {
+        'title': 'Market Prices',
+        'page_title': 'Market Price Dashboard',
+        'price_data': price_data,
+        'recent_news': recent_news,
+        'user_alerts': user_alerts,
+        'markets': ['Yangon', 'Mandalay', 'Nay Pyi Taw', 'Mawlamyine'],
+        'preferred_unit': preferred_unit,
+        'all_units': all_units,
+        'unit_symbol': unit_symbol,
+    }
+    
+    return render(request, 'farms/market_prices.html', context)
+@login_required
+def price_alert_create(request):
+    """Create a price alert (placeholder)"""
+    messages.info(request, 'Price alert feature coming soon!')
+    return redirect('farms:market_prices')
