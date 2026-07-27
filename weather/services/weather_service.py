@@ -18,6 +18,9 @@ class WeatherService:
         self.base_url = config('WEATHER_API_BASE_URL', default='http://api.weatherapi.com/v1')
         self.default_location = config('DEFAULT_LOCATION', default='Yangon')
         
+        # Debug: Check if API key is loaded
+        print(f"🔑 API Key loaded: {self.api_key[:5]}..." if self.api_key else "❌ No API Key found!")
+        
     def get_weather_data(self, location=None):
         """Get current weather and 7-day forecast for a location"""
         if not location:
@@ -43,7 +46,14 @@ class WeatherService:
             }
             
             logger.info(f"Fetching weather data for {location}")
+            print(f"📡 Fetching weather for: {location}")
+            
             response = requests.get(url, params=params, timeout=10)
+            print(f"📡 Response Status: {response.status_code}")
+            
+            if response.status_code != 200:
+                print(f"❌ Error Response: {response.text[:200]}")
+                
             response.raise_for_status()
             
             data = response.json()
@@ -52,9 +62,15 @@ class WeatherService:
             # Cache for 1 hour
             cache.set(cache_key, formatted_data, self.CACHE_TIMEOUT)
             
+            print(f"✅ Weather data fetched successfully for {location}")
             return formatted_data
             
+        except requests.exceptions.RequestException as e:
+            print(f"❌ Request error: {str(e)}")
+            logger.error(f"Weather API request error: {str(e)}")
+            return self._get_fallback_data(location)
         except Exception as e:
+            print(f"❌ Unexpected error: {str(e)}")
             logger.error(f"Weather API error: {str(e)}")
             return self._get_fallback_data(location)
     
@@ -64,6 +80,14 @@ class WeatherService:
             current = raw_data.get('current', {})
             location_data = raw_data.get('location', {})
             forecast = raw_data.get('forecast', {}).get('forecastday', [])
+            
+            # Debug: Print forecast data
+            print("📊 FORECAST DATA FROM API:")
+            for i, day in enumerate(forecast[:7]):
+                day_data = day.get('day', {})
+                condition_data = day_data.get('condition', {})
+                date_obj = datetime.strptime(day.get('date', ''), '%Y-%m-%d') if day.get('date') else datetime.now()
+                print(f"  {date_obj.strftime('%a')}: {condition_data.get('text', 'Unknown')} - Rain: {day_data.get('daily_chance_of_rain', 0)}%")
             
             # Current weather
             current_weather = {
@@ -85,6 +109,7 @@ class WeatherService:
             forecast_data = []
             for day in forecast[:7]:
                 day_data = day.get('day', {})
+                condition_data = day_data.get('condition', {})
                 date_obj = datetime.strptime(day.get('date', ''), '%Y-%m-%d') if day.get('date') else datetime.now()
                 
                 forecast_data.append({
@@ -93,8 +118,8 @@ class WeatherService:
                     'day_full': date_obj.strftime('%A'),
                     'max_temp': round(day_data.get('maxtemp_c', 25)),
                     'min_temp': round(day_data.get('mintemp_c', 18)),
-                    'condition': day_data.get('condition', {}).get('text', 'Clear'),
-                    'condition_icon': day_data.get('condition', {}).get('icon', ''),
+                    'condition': condition_data.get('text', 'Clear'),
+                    'condition_icon': condition_data.get('icon', ''),
                     'chance_of_rain': day_data.get('daily_chance_of_rain', 0),
                     'humidity': day_data.get('avghumidity', 60),
                 })
@@ -111,6 +136,7 @@ class WeatherService:
             }
             
         except Exception as e:
+            print(f"❌ Error formatting weather data: {str(e)}")
             logger.error(f"Error formatting weather data: {str(e)}")
             return self._get_fallback_data(location)
     
@@ -132,7 +158,8 @@ class WeatherService:
         return alerts
     
     def _get_fallback_data(self, location):
-        """Fallback data when API fails"""
+        """Fallback data when API fails - with varied weather"""
+        print(f"⚠️ Using fallback weather data for {location}")
         return {
             'current': {
                 'location': location,
@@ -155,9 +182,12 @@ class WeatherService:
         }
     
     def _get_fallback_forecast(self):
-        """Generate fallback 7-day forecast"""
+        """Generate fallback 7-day forecast - ONLY SOME DAYS HAVE RAIN"""
         forecast = []
-        conditions = ['Sunny', 'Partly cloudy', 'Cloudy', 'Light rain', 'Clear', 'Sunny', 'Partly cloudy']
+        # Mix of weather conditions
+        conditions = ['Sunny', 'Partly cloudy', 'Cloudy', 'Clear', 'Sunny', 'Partly cloudy', 'Clear']
+        # Only some days have rain chance
+        rain_chances = [0, 0, 15, 0, 0, 25, 0]
         
         for i in range(7):
             date_obj = datetime.now() + timedelta(days=i)
@@ -169,7 +199,7 @@ class WeatherService:
                 'min_temp': 22 - i,
                 'condition': conditions[i % len(conditions)],
                 'condition_icon': '//cdn.weatherapi.com/weather/64x64/day/116.png',
-                'chance_of_rain': 20 + (i * 5) % 30,
+                'chance_of_rain': rain_chances[i % len(rain_chances)],
                 'humidity': 60 + i * 2,
             })
         return forecast
