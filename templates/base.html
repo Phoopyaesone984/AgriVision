@@ -41,7 +41,7 @@
             --bg-card: #ffffff;
             --bg-nav: rgba(255, 255, 255, 0.75);
             --bg-glass: rgba(255, 255, 255, 0.5);
-            
+
             --ink: #16201b;
             --ink-soft: #5b6b60;
             --ink-faint: #8a978e;
@@ -52,7 +52,7 @@
             --mint-deep: #1f4e3d;
             --forest: #16281f;
             --forest-deep: #0c1a13;
-            
+
             --accent-green: #0ea76a;
             --accent-green-glow: rgba(14, 167, 106, 0.25);
             --accent-cyan: #2fc7b0;
@@ -67,11 +67,11 @@
             --shadow-card: 0 10px 30px rgba(20, 32, 24, 0.05);
             --shadow-soft: 0 12px 40px rgba(20, 40, 30, 0.08);
             --shadow-glow: 0 8px 32px rgba(0, 180, 120, 0.12);
-            
+
             --footer-bg: #0f261e;
             --footer-text: #bcd9ce;
             --mode-toggle-bg: #d4e3dd;
-            
+
             --nav-link: #1f3d31;
             --text-primary: #16201b;
             --text-secondary: #2b4a3a;
@@ -84,7 +84,7 @@
             --bg-card: #14241d;
             --bg-nav: rgba(12, 28, 22, 0.85);
             --bg-glass: rgba(18, 38, 30, 0.5);
-            
+
             --ink: #dff3eb;
             --ink-soft: #b6d9cb;
             --ink-faint: #8bb4a3;
@@ -95,7 +95,7 @@
             --mint-deep: #1f4e3d;
             --forest: #16281f;
             --forest-deep: #0c1a13;
-            
+
             --accent-green: #2edb92;
             --accent-green-glow: rgba(46, 219, 146, 0.25);
             --accent-cyan: #4fe0cc;
@@ -103,11 +103,11 @@
             --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.4);
             --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.6);
             --shadow-glow: 0 8px 32px rgba(0, 220, 150, 0.15);
-            
+
             --footer-bg: #05100b;
             --footer-text: #8db8a8;
             --mode-toggle-bg: #1f3d31;
-            
+
             --nav-link: #ccede2;
             --text-primary: #dff3eb;
             --text-secondary: #b6d9cb;
@@ -464,6 +464,40 @@
             font-size: 10px;
         }
 
+        /* ===== Notifications Dropdown ===== */
+        .notif-dropdown-wrap { position: relative; }
+        .notif-dropdown {
+            display: none;
+            position: absolute; top: 40px; right: 0;
+            width: 320px; max-height: 400px; overflow-y: auto;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-md); box-shadow: var(--shadow-soft);
+            z-index: 1200;
+        }
+        .notif-dropdown.open { display: block; }
+        .notif-dropdown-header {
+            padding: 12px 16px; font-size: 13.5px; font-weight: 700; color: var(--ink);
+            border-bottom: 1px solid var(--border);
+        }
+        .notif-item {
+            display: flex; gap: 10px; align-items: flex-start;
+            padding: 10px 16px; text-decoration: none; color: var(--ink);
+            border-bottom: 1px solid var(--border);
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: rgba(20,32,24,0.04); }
+        .notif-item.unread { background: rgba(46,219,146,0.06); }
+        .notif-avatar {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--forest); color: var(--mint);
+            display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+            flex-shrink: 0; overflow: hidden;
+        }
+        .notif-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .notif-text { font-size: 13px; color: var(--ink); line-height: 1.5; }
+        .notif-text strong { font-weight: 700; }
+        .notif-time { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+        .notif-empty { padding: 24px 16px; text-align: center; color: var(--ink-faint); font-size: 13px; }
+
         /* ===== Language Selector ===== */
         .lang-dropdown .dropdown-toggle {
             background: var(--bg-glass);
@@ -634,6 +668,10 @@
         .bg-surface { background: var(--bg-card); }
         .border-subtle { border-color: var(--border) !important; }
 
+        .app-layout.no-sidebar {
+            grid-template-columns: 1fr;
+        }
+
         {% block extra_css %}{% endblock %}
     </style>
 </head>
@@ -642,10 +680,10 @@
 <!-- ============================================================ -->
 <!--  CONDITIONAL LAYOUT: Sidebar ONLY if logged in              -->
 <!-- ============================================================ -->
-<div class="app-layout">
+<div class="app-layout {% if hide_app_sidebar %}no-sidebar{% endif %}">
 
     <!-- ===== SIDEBAR - ONLY SHOW IF LOGGED IN ===== -->
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not hide_app_sidebar %}
     <aside class="app-sidebar">
         <div class="sidebar-brand">
             <div class="logo-mark">
@@ -658,36 +696,31 @@
         </div>
 
         <nav class="sidebar-nav">
-    <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
-        <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
-    </a>
-    <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
-        <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
-    </a>
-    <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
-        <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
-    </a>
-    <!-- ADD THE TASKS LINK RIGHT HERE -->
-    <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
-        <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
-    </a>
-    <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
-        <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
-    </a>
-   <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
-        <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
-    </a>
-    <!-- Add this right after the weather link -->
-<a href="{% url 'farms:market_prices' %}" class="nav-item {% block nav_market_prices %}{% endblock %}">
-    <span class="material-symbols-outlined">trending_up</span> {% trans "Market Prices" %}
-</a>
-    <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
-        <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
-    </a>
-    <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
-        <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
-    </a>
-</nav>
+            <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+                <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
+            </a>
+            <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
+                <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
+            </a>
+            <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
+                <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
+            </a>
+            <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
+                <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
+            </a>
+            <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
+                <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
+            </a>
+            <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
+                <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
+            </a>
+            <a href="{% url 'community:feed' %}" class="nav-item {% block nav_community %}{% endblock %}">
+                <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
+            </a>
+            <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
+                <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
+            </a>
+        </nav>
 
         <div class="sidebar-bottom">
             <button class="new-analysis-btn">
@@ -751,10 +784,22 @@
                     </div>
                 </div>
 
-                <button class="icon-btn">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="notif-dot"></span>
-                </button>
+                <div class="notif-dropdown-wrap">
+                    <button class="icon-btn" id="notifBellBtn" onclick="toggleNotifDropdown()">
+                        <span class="material-symbols-outlined">notifications</span>
+                        {% if unread_notifications_count > 0 %}
+                            <span class="notif-dot" id="notifDot"></span>
+                        {% endif %}
+                    </button>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-dropdown-header">
+                            <span>{% trans "Notifications" %}</span>
+                        </div>
+                        <div class="notif-dropdown-list" id="notifList">
+                            <div class="notif-empty">{% trans "Loading..." %}</div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="user-chip">
                     <div class="avatar">{{ user.username|slice:":2"|upper }}</div>
@@ -799,6 +844,55 @@
 
 <!-- Custom JS -->
 <script>
+    /* ===== Notification dropdown (top-level so inline onclick can reach them) ===== */
+    function toggleNotifDropdown() {
+        const dropdown = document.getElementById('notifDropdown');
+        if (!dropdown) return;
+        const isOpening = !dropdown.classList.contains('open');
+        dropdown.classList.toggle('open');
+        if (isOpening) loadNotifications();
+    }
+
+    function loadNotifications() {
+        fetch('/community/notifications/')
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('notifList');
+                if (!list) return;
+                if (data.notifications.length === 0) {
+                    list.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
+                    return;
+                }
+                list.innerHTML = data.notifications.map(n => `
+                    <a href="${n.url}" class="notif-item ${n.is_read ? '' : 'unread'}">
+                        <div class="notif-avatar">
+                            ${n.actor_avatar ? `<img src="${n.actor_avatar}" alt="">` : n.actor_initials}
+                        </div>
+                        <div>
+                            <div class="notif-text"><strong>${n.actor_name}</strong> ${n.verb}</div>
+                            <div class="notif-time">${n.time}</div>
+                        </div>
+                    </a>
+                `).join('');
+
+                if (data.unread_count > 0) {
+                    fetch('/community/notifications/read-all/', {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                    }).then(() => {
+                        const dot = document.getElementById('notifDot');
+                        if (dot) dot.remove();
+                    });
+                }
+            });
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // ===== Theme Toggle =====
         const toggleTrack = document.getElementById('themeToggle');
@@ -835,6 +929,14 @@
             });
         }
 
+        // ===== Close notifications dropdown on outside click =====
+        document.addEventListener('click', function(e) {
+            const wrap = document.querySelector('.notif-dropdown-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('notifDropdown')?.classList.remove('open');
+            }
+        });
+
         // ===== Language Switching =====
         const langSwitches = document.querySelectorAll('.lang-switch');
         langSwitches.forEach(link => {
@@ -842,7 +944,7 @@
                 e.preventDefault();
                 const lang = this.dataset.language;
                 const currentPath = window.location.pathname;
-                
+
                 fetch(`/set-language/?language=${lang}&next=${currentPath}`)
                     .then(response => {
                         if (response.redirected) {

@@ -7,6 +7,7 @@ from landing.views import set_language
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('landing.urls')),
+    path('community/', include('community.urls')),
     path('farms/', include('farms.urls')),  # Changed from 'app/' to 'farms/'
     path('crops/', include('crops.urls')), 
     path('weather/', include('weather.urls')), 
