@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
 from django.utils import timezone
-from .models import Farm, Activity, SoilReading, MarketPrice, PriceAlert, MarketNews
+from .models import Farm, Activity, SoilReading, MarketPrice, PriceAlert, MarketNews,UserProfile
 from crops.models import Crop
 from .forms import FarmForm, ActivityForm
 from .services.market_price import MarketPriceService
