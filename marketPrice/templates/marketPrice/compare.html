@@ -1,0 +1,927 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Compare Crops" %} - AgriVision{% endblock %}
+{% block nav_compare %}active{% endblock %}
+{% block page_title %}{% trans "Compare Crops" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       COMPARE PAGE STYLES - MATCHES BASE THEME
+    ============================================ */
+    .compare-page {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    /* ===== SELECTION PANEL ===== */
+    .selection-panel {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .selection-panel:hover {
+        box-shadow: var(--shadow-soft);
+    }
+
+    .selection-panel-header {
+        padding: 1.25rem 1.75rem;
+        background: var(--bg-glass);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        transition: background 0.3s ease;
+    }
+
+    .selection-panel-header .left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .selection-panel-header .left .step-badge {
+        background: var(--accent-green);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.2rem 0.8rem;
+        border-radius: 50px;
+        letter-spacing: 0.5px;
+    }
+
+    .selection-panel-header .left h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--ink);
+    }
+
+    .selection-panel-header .selected-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--accent-green-glow);
+        padding: 0.4rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--accent-green);
+    }
+
+    .selection-panel-body {
+        padding: 1.75rem;
+    }
+
+    /* ===== SELECT ALL BAR ===== */
+    .select-all-bar-modern {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1.2rem;
+        background: var(--bg-glass);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .select-all-bar-modern:hover {
+        border-color: var(--accent-green);
+        background: var(--accent-green-glow);
+    }
+
+    .select-all-bar-modern input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--accent-green);
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .select-all-bar-modern label {
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--ink);
+        cursor: pointer;
+    }
+
+    .select-all-bar-modern .count-badge {
+        margin-left: auto;
+        background: var(--bg-card);
+        padding: 0.2rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+    }
+
+    /* ===== CROP GRID ===== */
+    .crop-grid-modern {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .crop-grid-modern::-webkit-scrollbar {
+        width: 6px;
+    }
+    .crop-grid-modern::-webkit-scrollbar-track {
+        background: var(--bg-glass);
+        border-radius: 20px;
+    }
+    .crop-grid-modern::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 20px;
+    }
+
+    .crop-card-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        background: var(--bg-glass);
+        border: 2px solid transparent;
+        border-radius: var(--radius-md);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .crop-card-modern:hover {
+        background: var(--bg-card);
+        border-color: var(--border);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .crop-card-modern:has(input:checked) {
+        background: var(--accent-green-glow);
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 3px var(--accent-green-glow);
+    }
+
+    .crop-card-modern input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent-green);
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .crop-card-modern .crop-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .crop-card-modern .crop-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--ink);
+        display: block;
+    }
+
+    .crop-card-modern .crop-category-badge {
+        font-size: 0.65rem;
+        padding: 1px 10px;
+        border-radius: 50px;
+        background: var(--bg-card);
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+        display: inline-block;
+        margin-top: 2px;
+    }
+
+    .crop-card-modern .check-mark {
+        opacity: 0;
+        color: var(--accent-green);
+        font-size: 1.1rem;
+        transition: all 0.2s ease;
+    }
+
+    .crop-card-modern:has(input:checked) .check-mark {
+        opacity: 1;
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding-top: 1rem;
+        border-top: 2px solid var(--border);
+    }
+
+    .btn-compare-modern {
+        padding: 0.7rem 2rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        font-family: inherit;
+    }
+
+    .btn-compare-primary {
+        background: var(--accent-green);
+        color: #fff !important;
+        box-shadow: 0 2px 8px var(--accent-green-glow);
+    }
+
+    .btn-compare-primary:hover {
+        background: var(--mint-deep);
+        color: #fff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px var(--accent-green-glow);
+    }
+
+    .btn-compare-secondary {
+        background: var(--bg-glass);
+        color: var(--ink) !important;
+        border: 1px solid var(--border);
+    }
+
+    .btn-compare-secondary:hover {
+        background: var(--border);
+        color: var(--ink) !important;
+        transform: translateY(-2px);
+    }
+
+    .btn-compare-danger {
+        background: var(--rose-bg);
+        color: var(--rose-ink) !important;
+    }
+
+    .btn-compare-danger:hover {
+        background: var(--rose-ink);
+        color: #fff !important;
+        transform: translateY(-2px);
+    }
+
+    /* ===== COMPARISON TAGS ===== */
+    .comparison-tags-modern {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: var(--bg-glass);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border);
+        margin-bottom: 2rem;
+        transition: background 0.3s ease;
+    }
+
+    .comparison-tags-modern .label {
+        color: var(--ink-faint);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-right: 0.5rem;
+    }
+
+    .tag-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 1rem 0.25rem 1.2rem;
+        border-radius: 50px;
+        background: var(--accent-green);
+        color: #fff !important;
+        font-size: 0.85rem;
+        font-weight: 500;
+        box-shadow: 0 2px 6px var(--accent-green-glow);
+    }
+
+    .tag-modern .remove {
+        opacity: 0.7;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+        line-height: 1;
+        background: none;
+        border: none;
+        color: #fff !important;
+        padding: 0 2px;
+    }
+
+    .tag-modern .remove:hover {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    /* ===== RESULTS PANEL ===== */
+    .results-panel {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .results-panel:hover {
+        box-shadow: var(--shadow-soft);
+    }
+
+    .results-panel-header {
+        padding: 1.25rem 1.75rem;
+        background: var(--bg-glass);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        transition: background 0.3s ease;
+    }
+
+    .results-panel-header h4 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .results-panel-header .chart-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 1rem;
+        border-radius: 50px;
+        background: var(--accent-green);
+        color: #fff !important;
+        font-weight: 500;
+    }
+
+    .results-panel-body {
+        padding: 1.75rem;
+    }
+
+    .chart-wrapper-modern {
+        position: relative;
+        height: 320px;
+        width: 100%;
+        margin-bottom: 2rem;
+        padding: 0.5rem;
+        background: var(--bg-glass);
+        border-radius: var(--radius-md);
+        transition: background 0.3s ease;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap {
+        overflow-x: auto;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .table-wrap::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .table-wrap::-webkit-scrollbar-track {
+        background: var(--bg-glass);
+        border-radius: 20px;
+    }
+    .table-wrap::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 20px;
+    }
+
+    .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        background: var(--bg-card);
+        color: var(--ink);
+    }
+
+    .compare-table thead th {
+        text-align: left;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink-faint);
+        font-weight: 700;
+        padding: 0.75rem 1rem;
+        background: var(--bg-glass);
+        border-bottom: 2px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .compare-table tbody td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+        color: var(--ink);
+    }
+
+    .compare-table tbody tr {
+        transition: background 0.2s ease;
+        background: var(--bg-card);
+    }
+
+    .compare-table tbody tr:hover {
+        background: var(--bg-glass);
+    }
+
+    .compare-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .compare-table .crop-link {
+        font-weight: 600;
+        color: var(--ink);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .compare-table .crop-link:hover {
+        color: var(--accent-green);
+    }
+
+    .compare-table .category-pill {
+        font-size: 0.65rem;
+        padding: 2px 12px;
+        border-radius: 50px;
+        background: var(--bg-glass);
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+        display: inline-block;
+    }
+
+    .compare-table .price-value {
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+    .compare-table .price-history-cell {
+        color: var(--ink-faint);
+        font-size: 0.85rem;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state-modern {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-state-modern .icon-wrap {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--accent-green-glow);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: var(--accent-green);
+    }
+
+    .empty-state-modern h3 {
+        color: var(--ink);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .empty-state-modern p {
+        color: var(--ink-soft);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 992px) {
+        .crop-grid-modern {
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        }
+        .chart-wrapper-modern {
+            height: 250px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .selection-panel-header {
+            padding: 1rem 1.25rem;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .selection-panel-body {
+            padding: 1.25rem;
+        }
+        .crop-grid-modern {
+            grid-template-columns: 1fr 1fr;
+            max-height: 300px;
+            gap: 0.5rem;
+        }
+        .results-panel-header {
+            padding: 1rem 1.25rem;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .results-panel-body {
+            padding: 1.25rem;
+        }
+        .chart-wrapper-modern {
+            height: 200px;
+        }
+        .compare-table {
+            font-size: 0.8rem;
+        }
+        .compare-table thead th,
+        .compare-table tbody td {
+            padding: 0.5rem 0.75rem;
+        }
+        .btn-compare-modern {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.85rem;
+            width: 100%;
+            justify-content: center;
+        }
+        .action-row {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .crop-grid-modern {
+            grid-template-columns: 1fr;
+        }
+        .select-all-bar-modern {
+            flex-wrap: wrap;
+        }
+        .select-all-bar-modern .count-badge {
+            margin-left: 0;
+            width: 100%;
+            text-align: center;
+        }
+        .comparison-tags-modern {
+            padding: 0.75rem 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="compare-page">
+
+    <!-- SELECTION PANEL -->
+    <div class="selection-panel">
+        <div class="selection-panel-header">
+            <div class="left">
+                <span class="step-badge">{% trans "STEP 1" %}</span>
+                <h3>{% trans "Select Crops to Compare" %}</h3>
+            </div>
+            <div class="selected-info">
+                <i class="bi bi-check-circle-fill"></i>
+                <span id="selectedCountHeader">0 {% trans "selected" %}</span>
+            </div>
+        </div>
+
+        <div class="selection-panel-body">
+            <form method="get" id="compareForm">
+                <!-- Select All -->
+                <div class="select-all-bar-modern">
+                    <input type="checkbox" id="selectAllCheckbox">
+                    <label for="selectAllCheckbox">{% trans "Select All Crops" %}</label>
+                    <span class="count-badge" id="selectedCount">0 / {{ all_crops|length }} {% trans "selected" %}</span>
+                </div>
+
+                <!-- Crop Grid -->
+                <div class="crop-grid-modern">
+                    {% for crop in all_crops %}
+                    <label class="crop-card-modern" for="crop_{{ crop.id }}">
+                        <input type="checkbox" name="crops" value="{{ crop.id }}" 
+                               id="crop_{{ crop.id }}"
+                               class="crop-checkbox"
+                               {% if crop.id in selected_ids %}checked{% endif %}>
+                        <div class="crop-info">
+                            <span class="crop-name">{% translate crop.name %}</span>
+                            {% if crop.category %}
+                            <span class="crop-category-badge">{{ crop.category }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="check-mark"><i class="bi bi-check-circle-fill"></i></span>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <!-- Actions -->
+                <div class="action-row">
+                    <button type="submit" class="btn-compare-modern btn-compare-primary">
+                        <i class="bi bi-graph-up-arrow"></i> {% trans "Compare Now" %}
+                    </button>
+                    <button type="button" class="btn-compare-modern btn-compare-secondary" id="clearSelection">
+                        <i class="bi bi-x-circle"></i> {% trans "Clear Selection" %}
+                    </button>
+                    {% if comparison_data %}
+                    <a href="{% url 'marketPrice:compare' %}" class="btn-compare-modern btn-compare-danger">
+                        <i class="bi bi-arrow-counterclockwise"></i> {% trans "Reset All" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- COMPARISON TAGS -->
+    {% if comparison_data %}
+    <div class="comparison-tags-modern">
+        <span class="label">{% trans "Comparing" %}:</span>
+        {% for data in comparison_data %}
+        <span class="tag-modern">
+            {{ data.crop_name }}
+            <button type="button" class="remove" onclick="removeCrop('{{ data.crop_id }}')">&times;</button>
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- RESULTS PANEL -->
+    {% if comparison_data and comparison_data|length > 0 %}
+    <div class="results-panel">
+        <div class="results-panel-header">
+            <h4>
+                <i class="bi bi-graph-up-arrow" style="color:var(--accent-green);"></i>
+                {% trans "Price Trend Analysis" %}
+            </h4>
+            <span class="chart-badge">
+                <i class="bi bi-calendar3 me-1"></i>
+                {% trans "Historical Comparison" %}
+            </span>
+        </div>
+
+        <div class="results-panel-body">
+            <!-- Chart -->
+            <div class="chart-wrapper-modern">
+                <canvas id="compareChart"></canvas>
+            </div>
+
+            <hr style="border-color:var(--border);margin:1.5rem 0;">
+
+            <!-- Table -->
+            <div class="table-wrap">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Crop" %}</th>
+                            <th>{% trans "Category" %}</th>
+                            <th class="text-end">{% trans "Latest Price" %}</th>
+                            <th class="text-end">{% trans "Daily Price" %}</th>
+                            <th>{% trans "Market" %}</th>
+                            {% for year in years %}
+                            <th class="text-end price-history-cell">{{ year }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in comparison_data %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'marketPrice:crop_detail' data.crop_id %}" class="crop-link">
+                                    {{ data.crop_name }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="category-pill">{{ data.crop_category|default:"—" }}</span>
+                            </td>
+                            <td class="text-end price-value">
+                                {% if data.latest_harvest and data.latest_harvest.price %}
+                                {{ data.latest_harvest.price|floatformat:0 }}
+                                {% else %}
+                                <span style="color:var(--ink-faint);">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if data.latest_daily and data.latest_daily.price %}
+                                {{ data.latest_daily.price|floatformat:0 }}
+                                {% else %}
+                                <span style="color:var(--ink-faint);">—</span>
+                                {% endif %}
+                            </td>
+                            <td style="color:var(--ink-soft);">
+                                {{ data.latest_daily.market|default:"—" }}
+                            </td>
+                            {% for price in data.price_history %}
+                            <td class="text-end price-history-cell">
+                                {{ price.price|floatformat:0|default:"—" }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- EMPTY STATE -->
+    <div class="results-panel">
+        <div class="results-panel-body empty-state-modern">
+            <div class="icon-wrap">
+                <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <h3>{% trans "Ready to Compare?" %}</h3>
+            <p>
+                {% trans "Select at least two crops from above and click 'Compare Now' to see their historical price trends side by side." %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ===== DATA INJECTION FOR CHART ===== -->
+{{ comparison_data|json_script:"comparison-data" }}
+{{ years|json_script:"years-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ============================================
+    // SELECT ALL LOGIC
+    // ============================================
+    const selectAll = document.getElementById('selectAllCheckbox');
+    const checkboxes = document.querySelectorAll('.crop-checkbox');
+    const countDisplay = document.getElementById('selectedCount');
+    const countHeader = document.getElementById('selectedCountHeader');
+
+    function updateCounts() {
+        const checked = document.querySelectorAll('.crop-checkbox:checked').length;
+        const total = checkboxes.length;
+        const text = checked + ' / ' + total + ' selected';
+        countDisplay.textContent = text;
+        countHeader.textContent = checked + ' selected';
+        selectAll.checked = (checked === total && total > 0);
+    }
+
+    selectAll.addEventListener('change', function() {
+        checkboxes.forEach(function(cb) {
+            cb.checked = this.checked;
+        }, this);
+        updateCounts();
+    });
+
+    checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', updateCounts);
+    });
+
+    // Clear Selection button
+    document.getElementById('clearSelection').addEventListener('click', function(e) {
+        e.preventDefault();
+        checkboxes.forEach(function(cb) {
+            cb.checked = false;
+        });
+        updateCounts();
+    });
+
+    updateCounts();
+
+    // ============================================
+    // REMOVE CROP FROM COMPARISON
+    // ============================================
+    window.removeCrop = function(cropId) {
+        const cb = document.getElementById('crop_' + cropId);
+        if (cb) {
+            cb.checked = false;
+            updateCounts();
+        }
+        document.getElementById('compareForm').submit();
+    };
+
+    // ============================================
+    // CHART LOGIC
+    // ============================================
+    const comparisonData = JSON.parse(document.getElementById('comparison-data').textContent);
+    const years = JSON.parse(document.getElementById('years-data').textContent);
+
+    if (comparisonData && comparisonData.length > 0) {
+        const ctx = document.getElementById('compareChart').getContext('2d');
+        
+        const colors = [
+            '#0ea76a', '#e74c3c', '#3498db', '#f39c12', 
+            '#9b59b6', '#1abc9c', '#e67e22', '#2ecc71',
+            '#e84393', '#00b894', '#6c5ce7', '#fd79a8'
+        ];
+
+        const datasets = comparisonData.map(function(item, index) {
+            const prices = item.price_history.map(function(p) { return p.price; });
+            const label = item.crop_name;
+            const color = colors[index % colors.length];
+            
+            return {
+                label: label,
+                data: prices,
+                borderColor: color,
+                backgroundColor: color + '25',
+                borderWidth: 3,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                pointBackgroundColor: color,
+                pointBorderColor: 'var(--bg-card)',
+                pointBorderWidth: 2,
+                tension: 0.3,
+                fill: true,
+                spanGaps: true
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 14,
+                            padding: 20,
+                            font: { size: 12, weight: '600' },
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            color: 'var(--ink)'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'var(--bg-card)',
+                        titleColor: 'var(--ink)',
+                        bodyColor: 'var(--ink-soft)',
+                        titleFont: { size: 14, weight: '700' },
+                        bodyFont: { size: 13 },
+                        cornerRadius: 10,
+                        padding: 14,
+                        borderColor: 'var(--border)',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'var(--border)', drawBorder: false },
+                        ticks: { 
+                            font: { size: 12 },
+                            color: 'var(--ink-soft)',
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { 
+                            font: { size: 12 },
+                            color: 'var(--ink-soft)'
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

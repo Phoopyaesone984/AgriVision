@@ -1,0 +1,448 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %}{% trans "Crop Recommendations" %} - AgriVision{% endblock %}
+{% block nav_recommendations %}active{% endblock %}
+{% block page_title %}{% trans "Crop Decision Support" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* =========================================================
+   LAYOUT & BREATHING
+   ========================================================= */
+.recommendation-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* =========================================================
+   SUMMARY STAT CARDS
+   ========================================================= */
+.summary-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-card);
+    height: 100%;
+}
+
+.summary-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+}
+
+.summary-stat .stat-icon {
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--ink-soft);
+}
+
+.summary-stat .stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+}
+
+.summary-stat .stat-label {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.35rem;
+}
+
+/* =========================================================
+   RECOMMENDATION CARDS
+   ========================================================= */
+.recommendation-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-soft);
+}
+
+.card-header-clean {
+    background: var(--bg-glass);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body-breathable {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+
+/* =========================================================
+   BADGES & STATUSES
+   ========================================================= */
+.badge-recommend {
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.badge-recommend.sell { background: #dc3545; color: #fff; }
+.badge-recommend.hold { background: #ffc107; color: #212529; }
+.badge-recommend.monitor { background: #17a2b8; color: #fff; }
+
+[data-theme="dark"] .badge-recommend.hold { background: #e6a800; color: #fff; }
+
+.trend-up { color: #28a745; }
+.trend-down { color: #dc3545; }
+.trend-stable { color: #6c757d; }
+
+[data-theme="dark"] .trend-up { color: #4caf50; }
+[data-theme="dark"] .trend-down { color: #ef5350; }
+
+.profit-positive { color: #28a745; font-weight: 700; }
+.profit-negative { color: #dc3545; font-weight: 700; }
+
+[data-theme="dark"] .profit-positive { color: #4caf50; }
+[data-theme="dark"] .profit-negative { color: #ef5350; }
+
+/* =========================================================
+   ALERT REASONS
+   ========================================================= */
+.alert-recommendation {
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-top: 1.25rem;
+    border: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.alert-recommendation i { font-size: 1.2rem; margin-top: 2px; }
+
+.alert-recommendation.sell {
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+    border-left: 4px solid #dc3545;
+}
+.alert-recommendation.hold {
+    background: rgba(255, 193, 7, 0.08);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+.alert-recommendation.monitor {
+    background: rgba(23, 162, 184, 0.08);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+[data-theme="dark"] .alert-recommendation.sell { background: rgba(220, 53, 69, 0.2); color: #ef5350; }
+[data-theme="dark"] .alert-recommendation.hold { background: rgba(255, 193, 7, 0.15); color: #ffd60a; }
+[data-theme="dark"] .alert-recommendation.monitor { background: rgba(23, 162, 184, 0.2); color: #4dd0e1; }
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+.card-footer-clean {
+    border-top: 1px solid var(--border) !important;
+    padding: 1rem 1.5rem;
+    background: transparent;
+}
+
+.btn-action {
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover { transform: translateY(-2px); }
+
+.badge-theme {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--bg-glass);
+    color: var(--ink);
+    border: 1px solid var(--border);
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+.empty-state {
+    padding: 3.5rem 1.5rem;
+    text-align: center;
+    color: var(--ink-faint);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1.25rem;
+    opacity: 0.3;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 768px) {
+    .summary-stat .stat-number { font-size: 1.8rem; }
+    .badge-recommend { font-size: 0.65rem; padding: 4px 12px; }
+    .card-body-breathable { padding: 1.25rem; }
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="recommendation-wrapper">
+    
+    <!-- Page Header -->
+    <div class="row align-items-center mb-2">
+        <div class="col-md-8">
+            <p class="text-muted mb-0">
+                <i class="bi bi-lightbulb me-2 text-success"></i>
+                {% if user.is_authenticated and recommendations %}
+                    {% trans "Showing recommendations for crops currently growing in your farms." %}
+                {% else %}
+                    {% trans "Get data-driven recommendations on whether to sell, hold, or export your crops based on market trends." %}
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end mt-2 mt-md-0">
+            <span class="badge badge-theme">
+                <i class="bi bi-calendar3 me-1"></i>
+                {{ current_date|date:"F d, Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Summary Cards Row -->
+    <div class="row g-3">
+        <div class="col-6 col-md-3">
+            <div class="summary-stat">
+                <i class="bi bi-grid-3x3-gap-fill stat-icon"></i>
+                <div class="stat-number" id="totalAnalyzed">0</div>
+                <div class="stat-label">{% trans "Crops Analyzed" %}</div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3">
+            <div class="summary-stat">
+                <i class="bi bi-graph-up-arrow stat-icon" style="color: #28a745;"></i>
+                <div class="stat-number text-success" id="totalSell">0</div>
+                <div class="stat-label">{% trans "Recommend SELL" %}</div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3">
+            <div class="summary-stat">
+                <i class="bi bi-clock-history stat-icon" style="color: #ffc107;"></i>
+                <div class="stat-number text-warning" id="totalHold">0</div>
+                <div class="stat-label">{% trans "Recommend HOLD" %}</div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3">
+            <div class="summary-stat">
+                <i class="bi bi-eye stat-icon" style="color: #17a2b8;"></i>
+                <div class="stat-number text-info" id="totalMonitor">0</div>
+                <div class="stat-label">{% trans "Recommend MONITOR" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations Grid -->
+    <div class="row g-4">
+        {% for rec in recommendations %}
+        <div class="col-lg-6 col-md-6">
+            <div class="recommendation-card">
+                <!-- Header -->
+                <div class="card-header-clean d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <a href="{% url 'marketPrice:crop_detail' rec.crop.id %}" class="text-decoration-none" style="color: var(--ink);">
+                            <!-- ✅ Uses translation from your .po file -->
+                            {% translate rec.crop.name %}
+                        </a>
+                    </h5>
+                    <span class="badge-recommend {{ rec.recommendation|lower }}">
+                        {{ rec.recommendation }}
+                    </span>
+                </div>
+                
+                <!-- Body -->
+                <div class="card-body-breathable">
+                    <!-- Price & Profit Row -->
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <small class="text-muted d-block mb-1">{% trans "Harvest Price" %}</small>
+                            <h5 class="mb-1">{{ rec.current_price|floatformat:0|intcomma }}</h5>
+                            <small class="text-muted">{% trans "3-Yr Avg" %}: {{ rec.avg_price|floatformat:0|intcomma }}</small>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block mb-1">{% trans "Profit per Acre" %}</small>
+                            <h5 class="mb-1 {% if rec.latest_profit.profit_per_acre > 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                                {{ rec.latest_profit.profit_per_acre|floatformat:0|intcomma }}
+                            </h5>
+                            <small class="text-muted">
+                                {% trans "Trend" %}: 
+                                <span class="trend-{{ rec.trend }}">
+                                    {% if rec.trend == 'up' %}<i class="bi bi-arrow-up-circle"></i> +{{ rec.price_change|floatformat:1 }}%{% endif %}
+                                    {% if rec.trend == 'down' %}<i class="bi bi-arrow-down-circle"></i> {{ rec.price_change|floatformat:1 }}%{% endif %}
+                                    {% if rec.trend == 'stable' %}<i class="bi bi-dash-circle"></i> {{ rec.price_change|floatformat:1 }}%{% endif %}
+                                </span>
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation Reason Alert -->
+                    <div class="alert-recommendation {{ rec.recommendation|lower }}">
+                        <i class="bi bi-lightbulb"></i>
+                        <div>
+                            <strong>{% trans "Why" %}:</strong> {{ rec.recommendation_reason }}
+                        </div>
+                    </div>
+                    
+                    <!-- Export & Action Badges -->
+                    <div class="mt-3 d-flex flex-wrap gap-2">
+                        <span class="badge badge-theme">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>
+                            {% trans "Export" %}: 
+                            {% if rec.export_recommendation == 'EXPORT' %}
+                                <i class="bi bi-check-circle-fill text-success"></i> {% trans "Recommended" %}
+                            {% elif rec.export_recommendation == 'CONSIDER_EXPORT' %}
+                                <i class="bi bi-question-circle-fill text-warning"></i> {% trans "Consider" %}
+                            {% else %}
+                                <i class="bi bi-geo-alt-fill text-info"></i> {% trans "Local Better" %}
+                            {% endif %}
+                        </span>
+                        
+                        <span class="badge badge-theme">
+                            <i class="bi bi-megaphone me-1"></i>
+                            {% trans "Action" %}: 
+                            {% if rec.recommendation == 'SELL' %}
+                                <i class="bi bi-tag-fill text-danger"></i> {% trans "Sell Now" %}
+                            {% elif rec.recommendation == 'HOLD' %}
+                                <i class="bi bi-clock-fill text-warning"></i> {% trans "Hold" %}
+                            {% else %}
+                                <i class="bi bi-eye-fill text-info"></i> {% trans "Monitor" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="card-footer-clean">
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'marketPrice:crop_detail' rec.crop.id %}" class="btn btn-sm btn-outline-success flex-grow-1 btn-action">
+                            <i class="bi bi-eye me-1"></i> {% trans "View Details" %}
+                        </a>
+                        <a href="{% url 'marketPrice:compare' %}?crops={{ rec.crop.id }}" class="btn btn-sm btn-outline-primary btn-action">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h4>{% trans "No Recommendations Available" %}</h4>
+                    <p class="text-muted">
+                        {% if user.is_authenticated %}
+                            {% trans "You haven't added any crops to your farms yet, or they don't have price data." %}
+                        {% else %}
+                            {% trans "Please ensure you have imported price and profitability data first." %}
+                        {% endif %}
+                    </p>
+                    <div class="mt-3">
+                        <code style="background: var(--bg-glass); padding: 8px 16px; border-radius: 8px; display: inline-block;">
+                            python manage.py import_data
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Help Section -->
+    <div class="card mt-2" style="background: var(--bg-glass); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <div class="card-body p-4">
+            <div class="row align-items-center g-3">
+                <div class="col-md-8">
+                    <h6 class="mb-1">
+                        <i class="bi bi-question-circle me-2 text-success"></i>
+                        {% trans "How are recommendations calculated?" %}
+                    </h6>
+                    <p class="text-muted small mb-0">
+                        {% trans "Recommendations are based on price trends (3-year average), current market prices, and profitability data. SELL = falling prices or high profit, HOLD = rising prices, MONITOR = stable market." %}
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                    <span class="badge badge-theme">
+                        <i class="bi bi-arrow-up-circle text-success me-1"></i> {% trans "Uptrend" %}
+                    </span>
+                    <span class="badge badge-theme">
+                        <i class="bi bi-arrow-down-circle text-danger me-1"></i> {% trans "Downtrend" %}
+                    </span>
+                    <span class="badge badge-theme">
+                        <i class="bi bi-dash-circle text-secondary me-1"></i> {% trans "Stable" %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-calculate the statistics based on the rendered HTML
+    // This fixes the "all numbers are the same" issue without needing a backend update.
+    
+    let totalSell = 0;
+    let totalHold = 0;
+    let totalMonitor = 0;
+
+    // Loop through all recommendation badges in the grid
+    document.querySelectorAll('.badge-recommend').forEach(function(badge) {
+        const text = badge.innerText.trim();
+        if (text === 'SELL') totalSell++;
+        else if (text === 'HOLD') totalHold++;
+        else if (text === 'MONITOR') totalMonitor++;
+    });
+
+    // Update the summary stat cards
+    const totalAnalyzed = totalSell + totalHold + totalMonitor;
+    document.getElementById('totalAnalyzed').innerText = totalAnalyzed;
+    document.getElementById('totalSell').innerText = totalSell;
+    document.getElementById('totalHold').innerText = totalHold;
+    document.getElementById('totalMonitor').innerText = totalMonitor;
+});
+</script>
+{% endblock %}
