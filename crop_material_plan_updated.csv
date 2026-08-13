@@ -1,0 +1,28 @@
+crop_name,category,growth_stage,material_type,material_name,quantity_per_acre,unit,application_time,cost_per_unit,purpose
+Rice,Grain,Land Preparation,Fertilizer,Lime,100,kg,Before planting,150,Soil improvement
+Rice,Grain,Planting,Seed,Rice Seed,25,kg,Planting day,2500,Seed requirement
+Rice,Grain,Vegetative,Fertilizer,Urea,50,kg,20-30 days after planting,1200,Nitrogen supply
+Rice,Grain,Vegetative,Fertilizer,TSP,25,kg,15 days after planting,1800,Root development
+Rice,Grain,Flowering,Pesticide,Insecticide,1,litre,Flowering stage,9000,Pest control
+Corn,Cereal,Land Preparation,Fertilizer,Lime,80,kg,Before planting,150,Soil preparation
+Corn,Cereal,Planting,Seed,Corn Hybrid Seed,8,kg,Planting day,5000,Seed requirement
+Corn,Cereal,Vegetative,Fertilizer,Urea,60,kg,25 days after planting,1200,Nitrogen supply
+Corn,Cereal,Vegetative,Fertilizer,NPK 15-15-15,50,kg,20 days after planting,2200,Balanced nutrients
+Corn,Cereal,Flowering,Pesticide,Pest Control Spray,1,litre,Flowering stage,8500,Pest protection
+Wheat,Cereal,Planting,Seed,Wheat Seed,60,kg,Planting day,2000,Seed requirement
+Wheat,Cereal,Vegetative,Fertilizer,Urea,45,kg,30 days after planting,1200,Nitrogen supply
+Wheat,Cereal,Vegetative,Fertilizer,DAP Fertilizer,40,kg,Early growth,2500,Root growth
+Wheat,Cereal,Pest Control,Pesticide,Fungicide,1,litre,Growth stage,10000,Disease prevention
+Soybean,Legume,Planting,Seed,Soybean Seed,30,kg,Planting day,3500,Seed requirement
+Soybean,Legume,Vegetative,Fertilizer,NPK Fertilizer,40,kg,30 days after planting,2200,Nutrient supply
+Soybean,Legume,Pest Control,Pesticide,Insecticide,1,litre,Flowering stage,9000,Pest control
+Cotton,Fiber,Planting,Seed,Cotton Seed,8,kg,Planting day,4000,Seed requirement
+Cotton,Fiber,Vegetative,Fertilizer,Urea,50,kg,30 days after planting,1200,Nitrogen supply
+Cotton,Fiber,Flowering,Pesticide,Insecticide,1,litre,Flowering stage,9000,Pest control
+Tomato,Vegetable,Planting,Seed,Tomato Seed,0.2,kg,Planting day,25000,Seed requirement
+Tomato,Vegetable,Vegetative,Fertilizer,Compost,500,kg,Before planting,100,Organic fertilizer
+Tomato,Vegetable,Fruiting,Fertilizer,NPK 15-15-15,40,kg,Fruit stage,2200,Fruit development
+Tomato,Vegetable,Pest Control,Pesticide,Fungicide,2,litre,Weekly spray,8000,Disease prevention
+Mango,Fruit,Planting,Seedling,Mango Seedling,40,tree,Planting season,5000,Planting material
+Mango,Fruit,Growth,Fertilizer,Organic Compost,20,kg,Monthly,100,Plant nutrition
+Mango,Fruit,Fruiting,Fertilizer,NPK Fertilizer,5,kg,Fruit season,2200,Fruit production

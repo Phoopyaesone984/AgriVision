@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Materials" %} | AgriVision{% endblock %}
+{% block nav_stock %}active{% endblock %}
+{% block page_title %}{% trans "Materials" %}{% endblock %}
+
+{% block extra_css %}
+    .stock-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .tab-link { padding: 10px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab-link:hover { color: var(--ink); }
+    .tab-link.active { color: var(--mint-deep); border-bottom-color: var(--mint-deep); }
+
+    .panel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px; margin-bottom: 20px; }
+    .panel-card h3 { font-size: 15.5px; font-weight: 700; margin: 0 0 4px; color: var(--ink); }
+    .panel-card .sub { font-size: 12.5px; color: var(--ink-faint); margin-bottom: 14px; }
+
+    table.txn-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.txn-table th { text-align: left; color: var(--ink-faint); font-weight: 600; padding: 8px; border-bottom: 1px solid var(--border); font-size: 11.5px; text-transform: uppercase; }
+    table.txn-table td { padding: 9px 8px; border-bottom: 1px solid var(--border); color: var(--ink); vertical-align: top; }
+    .view-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--mint-deep); text-decoration: none; }
+    .empty-note { color: var(--ink-faint); font-size: 13.5px; }
+{% endblock %}
+
+{% block app_content %}
+<div class="stock-tabs">
+    <a href="{% url 'stock:material_list' %}" class="tab-link {% if active_tab == 'materials' %}active{% endif %}">
+        {% trans "Materials" %}
+    </a>
+    <a href="{% url 'stock:material_stock' %}" class="tab-link {% if active_tab == 'material_stock' %}active{% endif %}">
+        {% trans "Material Stock" %}
+    </a>
+    <a href="{% url 'stock:demand_planning' %}" class="tab-link {% if active_tab == 'demand' %}active{% endif %}">
+        {% trans "Demand Planning" %}
+    </a>
+    <a href="{% url 'stock:stock_list' %}" class="tab-link {% if active_tab == 'stock' %}active{% endif %}">
+        {% trans "Harvest Stock" %}
+    </a>
+</div>
+
+<div class="panel-card">
+    <h3>{% trans "Crop Material Plans" %}</h3>
+    <div class="sub">{% trans "Click a crop to see its recommended materials, cost, and application schedule generated automatically." %}</div>
+
+    {% if crops %}
+        <table class="txn-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Crop" %}</th>
+                    <th>{% trans "Farm" %}</th>
+                    <th>{% trans "Area" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for crop in crops %}
+                <tr>
+                    <td>{{ crop.name }}</td>
+                    <td>{{ crop.farm.name }}</td>
+                    <td>{{ crop.area_acres }} {% trans "acres" %}</td>
+                    <td>{{ crop.get_status_display }}</td>
+                    <td>
+                        <a href="{% url 'stock:crop_material_plan' crop.pk %}" class="view-link" style="margin-top:0;">
+                            {% trans "Material Plan" %} <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-note">{% trans "No crops yet. Add crops under Farm Management first." %}</p>
+    {% endif %}
+</div>
+{% endblock %}

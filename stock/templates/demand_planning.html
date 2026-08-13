@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Demand Planning" %} | AgriVision{% endblock %}
+{% block nav_stock %}active{% endblock %}
+{% block page_title %}{% trans "Demand Planning" %}{% endblock %}
+
+{% block extra_css %}
+    .stock-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .tab-link { padding: 10px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab-link:hover { color: var(--ink); }
+    .tab-link.active { color: var(--mint-deep); border-bottom-color: var(--mint-deep); }
+
+    .panel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px; margin-bottom: 18px; }
+    .panel-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .panel-card h3 { font-size: 15.5px; font-weight: 700; margin: 0; color: var(--ink); }
+    .panel-card .sub { font-size: 12.5px; color: var(--ink-faint); margin-bottom: 14px; }
+
+    .view-link { font-size: 13px; font-weight: 600; color: var(--mint-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+
+    table.est-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.est-table th { text-align: left; color: var(--ink-faint); font-weight: 600; padding: 8px; border-bottom: 1px solid var(--border); font-size: 11.5px; text-transform: uppercase; }
+    table.est-table td { padding: 9px 8px; border-bottom: 1px solid var(--border); color: var(--ink); }
+    .shortfall-badge { background: var(--rose-bg); color: var(--rose-ink); font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+    .ok-badge { background: #ddf3ea; color: var(--mint-deep); font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+    .not-stocked-badge { background: var(--amber-bg); color: var(--amber-ink); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 50px; margin-left: 6px; }
+
+    .source-badge { font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .source-badge.historical { background: #ddf3ea; color: var(--mint-deep); }
+    .source-badge.default { background: rgba(20,32,24,0.06); color: var(--ink-soft); }
+
+    .legend { display: flex; gap: 16px; margin-bottom: 16px; font-size: 12.5px; color: var(--ink-faint); flex-wrap: wrap; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--ink-faint); }
+{% endblock %}
+
+{% block app_content %}
+<div class="stock-tabs">
+    <a href="{% url 'stock:material_list' %}" class="tab-link {% if active_tab == 'materials' %}active{% endif %}">
+        {% trans "Materials" %}
+    </a>
+    <a href="{% url 'stock:material_stock' %}" class="tab-link {% if active_tab == 'material_stock' %}active{% endif %}">
+        {% trans "Material Stock" %}
+    </a>
+    <a href="{% url 'stock:demand_planning' %}" class="tab-link {% if active_tab == 'demand' %}active{% endif %}">
+        {% trans "Demand Planning" %}
+    </a>
+    <a href="{% url 'stock:stock_list' %}" class="tab-link {% if active_tab == 'stock' %}active{% endif %}">
+        {% trans "Harvest Stock" %}
+    </a>
+</div>
+{% if plans %}
+<div class="legend">
+    <span><span class="source-badge historical">{% trans "Your History" %}</span> {% trans "based on your own past usage" %}</span>
+    <span><span class="source-badge default">{% trans "Standard Rate" %}</span> {% trans "based on the general recipe for this crop" %}</span>
+</div>
+{% endif %}
+
+{% for plan in plans %}
+    <div class="panel-card">
+        <div class="panel-card-head">
+            <h3>{{ plan.crop.name }} <span style="font-weight:400; color:var(--ink-faint);">· {{ plan.crop.farm.name }}</span></h3>
+            <a href="{% url 'stock:crop_material_plan' plan.crop.pk %}" class="view-link">
+                {% trans "View Material Plan" %} <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
+            </a>
+        </div>
+        <div class="sub">{{ plan.crop.get_status_display }} · {{ plan.crop.area_acres }} acres</div>
+
+        <table class="est-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Material" %}</th>
+                    <th>{% trans "Source" %}</th>
+                    <th>{% trans "Estimated Need" %}</th>
+                    <th>{% trans "On Hand" %}</th>
+                    <th>{% trans "Status" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for est in plan.estimates %}
+                <tr>
+                    <td>
+                        {{ est.material_name }}
+                        {% if est.not_stocked %}<span class="not-stocked-badge">{% trans "Not stocked here" %}</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if est.source == "historical" %}
+                            <span class="source-badge historical">{% trans "Your History" %}</span>
+                        {% else %}
+                            <span class="source-badge default">{% trans "Standard Rate" %}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ est.estimated_need }} {{ est.unit }}</td>
+                    <td>{{ est.on_hand }} {{ est.unit }}</td>
+                    <td>
+                        {% if est.shortfall > 0 %}
+                            <span class="shortfall-badge">{% trans "Short by" %} {{ est.shortfall }} {{ est.unit }}</span>
+                        {% else %}
+                            <span class="ok-badge">{% trans "Sufficient" %}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% empty %}
+    <div class="empty-state">
+        <span class="material-symbols-outlined" style="font-size:36px; display:block; margin-bottom:8px;">assignment</span>
+        {% trans "No upcoming crops to plan for yet. Add a Planned, Planted, or Growing crop under Farm Management to see demand estimates here." %}
+    </div>
+{% endfor %}
+{% endblock %}

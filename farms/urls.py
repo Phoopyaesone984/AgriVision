@@ -12,7 +12,7 @@ urlpatterns = [
     path('farms/add/', views.farm_create, name='farm_create'),
     path('farms/<int:pk>/edit/', views.farm_edit, name='farm_edit'),
     path('farms/<int:pk>/delete/', views.farm_delete, name='farm_delete'),
-    
+    path('crops/<int:crop_pk>/harvest/', views.harvest_create, name='harvest_create'),
     # Activity/Task Management - ADD THESE NEW URLS
     path('activities/', views.activity_list, name='activity_list'),
     path('activities/add/', views.activity_create, name='activity_create'),

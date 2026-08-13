@@ -1,0 +1,384 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Material Plan" %} · {{ crop.name }} | AgriVision{% endblock %}
+{% block nav_stock %}active{% endblock %}
+{% block page_title %}{% trans "Material Plan" %}{% endblock %}
+
+{% block extra_css %}
+    .breadcrumb { font-size: 13px; color: var(--ink-faint); margin-bottom: 10px; }
+    .breadcrumb a { color: var(--ink-faint); }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb .sep { margin: 0 6px; }
+    .breadcrumb .current { color: var(--ink); font-weight: 600; }
+
+    .plan-header {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 16px; flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .plan-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .plan-title h1 { font-size: 24px; font-weight: 800; color: var(--ink); margin: 0; }
+    .chip { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 50px; }
+    .chip.active { background: #ddf3ea; color: var(--mint-deep); }
+    .chip.optimized { background: var(--amber-bg); color: var(--amber-ink); }
+
+    .plan-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-outline {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--bg-card); border: 1.5px solid var(--border); color: var(--ink);
+        border-radius: 50px; padding: 9px 18px; font-size: 13.5px; font-weight: 600;
+        cursor: pointer; text-decoration: none;
+    }
+    .btn-outline:hover { background: rgba(20,32,24,0.04); }
+    .btn-dark {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--forest-deep); color: #fff; border: none;
+        border-radius: 50px; padding: 9px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    }
+    .btn-dark:hover { opacity: 0.9; }
+
+    .plan-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 22px; }
+
+    .info-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 26px; }
+    @media (max-width: 900px) { .info-row { grid-template-columns: repeat(2, 1fr); } }
+    .info-pill {
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card); padding: 14px 16px;
+    }
+    .info-pill .label { font-size: 11.5px; color: var(--ink-faint); margin-bottom: 4px; }
+    .info-pill .value { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+
+    .two-col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 1000px) { .two-col { grid-template-columns: 1fr; } }
+
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-head h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--ink); margin: 0; }
+    .section-head h3 .material-symbols-outlined { color: var(--mint-deep); font-size: 20px; }
+    .section-head .link { font-size: 13px; font-weight: 600; color: var(--mint-deep); text-decoration: none; }
+
+    .panel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px; margin-bottom: 20px; }
+
+    table.req-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.req-table th { text-align: left; color: var(--ink-faint); font-weight: 600; padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 11.5px; text-transform: uppercase; }
+    table.req-table td { padding: 12px 8px; border-bottom: 1px solid var(--border); color: var(--ink); vertical-align: middle; }
+    table.req-table tr:last-child td { border-bottom: none; }
+    .mat-name { font-weight: 600; }
+    .cat-chip { font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .cat-chip.fertilizer { background: #ddf3ea; color: var(--mint-deep); }
+    .cat-chip.pesticide { background: var(--rose-bg); color: var(--rose-ink); }
+    .cat-chip.seed { background: var(--amber-bg); color: var(--amber-ink); }
+    .cat-chip.feed { background: rgba(20,32,24,0.06); color: var(--ink-soft); }
+    .cat-chip.labor { background: rgba(20,32,24,0.06); color: var(--ink-soft); }
+    .cat-chip.other { background: rgba(20,32,24,0.06); color: var(--ink-soft); }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; border: none; background: none; cursor: pointer; padding: 0; }
+    .status-badge.in_stock { color: var(--mint-deep); }
+    .status-badge.purchased { color: var(--mint-deep); }
+    .status-badge.pending { color: var(--amber-ink); }
+    .status-badge .material-symbols-outlined { font-size: 16px; }
+
+    .total-row { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 6px; border-top: 1px solid var(--border); }
+    .total-row .label { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .total-row .value { font-size: 16px; font-weight: 800; color: var(--ink); }
+
+    /* cost plan: estimated vs actual */
+    .cost-compare-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .cost-compare-box {
+        flex: 1; min-width: 140px; background: var(--bg-page); border-radius: 12px;
+        padding: 14px 16px; border: 1px solid var(--border);
+    }
+    .cost-compare-box.over { background: var(--rose-bg); border-color: transparent; }
+    .cost-compare-box.under { background: #ddf3ea; border-color: transparent; }
+    .cost-compare-label { font-size: 11.5px; color: var(--ink-faint); margin-bottom: 4px; }
+    .cost-compare-value { font-size: 16px; font-weight: 800; color: var(--ink); }
+    .variance-tag {
+        display: block; font-size: 11px; font-weight: 600; margin-top: 4px;
+        color: var(--ink-soft);
+    }
+    .variance-tag.over { color: var(--rose-ink); }
+    .variance-tag.under { color: var(--mint-deep); }
+
+    /* schedule timeline */
+    .timeline { position: relative; padding-left: 6px; }
+    .timeline-item { display: flex; gap: 14px; position: relative; padding-bottom: 24px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before {
+        content: ""; position: absolute; left: 15px; top: 34px; bottom: 0; width: 2px; background: var(--border);
+    }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot {
+        width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12.5px; font-weight: 700; color: var(--ink-soft); background: var(--bg-page);
+        border: 2px solid var(--border); z-index: 1;
+    }
+    .timeline-dot.done { background: var(--mint-deep); color: #fff; border-color: var(--mint-deep); }
+    .timeline-body { flex: 1; padding-top: 2px; }
+    .timeline-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .timeline-day { font-size: 10.5px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.4px; }
+    .timeline-date { font-size: 11.5px; color: var(--ink-faint); }
+    .timeline-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+
+    .timeline-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .btn-mint-sm {
+        display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 8px;
+        padding: 7px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer;
+        background: var(--mint); color: var(--mint-deep);
+    }
+    .btn-mint-sm:hover { opacity: 0.9; }
+    .btn-ghost-sm {
+        display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--border); border-radius: 8px;
+        padding: 6px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+        background: var(--bg-card); color: var(--ink-soft);
+    }
+    .btn-ghost-sm:hover { background: rgba(20,32,24,0.04); }
+
+    .status-pill-sm { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 8px; margin-top: 6px; }
+    .status-pill-sm.completed { background: #ddf3ea; color: var(--mint-deep); }
+    .status-pill-sm.upcoming { background: rgba(20,32,24,0.06); color: var(--ink-soft); }
+
+    .tip-box {
+        background: #ddf3ea; border: 1px solid rgba(46,219,146,0.3); border-radius: var(--radius-lg);
+        padding: 16px 18px; margin-top: 20px; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .tip-box .material-symbols-outlined { color: var(--mint-deep); font-size: 20px; flex-shrink: 0; }
+    .tip-box .tip-title { font-size: 12.5px; font-weight: 700; color: var(--mint-deep); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .tip-box p { font-size: 13px; color: var(--mint-deep); line-height: 1.6; margin: 0; }
+
+    .bottom-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; margin-bottom: 20px;}
+{% endblock %}
+
+{% block app_content %}
+<div class="breadcrumb">
+    <a href="{% url 'farms:farm_list' %}">{% trans "Farms" %}</a>
+    <span class="sep">›</span>
+    <a href="{% url 'farms:farm_edit' crop.farm.pk %}">{{ crop.farm.name }}</a>
+    <span class="sep">›</span>
+    <span class="current">{% trans "Material Plan" %}</span>
+</div>
+
+<div class="plan-header">
+    <div class="plan-title">
+        <h1>{% trans "Material Plan" %}: {{ crop.name }}</h1>
+        <span class="chip active">{{ crop.get_status_display }}</span>
+    </div>
+    <div class="plan-actions">
+        <a href="javascript:window.print()" class="btn-outline">
+            <span class="material-symbols-outlined" style="font-size:17px;">print</span> {% trans "Print" %}
+        </a>
+        <a href="{% url 'crops:crop_edit' crop.pk %}" class="btn-dark">
+            <span class="material-symbols-outlined" style="font-size:17px;">edit</span> {% trans "Edit Crop" %}
+        </a>
+    </div>
+</div>
+<div class="plan-sub">{% trans "Comprehensive resource allocation and schedule for the current growing cycle." %}</div>
+
+
+<div class="bottom-actions">
+    <a href="{% url 'stock:material_list' %}" class="btn-outline">
+        <span class="material-symbols-outlined" style="font-size:17px;">arrow_back</span> {% trans "Back to Materials" %}
+    </a>
+</div>
+
+<div class="info-row">
+    <div class="info-pill"><div class="label">{% trans "Farm" %}</div><div class="value">{{ crop.farm.name }}</div></div>
+    <div class="info-pill"><div class="label">{% trans "Crop" %}</div><div class="value">{{ crop.name }}</div></div>
+    <div class="info-pill"><div class="label">{% trans "Area" %}</div><div class="value">{{ crop.area_acres }} {% trans "Acres" %}</div></div>
+    <div class="info-pill"><div class="label">{% trans "Planting Date" %}</div><div class="value">{{ crop.planting_date }}</div></div>
+    <div class="info-pill"><div class="label">{% trans "Expected Harvest" %}</div><div class="value">{{ crop.expected_harvest_date }}</div></div>
+</div>
+
+
+<div class="two-col">
+    <div>
+        <div class="panel-card">
+            <div class="section-head">
+                <h3><span class="material-symbols-outlined">inventory_2</span> {% trans "Material Requirements" %}</h3>
+            </div>
+
+            {% if items %}
+            <table class="req-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Material" %}</th>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Est. Cost" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="mat-name">{{ item.material_name }}</td>
+                        <td><span class="cat-chip {{ item.category }}">{{ item.get_category_display }}</span></td>
+                        <td>{{ item.quantity }} {{ item.unit }}</td>
+                        <td>{{ item.estimated_cost }} MMK</td>
+                        <td>
+                            {% if item.status == "in_stock" %}
+                                <span class="status-badge in_stock">
+                                    <span class="material-symbols-outlined">home_storage</span> {% trans "In Stock" %}
+                                </span>
+                            {% elif item.status == "purchased" %}
+                                <form method="post" action="{% url 'stock:toggle_item_purchased' item.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="status-badge purchased">
+                                        <span class="material-symbols-outlined">check_circle</span> {% trans "Purchased" %}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'stock:toggle_item_purchased' item.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="status-badge pending">
+                                        <span class="material-symbols-outlined">schedule</span> {% trans "Pending" %}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="total-row">
+                <div class="label">{% trans "Total Estimated Material Cost" %}</div>
+                <div class="value">{{ total_cost }} MMK</div>
+            </div>
+            {% else %}
+                <p style="color:var(--ink-faint); font-size:13.5px;">
+                    {% trans "No default recipe has been set up for this crop type yet. Contact an admin to add one." %}
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="panel-card">
+            <div class="section-head">
+                <h3><span class="material-symbols-outlined">payments</span> {% trans "Cost Plan: Estimated vs Actual" %}</h3>
+            </div>
+
+            <div class="cost-compare-row">
+                <div class="cost-compare-box">
+                    <div class="cost-compare-label">{% trans "Estimated" %}</div>
+                    <div class="cost-compare-value">{{ total_cost }} MMK</div>
+                </div>
+                <div class="cost-compare-box">
+                    <div class="cost-compare-label">{% trans "Actual Spent" %}</div>
+                    <div class="cost-compare-value">{{ actual_total }} MMK</div>
+                </div>
+                <div class="cost-compare-box {% if variance > 0 %}over{% elif variance < 0 %}under{% endif %}">
+                    <div class="cost-compare-label">{% trans "Variance" %}</div>
+                    <div class="cost-compare-value">
+                        {% if variance > 0 %}+{% endif %}{{ variance }} MMK
+                        {% if variance > 0 %}<span class="variance-tag over">{% trans "Over budget" %}</span>
+                        {% elif variance < 0 %}<span class="variance-tag under">{% trans "Under budget" %}</span>
+                        {% else %}<span class="variance-tag">{% trans "On budget" %}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if usage_by_material %}
+            <table class="req-table" style="margin-top:16px;">
+                <thead>
+                    <tr>
+                        <th>{% trans "Material" %}</th>
+                        <th>{% trans "Actually Used" %}</th>
+                        <th>{% trans "Actually Spent" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, data in usage_by_material.items %}
+                    <tr>
+                        <td class="mat-name">{{ name }}</td>
+                        <td>{{ data.quantity }} {{ data.unit }}</td>
+                        <td>{{ data.cost }} MMK</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p style="color:var(--ink-faint); font-size:13.5px; margin-top:14px;">
+                    {% trans "No spending recorded yet \u2014 use \u201cMark as Complete\u201d on the schedule as you apply materials to track real costs here." %}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <div class="panel-card">
+            <div class="section-head">
+                <h3><span class="material-symbols-outlined">calendar_month</span> {% trans "Application Schedule" %}</h3>
+            </div>
+
+            {% if items %}
+            <div class="timeline">
+                {% for item in items %}
+                <div class="timeline-item">
+                    <div class="timeline-dot {% if item.is_applied %}done{% endif %}">
+                        {% if item.is_applied %}
+                            <span class="material-symbols-outlined" style="font-size:16px;">check</span>
+                        {% else %}
+                            {{ item.days_after_planting }}
+                        {% endif %}
+                    </div>
+                    <div class="timeline-body">
+                        <div class="timeline-top">
+                            <span class="timeline-day">{% trans "Day" %} {{ item.days_after_planting }}</span>
+                            <span class="timeline-date">{{ item.scheduled_date }}</span>
+                        </div>
+                        <div class="timeline-title">{% trans "Apply" %} {{ item.material_name }}</div>
+                        <div style="font-size:11.5px; color:var(--ink-faint); margin-top:2px;">
+                            {% trans "Planned" %}: {{ item.quantity }} {{ item.unit }}
+                        </div>
+
+                        {% if item.is_applied %}
+                            <span class="status-pill-sm completed">{% trans "Status: Completed" %}</span>
+                            <div style="font-size:12px; color:var(--ink); margin-top:6px;">
+                                {% trans "Actually used" %}: <strong>{{ item.actual_quantity }} {{ item.unit }}</strong>
+                                {% if item.quantity_difference != 0 %}
+                                    {% if item.quantity_difference < 0 %}
+                                        <span style="color:var(--mint-deep); font-weight:600;">({% trans "saved" %} {{ item.quantity_difference|stringformat:"d"|slice:"1:" }} {{ item.unit }})</span>
+                                    {% else %}
+                                        <span style="color:var(--rose-ink); font-weight:600;">(+{{ item.quantity_difference }} {{ item.unit }} {% trans "extra" %})</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <form method="post" action="{% url 'stock:toggle_item_applied' item.pk %}" style="margin-top:8px;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-ghost-sm">{% trans "Undo" %}</button>
+                            </form>
+                        {% else %}
+                            <span class="status-pill-sm upcoming">{% trans "Status: Upcoming" %}</span>
+                            <form method="post" action="{% url 'stock:toggle_item_applied' item.pk %}" style="margin-top:8px;">
+                                {% csrf_token %}
+                                <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                                    <label style="font-size:11.5px; color:var(--ink-soft); font-weight:600;">{% trans "Actual qty" %}:</label>
+                                    <input type="number" name="actual_quantity" value="{{ item.quantity }}" min="0"
+                                           style="width:80px; border:1.5px solid var(--border); border-radius:8px; padding:5px 8px; font-size:12.5px; font-family:inherit;">
+                                    <span style="font-size:11.5px; color:var(--ink-faint);">{{ item.unit }}</span>
+                                </div>
+                                <div class="timeline-actions">
+                                    <button type="submit" class="btn-mint-sm">{% trans "Mark as Complete" %}</button>
+                                    <button type="submit" formaction="{% url 'stock:reschedule_item' item.pk %}" class="btn-ghost-sm">{% trans "Reschedule +7d" %}</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p style="color:var(--ink-faint); font-size:13.5px;">{% trans "No schedule yet." %}</p>
+            {% endif %}
+
+            <div class="tip-box">
+                <span class="material-symbols-outlined">lightbulb</span>
+                <div>
+                    <div class="tip-title">{% trans "Farming Tip" %}</div>
+                    <p>{{ tip }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
