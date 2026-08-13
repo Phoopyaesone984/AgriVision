@@ -2056,7 +2056,7 @@ msgid "Butter Bean"
 msgstr "ထောပတ်ပဲ"
 
 msgid "Bocate (Cow Pea)"
-msgstr "ဘိုကေတီပဲ"
+msgstr "ဘိုကိတ်ပဲ"
 
 msgid "Sultani"
 msgstr "စူလ်တာနီပဲ"
@@ -2122,7 +2122,7 @@ msgid "Cotton (Long Staple)"
 msgstr "ဝါ (အမျှင်ရှည်)"
 
 msgid "Jute"
-msgstr "ဂျုံး"
+msgstr "ဂျုံ"
 
 msgid "Rubber"
 msgstr "ရော်ဘာ"

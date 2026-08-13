@@ -23,38 +23,37 @@ def crop_list(request):
 
 @login_required
 def crop_create(request):
-    # Check if user has any farms
-    if not Farm.objects.filter(owner=request.user).exists():  # Changed: user -> owner
+    if not Farm.objects.filter(owner=request.user).exists():
         messages.warning(request, 'Please create a farm first before adding crops.')
         return redirect('farms:farm_list')
     
     if request.method == 'POST':
-        form = CropForm(request.POST, user=request.user)
+        form = CropForm(request.POST, user=request.user)  # <-- Ensure 'user' is passed
         if form.is_valid():
             crop = form.save()
             messages.success(request, f'✅ Crop "{crop.name}" created successfully!')
             return redirect('crops:crop_list')
     else:
-        form = CropForm(user=request.user)
+        form = CropForm(user=request.user)  # <-- Ensure 'user' is passed
     
     return render(request, 'crops/crop_form.html', {
         'form': form,
         'title': 'Add New Crop',
         'submit_text': 'Create Crop'
     })
-
 @login_required
+
 def crop_edit(request, pk):
-    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)  # Changed: farm__user -> farm__owner
+    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)
     
     if request.method == 'POST':
-        form = CropForm(request.POST, instance=crop, user=request.user)
+        form = CropForm(request.POST, instance=crop, user=request.user) # <-- Ensure 'user' passed
         if form.is_valid():
             crop = form.save()
             messages.success(request, f'✅ Crop "{crop.name}" updated successfully!')
             return redirect('crops:crop_list')
     else:
-        form = CropForm(instance=crop, user=request.user)
+        form = CropForm(instance=crop, user=request.user) # <-- Ensure 'user' passed
     
     return render(request, 'crops/crop_form.html', {
         'form': form,
@@ -62,7 +61,6 @@ def crop_edit(request, pk):
         'submit_text': 'Update Crop',
         'crop': crop
     })
-
 @login_required
 def crop_delete(request, pk):
     crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)  # Changed: farm__user -> farm__owner
