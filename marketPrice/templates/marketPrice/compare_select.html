@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Compare Crops" %} - AgriVision{% endblock %}
+{% block nav_compare %}active{% endblock %}
+{% block page_title %}{% trans "Select Crops to Compare" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+.crop-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: var(--bg-glass);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.crop-select-grid .form-check {
+    padding: 0.3rem 0.5rem;
+    margin: 0;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.crop-select-grid .form-check:hover {
+    background: var(--bg-card);
+}
+
+.crop-select-grid .form-check-label {
+    font-size: 0.85rem;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.crop-select-grid .form-check-input {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.crop-select-grid .crop-sub {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    display: block;
+    padding-left: 1.75rem;
+}
+
+.select-all-check {
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-glass);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="card">
+    <div class="card-header-clean">
+        <h5><i class="bi bi-arrow-left-right me-2"></i>{% trans "Select Crops" %}</h5>
+    </div>
+    <div class="card-body">
+        {% if error %}
+        <div class="alert alert-danger py-2 px-3 small">
+            <i class="bi bi-exclamation-triangle me-1"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <p class="text-muted small">
+            <i class="bi bi-info-circle me-1"></i>
+            {% trans "Select multiple crops to compare their prices and performance side by side." %}
+        </p>
+
+        <form method="get">
+            <div class="select-all-check d-flex align-items-center gap-3 mb-3">
+                <label class="form-check-label small fw-medium">
+                    <input type="checkbox" id="selectAll" class="form-check-input me-1">
+                    {% trans "Select All" %}
+                </label>
+                <span class="text-muted small" id="selectedCount">0 {% trans "selected" %}</span>
+            </div>
+
+            <div class="crop-select-grid">
+                {% for crop in crops %}
+                <div class="form-check">
+                    <input type="checkbox" name="crops" value="{{ crop.id }}" id="crop_{{ crop.id }}" class="form-check-input crop-check">
+                    <label class="form-check-label" for="crop_{{ crop.id }}">
+                        {{ crop.name }}
+                        {% if crop.category %}
+                        <span class="crop-sub">{{ crop.category }}</span>
+                        {% endif %}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-arrow-left-right me-1"></i> {% trans "Compare Selected Crops" %}
+                </button>
+                <a href="{% url 'marketPrice:crop_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> {% trans "Back to Crops" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.crop-check');
+    const selectAll = document.getElementById('selectAll');
+    const selectedCount = document.getElementById('selectedCount');
+    
+    function updateCount() {
+        const checked = document.querySelectorAll('.crop-check:checked').length;
+        selectedCount.textContent = checked + ' {% trans "selected" %}';
+    }
+    
+    selectAll.addEventListener('change', function() {
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateCount();
+    });
+    
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateCount);
+    });
+    
+    updateCount();
+});
+</script>
+{% endblock %}

@@ -1,10 +1,10 @@
-# weather/services/weather_service.py
 import requests
 import logging
 from datetime import datetime, timedelta
 from django.core.cache import cache
 from django.conf import settings
 from decouple import config
+from urllib.parse import quote
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,10 @@ class WeatherService:
         if not location:
             location = self.default_location
             
+        # Clean and encode location
+        location = location.strip()
+        encoded_location = quote(location)
+        
         # Check cache
         cache_key = f'weather_data_{location.lower().replace(" ", "_")}'
         cached_data = cache.get(cache_key)
@@ -35,20 +39,22 @@ class WeatherService:
             return cached_data
             
         try:
-            # Make API request
+            # Make API request with encoded location
             url = f"{self.base_url}/forecast.json"
             params = {
                 'key': self.api_key,
-                'q': location,
+                'q': encoded_location,  # Use encoded location
                 'days': 7,
                 'aqi': 'no',
                 'alerts': 'yes'
             }
             
             logger.info(f"Fetching weather data for {location}")
-            print(f"📡 Fetching weather for: {location}")
+            print(f"📡 Fetching weather for: {location} (encoded: {encoded_location})")
+            print(f"📡 URL: {url}?key={self.api_key[:5]}...&q={encoded_location}")
             
-            response = requests.get(url, params=params, timeout=10)
+            # Increase timeout for slower connections
+            response = requests.get(url, params=params, timeout=15)
             print(f"📡 Response Status: {response.status_code}")
             
             if response.status_code != 200:
@@ -65,14 +71,57 @@ class WeatherService:
             print(f"✅ Weather data fetched successfully for {location}")
             return formatted_data
             
+        except requests.exceptions.Timeout:
+            print(f"⏰ Timeout for {location}. Trying alternative location...")
+            # Try with a simpler location name
+            return self._try_alternative_location(location)
+            
         except requests.exceptions.RequestException as e:
             print(f"❌ Request error: {str(e)}")
             logger.error(f"Weather API request error: {str(e)}")
             return self._get_fallback_data(location)
+            
         except Exception as e:
             print(f"❌ Unexpected error: {str(e)}")
             logger.error(f"Weather API error: {str(e)}")
             return self._get_fallback_data(location)
+    
+    def _try_alternative_location(self, location):
+        """Try alternative location names if the original fails"""
+        # Common alternative names for locations
+        alternatives = {
+            'Pyin Oo Lwin': ['Pyin Oo Lwin', 'Maymyo', 'Pyinoolwin'],
+            'Mandalay': ['Mandalay'],
+            'Yangon': ['Yangon', 'Rangoon'],
+        }
+        
+        # If location is in the alternatives dict, try the first alternative
+        for key, alts in alternatives.items():
+            if location == key and len(alts) > 1:
+                for alt in alts:
+                    if alt != location:
+                        print(f"🔄 Trying alternative location: {alt}")
+                        try:
+                            url = f"{self.base_url}/forecast.json"
+                            params = {
+                                'key': self.api_key,
+                                'q': alt,
+                                'days': 7,
+                                'aqi': 'no',
+                                'alerts': 'yes'
+                            }
+                            response = requests.get(url, params=params, timeout=15)
+                            if response.status_code == 200:
+                                data = response.json()
+                                formatted_data = self._format_weather_data(data, location)
+                                print(f"✅ Success with alternative: {alt}")
+                                return formatted_data
+                        except:
+                            continue
+        
+        # If all alternatives fail, use fallback
+        print(f"⚠️ All alternatives failed for {location}")
+        return self._get_fallback_data(location)
     
     def _format_weather_data(self, raw_data, location):
         """Format raw API response"""
@@ -184,9 +233,7 @@ class WeatherService:
     def _get_fallback_forecast(self):
         """Generate fallback 7-day forecast - ONLY SOME DAYS HAVE RAIN"""
         forecast = []
-        # Mix of weather conditions
         conditions = ['Sunny', 'Partly cloudy', 'Cloudy', 'Clear', 'Sunny', 'Partly cloudy', 'Clear']
-        # Only some days have rain chance
         rain_chances = [0, 0, 15, 0, 0, 25, 0]
         
         for i in range(7):

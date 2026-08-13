@@ -12,6 +12,7 @@ urlpatterns = [
     path('crops/', include('crops.urls')), 
     path('weather/', include('weather.urls')), 
     path('auth/', include('authentication.urls')),
+    path('market/', include('marketPrice.urls')), 
     path('i18n/', include('django.conf.urls.i18n')),
     path('set-language/', set_language, name='set_language'),
 ]
