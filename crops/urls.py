@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>/edit/', views.crop_edit, name='crop_edit'),
     path('harvest-recommendations/', views.harvest_recommendations, name='harvest_recommendations'),
     path('<int:pk>/delete/', views.crop_delete, name='crop_delete'),
+    path('growth-advisor/', views.crop_growth_advisor, name='crop_growth_advisor'),
 ]

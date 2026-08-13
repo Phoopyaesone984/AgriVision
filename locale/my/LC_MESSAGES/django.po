@@ -2770,3 +2770,57 @@ msgstr "သမိုင်းဝင်စျေးနှုန်းများ
 
 msgid "Aim to sell when price reaches %s Ks / Viss."
 msgstr "%s Ks / Viss စျေးရောက်သည့်အခါ ရောင်းရန် ရည်ရွယ်ပါ။"
+
+#: crops/templates/crops/crop_growth_advisor.html
+msgid "Real-time growth advice based on your planting and harvest dates."
+msgstr "စိုက်ပျိုးခြင်းနှင့် ရိတ်သိမ်းခြင်းရက်စွဲများကို အခြေခံ၍ အချိန်နှင့်တပြေးညီ ကြီးထွားမှုဆိုင်ရာ အကြံပြုချက်များ။"
+
+msgid "Growth Advisor"
+msgstr "ကြီးထွားမှုအကြံပေး"
+
+msgid "Back to List"
+msgstr "စာရင်းသို့ ပြန်သွားရန်"
+
+msgid "Planted"
+msgstr "စိုက်ပြီး"
+
+msgid "Harvest"
+msgstr "ရိတ်သိမ်းမည့်ရက်"
+
+msgid "Advice"
+msgstr "အကြံပြုချက်"
+
+msgid "View Full Details"
+msgstr "အသေးစိတ်ကြည့်ရှုရန်"
+
+msgid "No active crops found"
+msgstr "လက်ရှိစိုက်ပျိုးနေသော သီးနှံများ မတွေ့ပါ"
+
+msgid "Add crops to your farms to get growth advice."
+msgstr "ကြီးထွားမှုအကြံပြုချက်များ ရရှိရန် သင့်လယ်ယာများတွင် သီးနှံများကို ထည့်သွင်းပါ။"
+
+# Advice strings
+msgid "Harvest date has passed. Check crop condition immediately."
+msgstr "ရိတ်သိမ်းရက် ကျော်လွန်နေပြီ။ သီးနှံအခြေအနေကို ချက်ချင်းစစ်ဆေးပါ။"
+
+msgid "Stop watering 2 weeks before harvest to improve quality. Prepare your harvesting tools."
+msgstr "အရည်အသွေးကောင်းမွန်ရန် ရိတ်သိမ်းခြင်းမပြုမီ ၂ ပတ်အလိုတွင် ရေသွင်းခြင်းကို ရပ်တန့်ပါ။ ရိတ်သိမ်းရေးကိရိယာများကို ပြင်ဆင်ပါ။"
+
+msgid "Ensure consistent moisture for germination. Watch for pests."
+msgstr "အပင်ပေါက်ရန် စိုထိုင်းဆကို ထိန်းသိမ်းပါ။ ပိုးမွှားများကို စောင့်ကြည့်ပါ။"
+
+msgid "Apply fertilizer based on growth stage. Monitor for pests. Ensure adequate irrigation."
+msgstr "ကြီးထွားမှုအဆင့်အလိုက် မြေသြဇာကျွေးပါ။ ပိုးမွှားများကို စောင့်ကြည့်ပါ။ လုံလောက်သော ရေသွင်းမှုကို သေချာပါစေ။"
+
+# Stage labels
+msgid "Past Harvest Date"
+msgstr "ရိတ်သိမ်းရက် လွန်နေပြီ"
+
+msgid "Ready to Harvest"
+msgstr "ရိတ်သိမ်းရန် အဆင်သင့်"
+
+msgid "Just Planted"
+msgstr "စိုက်ပျိုးပြီးစ"
+
+msgid "Active Growing"
+msgstr "ကြီးထွားနေဆဲ"

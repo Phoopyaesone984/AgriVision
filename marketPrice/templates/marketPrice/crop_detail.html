@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}{{ crop.name }} - AgriVision{% endblock %}
 {% block nav_market_crops %}active{% endblock %}
@@ -31,27 +32,25 @@
     color: var(--accent-green);
 }
 
-.price-up {
-    color: #28a745;
-}
+.price-up { color: #28a745; }
+.price-down { color: #dc3545; }
+.price-stable { color: #6c757d; }
 
-.price-down {
-    color: #dc3545;
-}
-
-.price-stable {
-    color: #6c757d;
+.viss-unit {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-left: 4px;
 }
 
 @media (max-width: 768px) {
-    .chart-container {
-        height: 200px;
-    }
+    .chart-container { height: 200px; }
 }
 </style>
 {% endblock %}
 
 {% block app_content %}
+<!-- Breadcrumbs & Action Buttons -->
 <div class="row mb-4">
     <div class="col-md-8">
         <nav aria-label="breadcrumb">
@@ -61,27 +60,33 @@
             </ol>
         </nav>
     </div>
-    <div class="col-md-4 text-end">
-        <a href="{% url 'marketPrice:compare' %}?crops={{ crop.id }}" class="btn btn-outline-success">
-            <i class="bi bi-arrow-left-right"></i> {% trans "Compare" %}
+    <div class="col-md-4 text-end d-flex justify-content-end gap-2">
+        <a href="{% url 'crops:harvest_recommendations' %}" class="btn btn-outline-success btn-sm">
+            <i class="bi bi-clock-history me-1"></i> {% trans "Back to Advisor" %}
+        </a>
+        <a href="{% url 'marketPrice:compare' %}?crops={{ crop.id }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left-right me-1"></i> {% trans "Compare" %}
         </a>
     </div>
 </div>
 
-<!-- Stats Cards -->
+<!-- Stats Cards (Converted to Ks / Viss) -->
 <div class="row mb-4">
     <div class="col-md-3 col-sm-6 mb-3">
         <div class="card dashboard-card">
             <div class="card-body">
                 <h6 class="text-muted mb-2">{% trans "Latest Price" %}</h6>
                 <h3 class="mb-0 text-accent">
-                    {% if latest_harvest %}
-                        {{ latest_harvest.price|floatformat:0 }}
+                    {% if stats.latest_price %}
+                        {{ stats.latest_price|floatformat:0|intcomma }}
                     {% else %}
                         N/A
                     {% endif %}
                 </h3>
-                <small class="text-muted">{{ latest_harvest.year|default:"" }}</small>
+                <small class="text-muted">
+                    {{ latest_harvest.year|default:"" }}
+                    <span class="viss-unit">Ks / Viss</span>
+                </small>
             </div>
         </div>
     </div>
@@ -89,8 +94,11 @@
         <div class="card dashboard-card">
             <div class="card-body">
                 <h6 class="text-muted mb-2">{% trans "Average Price" %}</h6>
-                <h3 class="mb-0">{{ stats.avg_price|floatformat:0|default:"N/A" }}</h3>
-                <small class="text-muted">{% trans "All years" %}</small>
+                <h3 class="mb-0">{{ stats.avg_price|floatformat:0|intcomma|default:"N/A" }}</h3>
+                <small class="text-muted">
+                    {% trans "All years" %}
+                    <span class="viss-unit">Ks / Viss</span>
+                </small>
             </div>
         </div>
     </div>
@@ -98,8 +106,13 @@
         <div class="card dashboard-card">
             <div class="card-body">
                 <h6 class="text-muted mb-2">{% trans "Price Range" %}</h6>
-                <h3 class="mb-0">{{ stats.min_price|floatformat:0|default:"N/A" }} - {{ stats.max_price|floatformat:0|default:"N/A" }}</h3>
-                <small class="text-muted">{% trans "Min - Max" %}</small>
+                <h3 class="mb-0">
+                    {{ stats.min_price|floatformat:0|intcomma|default:"N/A" }} - {{ stats.max_price|floatformat:0|intcomma|default:"N/A" }}
+                </h3>
+                <small class="text-muted">
+                    {% trans "Min - Max" %}
+                    <span class="viss-unit">Ks / Viss</span>
+                </small>
             </div>
         </div>
     </div>
@@ -108,7 +121,7 @@
             <div class="card-body">
                 <h6 class="text-muted mb-2">{% trans "Category" %}</h6>
                 <h4 class="mb-0">{{ crop.category|default:"Uncategorized" }}</h4>
-                <small class="text-muted">{{ crop.unit|default:"N/A" }}</small>
+                <small class="text-muted">{{ crop.unit|default:"Ton" }}</small>
             </div>
         </div>
     </div>
@@ -179,7 +192,7 @@
     {% endif %}
 </div>
 
-<!-- Price Table - FIXED -->
+<!-- Historical Price Table (Viss Converted & Change Fixed) -->
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -188,48 +201,39 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>{% trans "Year" %}</th>
-                                <th>{% trans "Price" %}</th>
-                                <th>{% trans "Unit" %}</th>
-                                <th>{% trans "Change" %}</th>
+                                <th class="text-end">{% trans "Price (Ks / Viss)" %}</th>
+                                <th class="text-end">{% trans "Change" %}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% with prices=crop.harvest_prices.all|dictsort:"year" %}
-                                {% for price in prices %}
-                                <tr>
-                                    <td><strong>{{ price.year }}</strong></td>
-                                    <td><strong>{{ price.price|floatformat:0 }}</strong></td>
-                                    <td>{{ crop.unit|default:"Ton" }}</td>
-                                    <td>
-                                        {% if forloop.counter0 > 0 %}
-                                            {% with prev=prices|slice:forloop.counter0|last %}
-                                                {% if prev %}
-                                                    {% with change=price.price|add:prev.price|add:"-" %}
-                                                        <span class="{% if change > 0 %}price-up{% else %}price-down{% endif %}">
-                                                            {% if change > 0 %}+{% endif %}{{ change|floatformat:0 }}
-                                                        </span>
-                                                    {% endwith %}
-                                                {% endif %}
-                                            {% endwith %}
-                                        {% else %}
-                                            <span class="price-stable">-</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            {% endwith %}
-                            {% if not crop.harvest_prices.all %}
+                            {% for item in table_data %}
                             <tr>
-                                <td colspan="4" class="text-center py-4">
+                                <td><strong>{{ item.year }}</strong></td>
+                                <td class="text-end fw-bold">
+                                    {{ item.price_viss|floatformat:0|intcomma }}
+                                </td>
+                                <td class="text-end">
+                                    {% if forloop.counter0 > 0 %}
+                                        <span class="{% if item.change_viss > 0 %}price-up{% else %}price-down{% endif %}">
+                                            {% if item.change_viss > 0 %}+{% endif %}{{ item.change_viss|floatformat:0|intcomma }}
+                                        </span>
+                                    {% else %}
+                                        <span class="price-stable">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
                                     <i class="bi bi-inbox display-4 d-block mb-2"></i>
                                     {% trans "No harvest price data available" %}
                                 </td>
                             </tr>
-                            {% endif %}
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -250,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: {{ harvest_years|safe }},
             datasets: [{
-                label: '{% trans "Price" %}',
+                label: '{% trans "Price (Ks / Viss)" %}',
                 data: {{ harvest_values|safe }},
                 borderColor: '#2e7d32',
                 backgroundColor: 'rgba(46,125,50,0.1)',
@@ -264,16 +268,26 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toLocaleString() + ' Ks / Viss';
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' }
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
                 },
-                x: {
-                    grid: { display: false }
-                }
+                x: { grid: { display: false } }
             }
         }
     });
@@ -298,16 +312,26 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toLocaleString() + ' Ks / Viss';
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' }
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
                 },
-                x: {
-                    grid: { display: false }
-                }
+                x: { grid: { display: false } }
             }
         }
     });
@@ -333,17 +357,10 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' }
-                },
-                x: {
-                    grid: { display: false }
-                }
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
             }
         }
     });
@@ -367,17 +384,10 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' }
-                },
-                x: {
-                    grid: { display: false }
-                }
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
             }
         }
     });

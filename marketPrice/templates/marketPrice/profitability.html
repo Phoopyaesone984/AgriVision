@@ -8,69 +8,32 @@
 
 {% block extra_css %}
 <style>
-.chart-container {
-    position: relative;
-    height: 280px;
-    width: 100%;
-}
+.chart-container { position: relative; height: 280px; width: 100%; }
 
 .table-profit th {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    color: var(--ink-faint);
-    font-weight: 600;
-    padding: 0.5rem 0.75rem;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;
+    color: var(--ink-faint); font-weight: 600; padding: 0.75rem;
     border-bottom: 1px solid var(--border);
 }
-
 .table-profit td {
-    padding: 0.4rem 0.75rem;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.85rem;
+    padding: 0.75rem; vertical-align: middle;
+    border-bottom: 1px solid var(--border); font-size: 0.85rem;
 }
-
-.table-profit tr:last-child td {
-    border-bottom: none;
-}
-
-.table-profit .profit-pos { 
-    color: var(--accent-green); 
-    font-weight: 600; 
-}
-
-.table-profit .profit-neg { 
-    color: var(--rose-ink); 
-    font-weight: 600; 
-}
+.table-profit tr:last-child td { border-bottom: none; }
+.table-profit .price-high { color: var(--accent-green); font-weight: 700; }
+.table-profit .price-mid { color: var(--ink-soft); font-weight: 600; }
 
 .badge-roi {
-    font-size: 0.65rem;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-weight: 600;
-    display: inline-block;
+    font-size: 0.65rem; padding: 3px 12px; border-radius: 50px;
+    font-weight: 700; display: inline-block;
 }
+.badge-roi.high { background: var(--accent-green); color: #fff; }
+.badge-roi.medium { background: var(--amber-bg); color: var(--amber-ink); }
+.badge-roi.low { background: var(--rose-bg); color: var(--rose-ink); }
 
-.badge-roi.high { 
-    background: var(--accent-green); 
-    color: #fff; 
-}
+.viss-tag { font-size: 0.6rem; color: var(--ink-faint); font-weight: 400; margin-left: 2px; }
 
-.badge-roi.medium { 
-    background: var(--amber-bg); 
-    color: var(--amber-ink); 
-}
-
-.badge-roi.low { 
-    background: var(--rose-bg); 
-    color: var(--rose-ink); 
-}
-
-@media (max-width: 768px) {
-    .chart-container { height: 200px; }
-}
+@media (max-width: 768px) { .chart-container { height: 200px; } }
 </style>
 {% endblock %}
 
@@ -78,7 +41,7 @@
 <!-- Header -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
     <p class="text-muted small mb-0">
-        <i class="bi bi-bar-chart-fill me-1"></i> {% trans "Crops ranked by profit per acre" %}
+        <i class="bi bi-bar-chart-fill me-1"></i> {% trans "Crops ranked by real-time market value per Viss" %}
     </p>
     {% if has_data %}
     <form method="get" class="d-flex align-items-center gap-2">
@@ -109,7 +72,7 @@
 <!-- Chart -->
 <div class="card mb-3">
     <div class="card-header-clean">
-        <h5><i class="bi bi-bar-chart me-2"></i>{% trans "Profit per Acre Ranking" %}</h5>
+        <h5><i class="bi bi-bar-chart me-2"></i>{% trans "Market Value per Viss Ranking" %}</h5>
     </div>
     <div class="card-body">
         <div class="chart-container">
@@ -128,9 +91,9 @@
                         <th style="width:40px;">#</th>
                         <th>{% trans "Crop" %}</th>
                         <th>{% trans "Year" %}</th>
-                        <th class="text-end">{% trans "Price/Ton" %}</th>
-                        <th class="text-end">{% trans "Yield (T/A)" %}</th>
-                        <th class="text-end">{% trans "Profit/Acre" %}</th>
+                        <th class="text-end">{% trans "Farmgate Price" %}</th>
+                        <th class="text-end">{% trans "Est. Market Price" %}</th>
+                        <th class="text-end">{% trans "Profit Margin" %}</th>
                         <th class="text-center">{% trans "ROI" %}</th>
                     </tr>
                 </thead>
@@ -144,19 +107,25 @@
                             </a>
                         </td>
                         <td class="text-muted small">{{ item.year }}</td>
-                        <td class="text-end">{{ item.price_per_ton|floatformat:0 }}</td>
-                        <td class="text-end">{{ item.yield_tons_per_acre|floatformat:2 }}</td>
-                        <td class="text-end {% if item.profit_per_acre > 0 %}profit-pos{% else %}profit-neg{% endif %}">
-                            {{ item.profit_per_acre|floatformat:0 }}
+                        
+                        <td class="text-end">
+                            <span class="price-mid">{{ item.farmgate_viss|floatformat:0 }}</span>
+                            <span class="viss-tag">Ks/Viss</span>
                         </td>
+                        
+                        <td class="text-end">
+                            <span class="price-high">{{ item.retail_viss|floatformat:0 }}</span>
+                            <span class="viss-tag">Ks/Viss</span>
+                        </td>
+                        
+                        <td class="text-end">
+                            <span class="price-high">{{ item.profit_margin|floatformat:0 }}%</span>
+                        </td>
+                        
                         <td class="text-center">
-                            {% if item.price_per_ton > 0 %}
                             <span class="badge-roi {% if item.roi > 50 %}high{% elif item.roi > 20 %}medium{% else %}low{% endif %}">
                                 {{ item.roi|floatformat:0 }}%
                             </span>
-                            {% else %}
-                            <span class="text-muted">N/A</span>
-                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
@@ -181,11 +150,10 @@ document.addEventListener('DOMContentLoaded', function() {
     {% if has_data %}
     const ctx = document.getElementById('profitChart').getContext('2d');
     
-    // Data passed from Django as JSON
     const chartData = {
         labels: {{ chart_labels|safe }},
         datasets: [{
-            label: '{% trans "Profit per Acre" %}',
+            label: '{% trans "Est. Market Price (Ks / Viss)" %}',
             data: {{ chart_values|safe }},
             backgroundColor: [
                 'rgba(46, 125, 50, 0.7)',
@@ -196,17 +164,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'rgba(156, 39, 176, 0.7)',
                 'rgba(0, 188, 212, 0.7)'
             ],
-            borderColor: [
-                '#2e7d32',
-                '#4caf50',
-                '#ff9800',
-                '#f44336',
-                '#2196f3',
-                '#9c27b0',
-                '#00bcd4'
-            ],
-            borderWidth: 1.5,
-            borderRadius: 4
+            borderColor: ['#2e7d32', '#4caf50', '#ff9800', '#f44336', '#2196f3', '#9c27b0', '#00bcd4'],
+            borderWidth: 1.5, borderRadius: 4
         }]
     };
     
@@ -214,46 +173,28 @@ document.addEventListener('DOMContentLoaded', function() {
         type: 'bar',
         data: chartData,
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { 
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'var(--bg-card)',
-                    titleColor: 'var(--ink)',
-                    bodyColor: 'var(--ink-soft)',
-                    titleFont: { size: 13, weight: '600' },
-                    bodyFont: { size: 12 },
-                    cornerRadius: 8,
-                    padding: 12,
-                    borderColor: 'var(--border)',
-                    borderWidth: 1,
+                    backgroundColor: 'var(--bg-card)', titleColor: 'var(--ink)',
+                    bodyColor: 'var(--ink-soft)', titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 12 }, cornerRadius: 8, padding: 12,
+                    borderColor: 'var(--border)', borderWidth: 1,
                     callbacks: {
                         label: function(context) {
-                            return context.parsed.y.toLocaleString();
+                            return context.parsed.y.toLocaleString() + ' Ks / Viss';
                         }
                     }
                 }
             },
             scales: {
                 y: {
-                    beginAtZero: true,
-                    grid: { color: 'var(--border)', drawBorder: false },
-                    ticks: { 
-                        font: { size: 10 },
-                        color: 'var(--ink-soft)',
-                        callback: function(value) {
-                            return value.toLocaleString();
-                        }
-                    }
+                    beginAtZero: true, grid: { color: 'var(--border)', drawBorder: false },
+                    ticks: { font: { size: 10 }, color: 'var(--ink-soft)', callback: function(value) { return value.toLocaleString(); } }
                 },
                 x: {
-                    grid: { display: false },
-                    ticks: { 
-                        font: { size: 9 }, 
-                        maxRotation: 45,
-                        color: 'var(--ink-soft)'
-                    }
+                    grid: { display: false }, ticks: { font: { size: 9 }, maxRotation: 45, color: 'var(--ink-soft)' }
                 }
             }
         }

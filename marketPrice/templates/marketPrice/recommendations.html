@@ -282,8 +282,7 @@
                 <div class="card-header-clean d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <a href="{% url 'marketPrice:crop_detail' rec.crop.id %}" class="text-decoration-none" style="color: var(--ink);">
-                            <!-- ✅ Uses translation from your .po file -->
-                            {% translate rec.crop.name %}
+                            {{ rec.crop_name }}
                         </a>
                     </h5>
                     <span class="badge-recommend {{ rec.recommendation|lower }}">
@@ -296,21 +295,20 @@
                     <!-- Price & Profit Row -->
                     <div class="row g-3">
                         <div class="col-6">
-                            <small class="text-muted d-block mb-1">{% trans "Harvest Price" %}</small>
-                            <h5 class="mb-1">{{ rec.current_price|floatformat:0|intcomma }}</h5>
-                            <small class="text-muted">{% trans "3-Yr Avg" %}: {{ rec.avg_price|floatformat:0|intcomma }}</small>
+                            <small class="text-muted d-block mb-1">{% trans "Current Price" %}</small>
+                            <h5 class="mb-1">{{ rec.current_price_viss|floatformat:0|intcomma }} <small class="text-muted fw-normal" style="font-size:0.7rem;">Ks/Viss</small></h5>
+                            <small class="text-muted">{% trans "3-Yr Avg" %}: {{ rec.avg_price_viss|floatformat:0|intcomma }} Ks/Viss</small>
                         </div>
                         <div class="col-6">
                             <small class="text-muted d-block mb-1">{% trans "Profit per Acre" %}</small>
-                            <h5 class="mb-1 {% if rec.latest_profit.profit_per_acre > 0 %}profit-positive{% else %}profit-negative{% endif %}">
-                                {{ rec.latest_profit.profit_per_acre|floatformat:0|intcomma }}
+                            <h5 class="mb-1 {% if rec.profit_acre > 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                                {{ rec.profit_acre|floatformat:0|intcomma }} 
+                                <small class="text-muted fw-normal" style="font-size:0.7rem;">Ks</small>
                             </h5>
                             <small class="text-muted">
-                                {% trans "Trend" %}: 
+                                {% trans "ROI" %}: 
                                 <span class="trend-{{ rec.trend }}">
-                                    {% if rec.trend == 'up' %}<i class="bi bi-arrow-up-circle"></i> +{{ rec.price_change|floatformat:1 }}%{% endif %}
-                                    {% if rec.trend == 'down' %}<i class="bi bi-arrow-down-circle"></i> {{ rec.price_change|floatformat:1 }}%{% endif %}
-                                    {% if rec.trend == 'stable' %}<i class="bi bi-dash-circle"></i> {{ rec.price_change|floatformat:1 }}%{% endif %}
+                                    {{ rec.roi|floatformat:1 }}%
                                 </span>
                             </small>
                         </div>
@@ -422,14 +420,10 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-calculate the statistics based on the rendered HTML
-    // This fixes the "all numbers are the same" issue without needing a backend update.
-    
     let totalSell = 0;
     let totalHold = 0;
     let totalMonitor = 0;
 
-    // Loop through all recommendation badges in the grid
     document.querySelectorAll('.badge-recommend').forEach(function(badge) {
         const text = badge.innerText.trim();
         if (text === 'SELL') totalSell++;
@@ -437,7 +431,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (text === 'MONITOR') totalMonitor++;
     });
 
-    // Update the summary stat cards
     const totalAnalyzed = totalSell + totalHold + totalMonitor;
     document.getElementById('totalAnalyzed').innerText = totalAnalyzed;
     document.getElementById('totalSell').innerText = totalSell;

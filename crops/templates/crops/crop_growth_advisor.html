@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block nav_crops %}active{% endblock %}
+{% block page_title %}{% trans "Growth Advisor" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+.advisor-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* === Advisory Card Board === */
+.advisor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+.advisor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+    border-top: 5px solid var(--border);
+}
+
+.advisor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
+}
+
+.advisor-card.color-success { border-top-color: #2e7d32; }
+.advisor-card.color-warning { border-top-color: #ffc107; }
+.advisor-card.color-info { border-top-color: #17a2b8; }
+.advisor-card.color-danger { border-top-color: #dc3545; }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+}
+
+.crop-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.farm-name {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-top: 2px;
+}
+
+.stage-badge {
+    padding: 0.25rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+.stage-badge.success { background: #2e7d32; color: #fff; }
+.stage-badge.warning { background: #ffc107; color: #212529; }
+.stage-badge.info { background: #17a2b8; color: #fff; }
+.stage-badge.danger { background: #dc3545; color: #fff; }
+
+.dates-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-top: 1px dashed var(--border);
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+}
+
+.advice-box {
+    background: var(--bg-glass);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+    border: 1px solid var(--border);
+}
+
+.advice-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+}
+
+.advice-body {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+}
+
+.btn-view {
+    margin-top: 1.25rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--ink);
+    text-decoration: none;
+    text-align: center;
+    transition: 0.2s ease;
+    font-weight: 500;
+}
+.btn-view:hover {
+    background: var(--accent-green);
+    color: #fff;
+    border-color: var(--accent-green);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--ink-faint);
+}
+.empty-state i {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+@media (max-width: 600px) {
+    .advisor-grid { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="advisor-wrapper">
+    
+    <!-- Page Header -->
+    <div class="row align-items-center mb-2">
+        <div class="col-md-8">
+            <p class="text-muted mb-0">
+                <i class="bi bi-clock-history text-success me-2"></i>
+                {% trans "Real-time growth advice based on your planting and harvest dates." %}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'crops:crop_list' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">arrow_back</span>
+                {% trans "Back to List" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Advisor Cards Grid -->
+    <div class="advisor-grid">
+        {% for item in advisor_data %}
+        <div class="advisor-card color-{{ item.stage_color }}">
+            <div class="card-header">
+                <div>
+                    <div class="crop-title">{{ item.crop_name_translated }}</div>
+                    <div class="farm-name"><i class="bi bi-house me-1"></i> {{ item.farm_name_translated }}</div>
+                </div>
+                <span class="stage-badge {{ item.stage_color }}">
+                    {{ item.stage_label }}
+                </span>
+            </div>
+
+            <div class="dates-row">
+                <span>
+                    <span class="text-muted">{% trans "Planted" %}:</span> 
+                    {{ item.planting_date|date:"M d, Y" }}
+                </span>
+                <span>
+                    <span class="text-muted">{% trans "Harvest" %}:</span> 
+                    {{ item.harvest_date|date:"M d, Y" }}
+                </span>
+            </div>
+
+            <div class="advice-box">
+                <div class="advice-title">
+                    <i class="bi bi-lightbulb"></i> {% trans "Advice" %}
+                </div>
+                <div class="advice-body">
+                    {{ item.advice }}
+                </div>
+            </div>
+
+            <a href="{% url 'crops:crop_detail' item.crop.pk %}" class="btn-view">
+                <i class="bi bi-eye me-1"></i> {% trans "View Full Details" %}
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <span class="material-symbols-outlined" style="font-size: 64px; opacity: 0.3;">grass</span>
+                <h5>{% trans "No active crops found" %}</h5>
+                <p class="text-muted">{% trans "Add crops to your farms to get growth advice." %}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

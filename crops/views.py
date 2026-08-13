@@ -183,3 +183,55 @@ def harvest_recommendations(request):
         'page_title': _('Harvest & Price Advisor'),
     }
     return render(request, 'crops/harvest_recommendations.html', context)
+
+@login_required
+def crop_growth_advisor(request):
+    """Display crops with actionable advice based on planting vs harvest dates."""
+    farms = Farm.objects.filter(owner=request.user)
+    crops = Crop.objects.filter(farm__in=farms, is_active=True).select_related('farm')
+    
+    from datetime import date
+    advisor_data = []
+    
+    for crop in crops:
+        days_since_planting = (date.today() - crop.planting_date).days
+        days_to_harvest = (crop.expected_harvest_date - date.today()).days
+        
+        # Determine Stage and Advice
+        if days_to_harvest < 0:
+            stage = "danger"
+            stage_label = _("Past Harvest Date")
+            advice = _("Harvest date has passed. Check crop condition immediately.")
+            
+        elif days_to_harvest <= 14:
+            stage = "success"
+            stage_label = _("Ready to Harvest")
+            advice = _("Stop watering 2 weeks before harvest to improve quality. Prepare your harvesting tools.")
+            
+        elif days_since_planting <= 7:
+            stage = "info"
+            stage_label = _("Just Planted")
+            advice = _("Ensure consistent moisture for germination. Watch for pests.")
+            
+        else:
+            stage = "warning"
+            stage_label = _("Active Growing")
+            advice = _("Apply fertilizer based on growth stage. Monitor for pests. Ensure adequate irrigation.")
+
+        advisor_data.append({
+            'crop': crop,
+            'crop_name_translated': _(crop.name),
+            'farm_name_translated': _(crop.farm.name),
+            'stage_label': stage_label,
+            'advice': advice,
+            'stage_color': stage,  # success, warning, info, danger
+            'days_to_harvest': days_to_harvest,
+            'planting_date': crop.planting_date,
+            'harvest_date': crop.expected_harvest_date,
+        })
+    
+    context = {
+        'advisor_data': advisor_data,
+        'page_title': _('Growth Advisor'),
+    }
+    return render(request, 'crops/crop_growth_advisor.html', context)

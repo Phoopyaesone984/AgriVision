@@ -219,10 +219,17 @@ def crop_detail(request, crop_id):
     translated_name = _(crop.name)
     translated_category = _(crop.category) if crop.category else ''
     
+    # === ADD THIS CONSTANT ===
+    TON_TO_VISS = 612.4
+    
+    # Harvest prices
     harvest_prices = crop.harvest_prices.all().order_by('year')
     harvest_years = [hp.year for hp in harvest_prices]
-    harvest_values = [float(hp.price) for hp in harvest_prices]
     
+    # Convert raw Ton prices to Viss for the Chart
+    harvest_values = [float(hp.price) / TON_TO_VISS for hp in harvest_prices]
+    
+    # Daily prices (last 30 days)
     thirty_days_ago = datetime.now().date() - timedelta(days=30)
     daily_prices = crop.daily_prices.filter(
         recorded_date__gte=thirty_days_ago
@@ -230,16 +237,20 @@ def crop_detail(request, crop_id):
     daily_dates = [dp.recorded_date.strftime('%Y-%m-%d') for dp in daily_prices]
     daily_values = [float(dp.price) for dp in daily_prices]
     
+    # Yield data
     yields = crop.yields.all().order_by('year')
     yield_years = [y.year for y in yields]
     yield_values = [float(y.yield_value) for y in yields]
     
+    # Profitability
     profitability = crop.profitability.all().order_by('year')
     profit_years = [p.year for p in profitability]
     profit_values = [float(p.profit_per_acre) for p in profitability]
     
+    # =========================================================
+    # FIX: Create a Converted Object for Latest Price & Table
+    # =========================================================
     latest_harvest = harvest_prices.last() if harvest_prices else None
-    latest_daily = daily_prices.last() if daily_prices else None
     
     stats = {}
     if harvest_values:
@@ -247,13 +258,30 @@ def crop_detail(request, crop_id):
         stats['min_price'] = min(harvest_values)
         stats['avg_price'] = sum(harvest_values) / len(harvest_values)
         stats['latest_price'] = harvest_values[-1]
+        
+    # Build a list of converted prices for the table
+    table_data = []
+    for i, hp in enumerate(harvest_prices):
+        price_viss = float(hp.price) / TON_TO_VISS
+        change_viss = 0
+        # Calculate change from previous year (if exists)
+        if i > 0:
+            prev_price = float(harvest_prices[i-1].price) / TON_TO_VISS
+            change_viss = price_viss - prev_price
+        table_data.append({
+            'year': hp.year,
+            'price_viss': price_viss,
+            'change_viss': change_viss,
+        })
+    # =========================================================
     
     context = {
         'crop': crop,
         'crop_name': translated_name,
         'crop_category': translated_category,
         'harvest_years': json.dumps(harvest_years),
-        'harvest_values': json.dumps(harvest_values),
+        'harvest_values': json.dumps(harvest_values), # Chart Data
+        'table_data': table_data,                     # Table Data (Converted)
         'daily_dates': json.dumps(daily_dates),
         'daily_values': json.dumps(daily_values),
         'yield_years': json.dumps(yield_years),
@@ -261,7 +289,6 @@ def crop_detail(request, crop_id):
         'profit_years': json.dumps(profit_years),
         'profit_values': json.dumps(profit_values),
         'latest_harvest': latest_harvest,
-        'latest_daily': latest_daily,
         'stats': stats,
         'has_harvest_data': bool(harvest_values),
         'has_daily_data': bool(daily_values),
@@ -269,8 +296,7 @@ def crop_detail(request, crop_id):
         'has_profit_data': bool(profit_values),
     }
     return render(request, 'marketPrice/crop_detail.html', context)
-
-
+    
 def daily_prices(request):
     """Daily market prices table with filters"""
     daily_prices = DailyMarketPrice.objects.all().order_by('-recorded_date', 'category', 'commodity')
@@ -334,7 +360,6 @@ def daily_prices(request):
     }
     return render(request, 'marketPrice/daily_prices.html', context)
 
-
 def profitability(request):
     """Display crop profitability ranking"""
     years = Profitability.objects.values_list('year', flat=True).distinct().order_by('-year')
@@ -362,24 +387,57 @@ def profitability(request):
     chart_labels = []
     chart_values = []
     
+    # =========================================================
+    # Myanmar Market Math Constants
+    # =========================================================
+    TON_TO_VISS = 612.4
+    RETAIL_MARKUP_30 = 1.30
+    RETAIL_MARKUP_50 = 1.50
+    RETAIL_MARKUP_15 = 1.15
+    
     for item in profitability_qs:
         translated_name = _(item.crop.name)
+        
+        # 1. Convert Price/Ton to Farmgate Price/Viss
+        farmgate_viss = float(item.price_per_ton) / TON_TO_VISS
+        
+        # 2. Decide Markup based on Crop Name
+        crop_name_lower = item.crop.name.lower()
+        if "rice" in crop_name_lower:
+            markup = RETAIL_MARKUP_15
+        elif "onion" in crop_name_lower or "potato" in crop_name_lower or "garlic" in crop_name_lower or "pulse" in crop_name_lower or "bean" in crop_name_lower:
+            markup = RETAIL_MARKUP_30
+        elif "coffee" in crop_name_lower or "tea" in crop_name_lower or "chillies" in crop_name_lower or "tobacco" in crop_name_lower:
+            markup = RETAIL_MARKUP_50
+        else:
+            markup = RETAIL_MARKUP_30
+            
+        # 3. Calculate Retail Price
+        retail_viss = farmgate_viss * markup
+        
+        # 4. Calculate Profit Margin (How much a trader makes)
+        # (Retail - Farmgate) / Retail * 100
+        profit_margin = ((retail_viss - farmgate_viss) / retail_viss) * 100
+        
+        # 5. FIX ROI CALCULATION
         roi = 0
-        if item.price_per_ton and item.price_per_ton > 0:
-            roi = (item.profit_per_acre / item.price_per_ton) * 100
+        # Check if price_per_ton is greater than 0 (Decimal to float comparison)
+        if float(item.price_per_ton) > 0:
+            roi = (float(item.profit_per_acre) / float(item.price_per_ton)) * 100
         
         crop_data = {
             'crop_id': item.crop.id,
             'crop_name': translated_name,
             'year': item.year,
-            'price_per_ton': float(item.price_per_ton) if item.price_per_ton else 0,
-            'yield_tons_per_acre': float(item.yield_tons_per_acre) if item.yield_tons_per_acre else 0,
-            'profit_per_acre': float(item.profit_per_acre) if item.profit_per_acre else 0,
+            'farmgate_viss': int(farmgate_viss),
+            'retail_viss': int(retail_viss),
+            'profit_margin': int(profit_margin),
             'roi': roi,
         }
         profitability_data.append(crop_data)
+        
         chart_labels.append(translated_name)
-        chart_values.append(float(item.profit_per_acre) if item.profit_per_acre else 0)
+        chart_values.append(float(retail_viss))
     
     context = {
         'has_data': True,
@@ -390,8 +448,7 @@ def profitability(request):
         'chart_values': chart_values,
     }
     return render(request, 'marketPrice/profitability.html', context)
-
-
+    
 def compare(request):
     """Compare multiple crops side by side"""
     crop_ids = request.GET.getlist('crops')
@@ -541,13 +598,16 @@ def api_daily_prices(request):
         })
     return JsonResponse({'data': data})
 
-
 def crop_recommendation(request, crop_id=None):
     """Get recommendations for specific crop or all crops in user's farms"""
-    from datetime import datetime
+    from datetime import datetime, timedelta
     import math
     
+    # === LOCAL MATH CONSTANTS ===
+    TON_TO_VISS = 612.4
+    
     user_crops = set()
+    
     if request.user.is_authenticated:
         user_farms = Farm.objects.filter(owner=request.user)
         for farm in user_farms:
@@ -564,6 +624,7 @@ def crop_recommendation(request, crop_id=None):
         crops = Crop.objects.filter(harvest_prices__isnull=False).distinct()
         
     recommendations = []
+    
     for crop in crops:
         latest_price = crop.harvest_prices.order_by('-year').first()
         latest_profit = crop.profitability.order_by('-year').first()
@@ -571,9 +632,11 @@ def crop_recommendation(request, crop_id=None):
         if not latest_price or not latest_profit:
             continue
         
+        # Price history for trend analysis
         price_history = crop.harvest_prices.all().order_by('year')
         prices = [float(p.price) for p in price_history]
         
+        # Calculate trend and percentage change
         trend = "stable"
         price_change = 0
         if len(prices) >= 2:
@@ -583,8 +646,10 @@ def crop_recommendation(request, crop_id=None):
             elif price_change < -5:
                 trend = "down"
         
+        # Determine recommendation
         recommendation = "HOLD"
         recommendation_reason = ""
+        
         if trend == "up" and price_change > 10:
             recommendation = "HOLD"
             recommendation_reason = _lazy("Prices are rising strongly. Consider holding for better price.")
@@ -601,8 +666,27 @@ def crop_recommendation(request, crop_id=None):
             recommendation = "MONITOR"
             recommendation_reason = _lazy("Prices are stable. Monitor market conditions.")
         
+        # =========================================================
+        # CORRECT MATH
+        # =========================================================
         current_price = float(latest_price.price)
         current_profit = float(latest_profit.profit_per_acre)
+        avg_price = sum(prices) / len(prices)
+        
+        # Convert price to Viss
+        current_price_viss = int(current_price / TON_TO_VISS)
+        avg_price_viss = int(avg_price / TON_TO_VISS)
+        
+        # NEW: Calculate correct ROI based on Revenue
+        yield_tons = float(latest_profit.yield_tons_per_acre)
+        revenue_per_acre = current_price * yield_tons
+        
+        roi = 0
+        if revenue_per_acre > 0:
+            roi = (current_profit / revenue_per_acre) * 100
+        # =========================================================
+        
+        # Export Recommendations
         export_price = current_price * 0.85
         export_profit = current_profit * 0.80
         local_profit = current_profit
@@ -613,26 +697,30 @@ def crop_recommendation(request, crop_id=None):
         elif export_profit > local_profit * 0.9:
             export_recommendation = "CONSIDER_EXPORT"
         
-        avg_price = sum(prices[-3:]) / 3 if len(prices) >= 3 else prices[-1]
-        season_rec = "SELL" if current_price > avg_price * 1.1 else "HOLD"
+        season_rec = "SELL" if current_price > (sum(prices) / len(prices)) * 1.1 else "HOLD"
         
-        translated_crop_name = _(crop.name)
         recommendations.append({
             'crop': crop,
-            'crop_name': translated_crop_name,
+            'crop_name': _(crop.name),
             'latest_price': latest_price,
             'latest_profit': latest_profit,
+            
+            'current_price_viss': current_price_viss,
+            'avg_price_viss': avg_price_viss,
+            
+            # Keep Profit in Kyats (Acre)
+            'profit_acre': int(current_profit), 
+            'roi': roi,
+            
             'price_change': price_change,
             'trend': trend,
             'recommendation': recommendation,
             'recommendation_reason': recommendation_reason,
             'export_recommendation': export_recommendation,
             'season_recommendation': season_rec,
-            'avg_price': avg_price,
-            'current_price': current_price,
         })
     
-    recommendations.sort(key=lambda x: float(x['latest_profit'].profit_per_acre), reverse=True)
+    recommendations.sort(key=lambda x: x['profit_acre'], reverse=True)
     context = {
         'recommendations': recommendations,
         'current_date': datetime.now(),
