@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %}{% trans "Harvest Advisor" %} - AgriVision{% endblock %}
+{% block nav_recommendations %}active{% endblock %}
+{% block page_title %}{% trans "Harvest & Price Advisor" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* =========================================================
+   MASTER LAYOUT - Ultra Breathable
+   ========================================================= */
+.recommendation-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================================
+   STATS ROW - Breathable
+   ========================================================= */
+.summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem; /* Loose gap between stat pills */
+}
+
+.stat-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    transition: 0.2s ease;
+}
+
+.stat-pill:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+}
+
+.stat-pill .number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+}
+
+.stat-pill .label {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.35rem;
+}
+
+/* =========================================================
+   CROP CARDS - The Breathable Grid
+   ========================================================= */
+.crop-grid {
+    display: grid;
+    /* Automatically fits 1, 2, or 3 cards per row with no tightness */
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem; /* Defines the breathing gap between cards */
+}
+
+.advisor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem; /* Inner breathing space */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+}
+
+.advisor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-soft);
+}
+
+/* --- Card Header --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.crop-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+}
+/* Style the highlighted text in the advice */
+.advice-body strong {
+    font-weight: 600;
+    color: var(--accent-green);
+}
+.farm-name {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-top: 0.2rem;
+}
+
+.recommendation-badge {
+    padding: 0.3rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.badge-hold { background: rgba(46, 125, 50, 0.15); color: #2e7d32; border: 1px solid #2e7d32; }
+.badge-sell { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid #dc3545; }
+.badge-monitor { background: rgba(13, 110, 253, 0.15); color: #0d6efd; border: 1px solid #0d6efd; }
+.badge-na { background: rgba(108, 117, 125, 0.15); color: #6c757d; border: 1px solid #6c757d; }
+
+/* --- Price & Data Grid --- */
+.price-box {
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.price-item {
+    text-align: center;
+}
+
+.price-item .label {
+    font-size: 0.6rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.price-item .value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+}
+
+.price-item .value.text-success { color: #2e7d32; }
+.price-item .value.text-warning { color: #ffc107; }
+.price-item .value.text-danger { color: #dc3545; }
+
+.price-item .unit {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+/* --- Harvest Timer --- */
+.harvest-timer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    border-top: 1px dashed var(--border);
+}
+
+.harvest-timer .urgent { color: #dc3545; font-weight: 600; }
+.harvest-timer .warning { color: #ffc107; font-weight: 600; }
+
+/* --- Actionable Advice Block --- */
+.advice-box {
+    background: var(--bg-glass);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+}
+
+.advice-box.advice-hold { border-left-color: #2e7d32; }
+.advice-box.advice-sell { border-left-color: #dc3545; }
+.advice-box.advice-monitor { border-left-color: #0d6efd; }
+
+.advice-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.advice-body {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+}
+
+.advice-highlight {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+/* --- Button --- */
+.btn-view {
+    margin-top: 1.25rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--ink);
+    text-decoration: none;
+    text-align: center;
+    transition: 0.2s ease;
+    font-weight: 500;
+}
+
+.btn-view:hover {
+    background: var(--accent-green);
+    color: #fff;
+    border-color: var(--accent-green);
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 600px) {
+    .crop-grid { grid-template-columns: 1fr; }
+    .summary-stats { grid-template-columns: 1fr 1fr; }
+    .price-box { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="recommendation-wrapper">
+    
+    <!-- Page Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <p class="text-muted mb-0">
+                <i class="bi bi-graph-up-arrow text-success me-2"></i>
+                {% trans "Smart harvest timing based on 3-year historical market price trends." %}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end mt-2 mt-md-0">
+            <span class="badge bg-light text-dark border p-2">
+                <i class="bi bi-calendar3 me-1"></i> {{ now|date:"F d, Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Summary Stats (Added mb-5 to push it away from the Grid) -->
+    <div class="row g-5 mb-5">
+        <div class="col-md-4">
+            <div class="stat-pill">
+                <div class="number">{{ recommendations|length }}</div>
+                <div class="label">{% trans "Active Crops" %}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-pill" style="border-color: #2e7d32;">
+                <div class="number text-success">{{ hold_count }}</div>
+                <div class="label">{% trans "Hold Candidates" %}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-pill" style="border-color: #dc3545;">
+                <div class="number text-danger">{{ sell_count }}</div>
+                <div class="label">{% trans "Sell Candidates" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="crop-grid">
+                {% for item in recommendations %}
+                <div class="advisor-card">
+                    <!-- Card Header -->
+                    <div class="card-header">
+                        <div>
+                            <div class="crop-name">{{ item.crop_name_translated }}</div>
+                            <div class="farm-name"><i class="bi bi-house me-1"></i> {{ item.farm_name_translated }}</div>
+                        </div>
+                        <span class="recommendation-badge badge-{{ item.recommendation|lower }}">
+                            {{ item.recommendation }}
+                        </span>
+                    </div>
+
+                    <!-- Price Stats (Displayed in Viss) -->
+                    <div class="price-box">
+                        <div class="price-item">
+                            <span class="label">{% trans "Current Market Price" %}</span>
+                            <span class="value {% if item.recommendation == 'SELL' %}text-danger{% else %}text-success{% endif %}">
+                                {{ item.current_price_viss|intcomma }}
+                                <span class="unit">Ks / Viss</span>
+                            </span>
+                        </div>
+                        <div class="price-item">
+                            <span class="label">{% trans "Target Peak Price" %}</span>
+                            <span class="value text-success">
+                                {{ item.target_price_viss|intcomma }}
+                                <span class="unit">Ks / Viss</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Harvest Timer -->
+                    <div class="harvest-timer">
+                        <i class="bi bi-clock-history"></i>
+                        {% if item.days_to_harvest > 0 %}
+                            {% blocktrans with days=item.days_to_harvest %}
+                                {{ days }} days until planned harvest
+                            {% endblocktrans %}
+                        {% elif item.days_to_harvest == 0 %}
+                            <span class="warning">{% trans "Harvest is TODAY!" %}</span>
+                        {% else %}
+                            <span class="urgent">{% trans "Past harvest date!" %}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Actionable Advice -->
+                    {% if item.recommendation != 'N/A' %}
+                    <div class="advice-box advice-{{ item.recommendation|lower }}">
+                        <div class="advice-title">
+                            <i class="bi bi-lightbulb"></i>
+                            {% if item.recommendation == 'HOLD' %}
+                                {% trans "Suggestion: Hold until peak season" %}
+                            {% elif item.recommendation == 'SELL' %}
+                                {% trans "Suggestion: Sell immediately" %}
+                            {% else %}
+                                {% trans "Suggestion: Monitor market" %}
+                            {% endif %}
+                        </div>
+                        
+                                           <div class="advice-body">
+                            {% if item.recommendation == 'HOLD' %}
+                                {# Safely translated - HTML tags are OUTSIDE the translation #}
+                                {% blocktrans trimmed with month=item.best_sell_month %}
+                                    Historical prices peak around {{ month }}.
+                                {% endblocktrans %}
+                                <br>
+                                {% blocktrans trimmed with price=item.target_price_viss|intcomma %}
+                                    Aim to sell when price reaches {{ price }} Ks / Viss.
+                                {% endblocktrans %}
+                            {% elif item.recommendation == 'SELL' %}
+                                {% trans "Price is trending downward below average. Sell now to secure current market rate before it drops further." %}
+                            {% else %}
+                                {% trans "Market price is stable. Keep monitoring weekly market updates." %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Detail Button -->
+                    <a href="{% url 'crops:crop_detail' item.crop.pk %}" class="btn-view">
+                        <i class="bi bi-eye me-1"></i> {% trans "View Full Details" %}
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                    <h5>{% trans "No active crops found" %}</h5>
+                    <p class="text-muted">{% trans "Add crops to your farms to get price recommendations." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1433,3 +1433,1394 @@ msgstr "ခံစားရသည့် အပူချိန်"
 #: templates/base.html
 msgid "Market Prices"
 msgstr "စျေးကွက်"
+
+msgid ""
+msgstr ""
+"Project-Id-Version: AgriVision\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-13 12:00+0000\n"
+"PO-Revision-Date: 2026-08-13 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: my\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ============================================================
+# MARKET PRICE APP - NAVIGATION
+# ============================================================
+
+#: templates/base.html
+msgid "Market Intelligence"
+msgstr "စျေးကွက်ထောက်လှမ်းရေး"
+
+#: templates/base.html
+msgid "Market Dashboard"
+msgstr "စျေးကွက်ဒက်ရှ်ဘုတ်"
+
+#: templates/base.html
+msgid "Crop Prices"
+msgstr "သီးနှံစျေးနှုန်းများ"
+
+#: templates/base.html
+msgid "Daily Market"
+msgstr "နေ့စဉ်စျေးကွက်"
+
+#: templates/base.html
+msgid "Profitability"
+msgstr "အမြတ်အစွန်း"
+
+#: templates/base.html
+msgid "Compare"
+msgstr "နှိုင်းယှဉ်ရန်"
+
+#: templates/base.html
+msgid "Recommendations"
+msgstr "အကြံပြုချက်များ"
+
+#: templates/base.html
+msgid "Regional Data"
+msgstr "ဒေသဆိုင်ရာအချက်အလက်များ"
+
+
+# ============================================================
+# MARKET DASHBOARD (index.html)
+# ============================================================
+
+#: templates/marketPrice/index.html
+msgid "Market Intelligence Dashboard"
+msgstr "စျေးကွက်ထောက်လှမ်းရေး ဒက်ရှ်ဘုတ်"
+
+#: templates/marketPrice/index.html
+msgid "Total Crops"
+msgstr "စုစုပေါင်းသီးနှံများ"
+
+#: templates/marketPrice/index.html
+msgid "Markets"
+msgstr "စျေးကွက်များ"
+
+#: templates/marketPrice/index.html
+msgid "Commodities"
+msgstr "ကုန်ပစ္စည်းများ"
+
+#: templates/marketPrice/index.html
+msgid "Latest Update"
+msgstr "နောက်ဆုံးမွမ်းမံမှု"
+
+#: templates/marketPrice/index.html
+msgid "Price Trends"
+msgstr "စျေးနှုန်းလမ်းကြောင်း"
+
+#: templates/marketPrice/index.html
+msgid "Crop Categories"
+msgstr "သီးနှံအမျိုးအစားများ"
+
+#: templates/marketPrice/index.html
+msgid "Top Harvest Prices"
+msgstr "ထိပ်တန်းရိတ်သိမ်းစျေးနှုန်းများ"
+
+#: templates/marketPrice/index.html
+msgid "Top Daily Prices"
+msgstr "ထိပ်တန်းနေ့စဉ်စျေးနှုန်းများ"
+
+#: templates/marketPrice/index.html
+msgid "No data available"
+msgstr "အချက်အလက်မရှိပါ"
+
+
+# ============================================================
+# CROP LIST (crop_list.html)
+# ============================================================
+
+#: templates/marketPrice/crop_list.html
+msgid "Crop Catalog"
+msgstr "သီးနှံစာရင်း"
+
+#: templates/marketPrice/crop_list.html
+msgid "Browse all crops with latest price information"
+msgstr "နောက်ဆုံးစျေးနှုန်းအချက်အလက်များနှင့်အတူ သီးနှံအားလုံးကို ကြည့်ရှုပါ"
+
+#: templates/marketPrice/crop_list.html
+msgid "Search crops..."
+msgstr "သီးနှံများကိုရှာဖွေရန်..."
+
+#: templates/marketPrice/crop_list.html
+msgid "All"
+msgstr "အားလုံး"
+
+#: templates/marketPrice/crop_list.html
+msgid "Harvest Price"
+msgstr "ရိတ်သိမ်းစျေးနှုန်း"
+
+#: templates/marketPrice/crop_list.html
+msgid "Year"
+msgstr "နှစ်"
+
+#: templates/marketPrice/crop_list.html
+msgid "Change"
+msgstr "ပြောင်းလဲမှု"
+
+#: templates/marketPrice/crop_list.html
+msgid "Latest Daily"
+msgstr "နောက်ဆုံးနေ့စဉ်"
+
+#: templates/marketPrice/crop_list.html
+msgid "Market"
+msgstr "စျေးကွက်"
+
+#: templates/marketPrice/crop_list.html
+msgid "No price data"
+msgstr "စျေးနှုန်းအချက်အလက်မရှိပါ"
+
+#: templates/marketPrice/crop_list.html
+msgid "View Details"
+msgstr "အသေးစိတ်ကြည့်ရှုရန်"
+
+#: templates/marketPrice/crop_list.html
+msgid "No crops found matching your criteria."
+msgstr "သင့်ရွေးချယ်မှုနှင့်ကိုက်ညီသော သီးနှံမရှိပါ"
+
+
+# ============================================================
+# CROP DETAIL (crop_detail.html)
+# ============================================================
+
+#: templates/marketPrice/crop_detail.html
+msgid "Crops"
+msgstr "သီးနှံများ"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Compare"
+msgstr "နှိုင်းယှဉ်ရန်"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Latest Price"
+msgstr "နောက်ဆုံးစျေးနှုန်း"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Average Price"
+msgstr "ပျမ်းမျှစျေးနှုန်း"
+
+#: templates/marketPrice/crop_detail.html
+msgid "All years"
+msgstr "နှစ်အားလုံး"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Price Range"
+msgstr "စျေးနှုန်းအကွာအဝေး"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Min - Max"
+msgstr "အနည်းဆုံး - အများဆုံး"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Category"
+msgstr "အမျိုးအစား"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Harvest Price Trend"
+msgstr "ရိတ်သိမ်းစျေးနှုန်းလမ်းကြောင်း"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Daily Market Prices (30 Days)"
+msgstr "နေ့စဉ်စျေးကွက်စျေးနှုန်းများ (၃၀ ရက်)"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Yield Data"
+msgstr "အထွက်နှုန်းအချက်အလက်"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Profitability Trend"
+msgstr "အမြတ်အစွန်းလမ်းကြောင်း"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Historical Harvest Prices"
+msgstr "သမိုင်းဝင်ရိတ်သိမ်းစျေးနှုန်းများ"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Price"
+msgstr "စျေးနှုန်း"
+
+#: templates/marketPrice/crop_detail.html
+msgid "Unit"
+msgstr "ယူနစ်"
+
+#: templates/marketPrice/crop_detail.html
+msgid "No harvest price data available"
+msgstr "ရိတ်သိမ်းစျေးနှုန်းအချက်အလက်မရှိပါ"
+
+
+# ============================================================
+# DAILY MARKET PRICES (daily_prices.html)
+# ============================================================
+
+#: templates/marketPrice/daily_prices.html
+msgid "Daily Market Prices"
+msgstr "နေ့စဉ်စျေးကွက်စျေးနှုန်းများ"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Latest update"
+msgstr "နောက်ဆုံးမွမ်းမံမှု"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Total commodities"
+msgstr "စုစုပေါင်းကုန်ပစ္စည်းများ"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Category"
+msgstr "အမျိုးအစား"
+
+#: templates/marketPrice/daily_prices.html
+msgid "All Categories"
+msgstr "အမျိုးအစားအားလုံး"
+
+#: templates/marketPrice/daily_prices.html
+msgid "All Markets"
+msgstr "စျေးကွက်အားလုံး"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Date"
+msgstr "ရက်စွဲ"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Latest"
+msgstr "နောက်ဆုံး"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Filter"
+msgstr "စစ်ထုတ်ရန်"
+
+#: templates/marketPrice/daily_prices.html
+msgid "Commodity"
+msgstr "ကုန်ပစ္စည်း"
+
+#: templates/marketPrice/daily_prices.html
+msgid "No price data available for the selected filters."
+msgstr "ရွေးချယ်ထားသော စစ်ထုတ်မှုများအတွက် စျေးနှုန်းအချက်အလက်မရှိပါ"
+
+
+# ============================================================
+# PROFITABILITY (profitability.html)
+# ============================================================
+
+#: templates/marketPrice/profitability.html
+msgid "Crop Profitability Ranking"
+msgstr "သီးနှံအမြတ်အစွန်းအဆင့်သတ်မှတ်ချက်"
+
+#: templates/marketPrice/profitability.html
+msgid "Crops ranked by profit per acre"
+msgstr "တစ်ဧကအမြတ်အစွန်းအလိုက် သီးနှံများကို အဆင့်သတ်မှတ်ထားသည်"
+
+#: templates/marketPrice/profitability.html
+msgid "Profit per Acre Ranking"
+msgstr "တစ်ဧကအမြတ်အစွန်းအဆင့်သတ်မှတ်ချက်"
+
+#: templates/marketPrice/profitability.html
+msgid "Price/Ton"
+msgstr "စျေးနှုန်း/တန်"
+
+#: templates/marketPrice/profitability.html
+msgid "Yield (Tons/Acre)"
+msgstr "အထွက်နှုန်း (တန်/ဧက)"
+
+#: templates/marketPrice/profitability.html
+msgid "Profit/Acre"
+msgstr "အမြတ်/ဧက"
+
+#: templates/marketPrice/profitability.html
+msgid "ROI"
+msgstr "ရင်းနှီးမြှုပ်နှံမှုအပေါ်အမြတ်"
+
+#: templates/marketPrice/profitability.html
+msgid "No profitability data available."
+msgstr "အမြတ်အစွန်းအချက်အလက်မရှိပါ"
+
+#: templates/marketPrice/profitability.html
+msgid "No Profitability Data"
+msgstr "အမြတ်အစွန်းအချက်အလက်မရှိပါ"
+
+#: templates/marketPrice/profitability.html
+msgid "Profitability data is not available yet. Please run the import command to calculate profitability from harvest prices and yield data."
+msgstr "အမြတ်အစွန်းအချက်အလက်များ မရရှိသေးပါ။ ရိတ်သိမ်းစျေးနှုန်းများနှင့် အထွက်နှုန်းအချက်အလက်များမှ အမြတ်အစွန်းကို တွက်ချက်ရန် import command ကို လုပ်ဆောင်ပါ"
+
+#: templates/marketPrice/profitability.html
+msgid "This will import all data and calculate profitability automatically."
+msgstr "၎င်းသည် အချက်အလက်အားလုံးကို သွင်းယူပြီး အမြတ်အစွန်းကို အလိုအလျောက်တွက်ချက်ပေးပါမည်"
+
+
+# ============================================================
+# COMPARE (compare.html & compare_select.html)
+# ============================================================
+
+#: templates/marketPrice/compare.html
+msgid "Compare Crops"
+msgstr "သီးနှံများနှိုင်းယှဉ်ရန်"
+
+#: templates/marketPrice/compare.html
+msgid "Comparing"
+msgstr "နှိုင်းယှဉ်နေသည်"
+
+#: templates/marketPrice/compare.html
+msgid "Price Comparison"
+msgstr "စျေးနှုန်းနှိုင်းယှဉ်မှု"
+
+#: templates/marketPrice/compare.html
+msgid "Latest Price"
+msgstr "နောက်ဆုံးစျေးနှုန်း"
+
+#: templates/marketPrice/compare.html
+msgid "Latest Daily"
+msgstr "နောက်ဆုံးနေ့စဉ်"
+
+#: templates/marketPrice/compare.html
+msgid "No crops selected for comparison."
+msgstr "နှိုင်းယှဉ်ရန် သီးနှံများကို မရွေးချယ်ရသေးပါ"
+
+#: templates/marketPrice/compare.html
+msgid "Add More Crops to Compare"
+msgstr "နှိုင်းယှဉ်ရန် သီးနှံများထပ်ထည့်ပါ"
+
+#: templates/marketPrice/compare.html
+msgid "Hold Ctrl/Cmd to select multiple crops"
+msgstr "သီးနှံများစွာရွေးရန် Ctrl/Cmd ကိုဖိထားပါ"
+
+#: templates/marketPrice/compare.html
+msgid "Update"
+msgstr "မွမ်းမံရန်"
+
+#: templates/marketPrice/compare_select.html
+msgid "Select Crops to Compare"
+msgstr "နှိုင်းယှဉ်ရန် သီးနှံများရွေးချယ်ပါ"
+
+#: templates/marketPrice/compare_select.html
+msgid "Select multiple crops to compare their prices and performance side by side."
+msgstr "စျေးနှုန်းများနှင့် စွမ်းဆောင်ရည်များကို ဘေးချင်းယှဉ်ပြီး နှိုင်းယှဉ်ရန် သီးနှံများစွာကို ရွေးချယ်ပါ"
+
+#: templates/marketPrice/compare_select.html
+msgid "Choose Crops"
+msgstr "သီးနှံများရွေးချယ်ပါ"
+
+#: templates/marketPrice/compare_select.html
+msgid "Compare Selected Crops"
+msgstr "ရွေးချယ်ထားသော သီးနှံများကို နှိုင်းယှဉ်ရန်"
+
+#: templates/marketPrice/compare_select.html
+msgid "Back to Crops"
+msgstr "သီးနှံများသို့ ပြန်သွားရန်"
+
+
+# ============================================================
+# RECOMMENDATIONS (recommendations.html)
+# ============================================================
+
+#: templates/marketPrice/recommendations.html
+msgid "Crop Decision Support"
+msgstr "သီးနှံဆုံးဖြတ်ချက်အကူအညီ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Get data-driven recommendations on whether to sell, hold, or export your crops based on market trends."
+msgstr "စျေးကွက်လမ်းကြောင်းများကိုအခြေခံ၍ သင့်သီးနှံများကို ရောင်းရန်၊ ထားရန် သို့မဟုတ် တင်ပို့ရန် အချက်အလက်အခြေပြု အကြံပြုချက်များကို ရယူပါ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Crops Analyzed"
+msgstr "ခွဲခြမ်းစိတ်ဖြာထားသော သီးနှံများ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommend SELL"
+msgstr "ရောင်းရန် အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommend HOLD"
+msgstr "ထားရန် အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommend MONITOR"
+msgstr "စောင့်ကြည့်ရန် အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Current Price"
+msgstr "လက်ရှိစျေးနှုန်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Avg"
+msgstr "ပျမ်းမျှ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Profit per Acre"
+msgstr "တစ်ဧကအမြတ်အစွန်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Trend"
+msgstr "လမ်းကြောင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Why"
+msgstr "အကြောင်းအရင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Export"
+msgstr "တင်ပို့ရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommended"
+msgstr "အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Consider"
+msgstr "စဉ်းစားရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Local Better"
+msgstr "ပြည်တွင်းပိုကောင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Season"
+msgstr "ရာသီ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Sell Now"
+msgstr "ယခုရောင်းရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Hold"
+msgstr "ထားရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "No Recommendations Available"
+msgstr "အကြံပြုချက်များမရှိပါ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Please ensure you have imported price and profitability data first."
+msgstr "ကျေးဇူးပြု၍ စျေးနှုန်းနှင့် အမြတ်အစွန်းအချက်အလက်များကို ဦးစွာသွင်းယူထားကြောင်း သေချာပါစေ"
+
+#: templates/marketPrice/recommendations.html
+msgid "How are recommendations calculated?"
+msgstr "အကြံပြုချက်များကို မည်သို့တွက်ချက်သနည်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommendations are based on price trends (3-year average), current market prices, and profitability data. SELL = falling prices or high profit, HOLD = rising prices, MONITOR = stable market."
+msgstr "အကြံပြုချက်များသည် စျေးနှုန်းလမ်းကြောင်း (၃ နှစ်ပျမ်းမျှ)၊ လက်ရှိစျေးကွက်စျေးနှုန်းများနှင့် အမြတ်အစွန်းအချက်အလက်များကို အခြေခံထားသည်။ SELL = စျေးနှုန်းကျဆင်းခြင်း သို့မဟုတ် အမြတ်များခြင်း၊ HOLD = စျေးနှုန်းမြင့်တက်ခြင်း၊ MONITOR = စျေးကွက်တည်ငြိမ်ခြင်း။"
+
+#: templates/marketPrice/recommendations.html
+msgid "Uptrend"
+msgstr "မြင့်တက်လမ်းကြောင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Downtrend"
+msgstr "ကျဆင်းလမ်းကြောင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Stable"
+msgstr "တည်ငြိမ်"
+
+
+# ============================================================
+# REGIONAL ANALYSIS (region_analysis.html)
+# ============================================================
+
+#: templates/marketPrice/region_analysis.html
+msgid "Regional Crop Production Analysis"
+msgstr "ဒေသဆိုင်ရာ သီးနှံထုတ်လုပ်မှုခွဲခြမ်းစိတ်ဖြာခြင်း"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Regional data includes production statistics from 5 regions: Bago, Magway, Mandalay, Ayeyawady, and Shan."
+msgstr "ဒေသဆိုင်ရာအချက်အလက်များတွင် ပဲခူး၊ မကွေး၊ မန္တလေး၊ ဧရာဝတီနှင့် ရှမ်းဒေသများမှ ထုတ်လုပ်မှုစာရင်းဇယားများ ပါဝင်သည်"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Filter"
+msgstr "စစ်ထုတ်ရန်"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Region"
+msgstr "ဒေသ"
+
+#: templates/marketPrice/region_analysis.html
+msgid "All Regions"
+msgstr "ဒေသအားလုံး"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Crop Category"
+msgstr "သီးနှံအမျိုးအစား"
+
+#: templates/marketPrice/region_analysis.html
+msgid "All Categories"
+msgstr "အမျိုးအစားအားလုံး"
+
+#: templates/marketPrice/region_analysis.html
+msgid "All Years"
+msgstr "နှစ်အားလုံး"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Apply Filters"
+msgstr "စစ်ထုတ်မှုများအသုံးပြုရန်"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Production Data"
+msgstr "ထုတ်လုပ်မှုအချက်အလက်"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Sown (Acres)"
+msgstr "စိုက်ပျိုးဧရိယာ (ဧက)"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Harvested (Acres)"
+msgstr "ရိတ်သိမ်းဧရိယာ (ဧက)"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Production (Tons)"
+msgstr "ထုတ်လုပ်မှု (တန်)"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Please import regional data first."
+msgstr "ကျေးဇူးပြု၍ ဒေသဆိုင်ရာအချက်အလက်များကို ဦးစွာသွင်းယူပါ"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Use the management command to import data from region_data.xlsx"
+msgstr "region_data.xlsx မှ အချက်အလက်များကို သွင်းယူရန် management command ကို အသုံးပြုပါ"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Regional Data Not Yet Imported"
+msgstr "ဒေသဆိုင်ရာအချက်အလက်များ မသွင်းယူရသေးပါ"
+
+#: templates/marketPrice/region_analysis.html
+msgid "To view regional crop production data, you need to import the region_data.xlsx file."
+msgstr "ဒေသဆိုင်ရာ သီးနှံထုတ်လုပ်မှုအချက်အလက်များကို ကြည့်ရှုရန် region_data.xlsx ဖိုင်ကို သွင်းယူရန်လိုအပ်သည်"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Make sure the region_data.xlsx file is in the data/ folder"
+msgstr "region_data.xlsx ဖိုင်သည် data/ ဖိုင်တွဲတွင် ရှိကြောင်း သေချာပါစေ"
+
+
+# ============================================================
+# COMMON TRANSLATIONS
+# ============================================================
+
+msgid "Loading..."
+msgstr "ဒေတာများဆွဲယူနေသည်..."
+
+msgid "No data available"
+msgstr "အချက်အလက်မရှိပါ"
+
+msgid "Total"
+msgstr "စုစုပေါင်း"
+
+msgid "Search"
+msgstr "ရှာဖွေရန်"
+
+msgid "Apply"
+msgstr "အသုံးပြုရန်"
+
+msgid "Clear"
+msgstr "ရှင်းလင်းရန်"
+
+msgid "Back"
+msgstr "နောက်သို့"
+
+msgid "View all"
+msgstr "အားလုံးကြည့်ရန်"
+
+#: templates/marketPrice/crop_list.html
+msgid "Uncategorized"
+msgstr "အမျိုးအစားမသတ်မှတ်ရသေး"
+
+msgid "Premium Plan"
+msgstr "ပရီမီယံအစီအစဉ်"
+
+msgid "Notifications"
+msgstr "အကြောင်းကြားချက်များ"
+
+
+
+# Crop Name Translations
+msgid "Paddy (Summer)"
+msgstr "နွေစပါး"
+
+msgid "Paddy (Monsoon)"
+msgstr "မိုးစပါး"
+
+msgid "Wheat"
+msgstr "ဂျုံ"
+
+msgid "Maize"
+msgstr "ပြောင်း"
+
+msgid "Matpe (Black Gram)"
+msgstr "မတ်ပဲ (နက်မတ်)"
+
+msgid "Pedisein (Green Gram)"
+msgstr "ပဲစိမ်း"
+
+msgid "Butter Bean"
+msgstr "ထောပတ်ပဲ"
+
+msgid "Bocate (Cow Pea)"
+msgstr "ဘိုကိတ်ပဲ"
+
+msgid "Sultani"
+msgstr "စူလ်တာနီပဲ"
+
+msgid "Sultapya"
+msgstr "စူလ်တာပျာပဲ"
+
+msgid "Peboke (Soy Bean)"
+msgstr "ပဲပုပ်"
+
+msgid "Gram (Chick Pea)"
+msgstr "ကုလားပဲ"
+
+msgid "Pelun"
+msgstr "ပဲလွန်း"
+
+msgid "Pesingon (Pigeon Pea)"
+msgstr "ပဲစင်းငုံ"
+
+msgid "Peyin (Rice Bean)"
+msgstr "ပဲယင်း"
+
+msgid "Pebyugale (Duffin Bean)"
+msgstr "ပဲဗျူဂါလီ"
+
+msgid "Pegyi (Lablab Bean)"
+msgstr "ပဲကြီး"
+
+msgid "Sadawpe (Garden Pea)"
+msgstr "စာတောင်ပဲ"
+
+msgid "Peyazar (Lentil Bean)"
+msgstr "ပဲယာဇာ"
+
+msgid "Penauk (Krishna Mung)"
+msgstr "ပဲနောက်"
+
+msgid "Groundnut (Rain)"
+msgstr "မြေပဲ (မိုး)"
+
+msgid "Groundnut (Winter)"
+msgstr "မြေပဲ (ဆောင်း)"
+
+msgid "Sesamum (Early)"
+msgstr "နှမ်း (အစော)"
+
+msgid "Sesamum (Late)"
+msgstr "နှမ်း (နှောင်း)"
+
+msgid "Sunflower"
+msgstr "နေကြာ"
+
+msgid "Mustard"
+msgstr "မုန်ညင်း"
+
+msgid "Cotton (Wagyi)"
+msgstr "ဝါ (ဝါကြီး)"
+
+msgid "Cotton (Mahlaing 5/6)"
+msgstr "ဝါ (မလှိုင် ၅/၆)"
+
+msgid "Cotton (Long Staple)"
+msgstr "ဝါ (အမျှင်ရှည်)"
+
+msgid "Jute"
+msgstr "ဂျုံ"
+
+msgid "Rubber"
+msgstr "ရော်ဘာ"
+
+msgid "Sugarcane"
+msgstr "ကြံ"
+
+msgid "Tobacco"
+msgstr "ဆေးရွက်ကြီး"
+
+msgid "Betel Nut"
+msgstr "ကွမ်းသီး"
+
+msgid "Betel Leaves"
+msgstr "ကွမ်းရွက်"
+
+msgid "Chillies (Dry)"
+msgstr "ငရုတ်သီးခြောက်"
+
+msgid "Chillies (Green)"
+msgstr "ငရုတ်သီးစိမ်း"
+
+msgid "Onion"
+msgstr "ကြက်သွန်နီ"
+
+msgid "Garlic"
+msgstr "ကြက်သွန်ဖြူ"
+
+msgid "Potato"
+msgstr "အာလူး"
+
+msgid "Coffee"
+msgstr "ကော်ဖီ"
+
+msgid "Tea (Green)"
+msgstr "လက်ဖက်စိမ်း"
+
+msgid "Coconut"
+msgstr "အုန်းသီး"
+
+msgid "Tapioca"
+msgstr "ပဲပြောင်း"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:6
+msgid "Regional Analysis"
+msgstr "တိုင်းဒေသကြီးအလိုက် စိုက်ပျိုးထုတ်လုပ်မှု ဆန်းစစ်ချက်"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:10
+msgid "Regional Crop Production"
+msgstr "တိုင်းဒေသကြီးအလိုက် သီးနှံစိုက်ပျိုးထုတ်လုပ်မှု"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:60
+msgid "Regional data from 5 regions"
+msgstr "တိုင်းဒေသကြီး ၅ ခုမှ ဒေသဆိုင်ရာ အချက်အလက်များ"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:71
+msgid "Filter"
+msgstr "စစ်ထုတ်ရန်"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:74
+msgid "Region"
+msgstr "တိုင်းဒေသကြီး"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:75
+msgid "All"
+msgstr "အားလုံး"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:83
+msgid "Crop Category"
+msgstr "သီးနှံအမျိုးအစား"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:95
+msgid "Apply"
+msgstr "ရွေးချယ်အတည်ပြုရန်"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:109
+msgid "Production Data"
+msgstr "ထုတ်လုပ်မှုအချက်အလက်များ"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:115
+msgid "Region"
+msgstr "တိုင်းဒေသကြီး"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:116
+msgid "Crop"
+msgstr "သီးနှံ"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:117
+msgid "Year"
+msgstr "ခုနှစ်"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:118
+msgid "Sown"
+msgstr "စိုက်ဧက"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:119
+msgid "Harvested"
+msgstr "ရိတ်သိမ်းဧက"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:120
+msgid "Production"
+msgstr "ထုတ်လုပ်မှု (တန်)"
+
+#: marketPrice/templates/marketPrice/region_analysis.html:136
+msgid "No records match your filters."
+msgstr "သင်၏ ရွေးချယ်မှုများနှင့် ကိုက်ညီသော မှတ်တမ်းမရှိပါ။"
+
+#: marketPrice/templates/marketPrice/region_analysis.html
+msgid "Ayeyawady"
+msgstr "ဧရာ၀တီ"
+
+msgid "Mandalay"
+msgstr "မန္တလေး"
+
+msgid "Bago"
+msgstr "ပဲခူး"
+
+msgid "Shan"
+msgstr "ရှမ်း"
+
+msgid "Sagaing"
+msgstr "စစ်ကိုင်း"
+
+msgid "Magway"
+msgstr "မကွေး"
+
+msgid "Yangon"
+msgstr "ရန်ကုန်"
+
+msgid "Kachin"
+msgstr "ကချင်"
+
+msgid "Tanintharyi"
+msgstr "တနင်္သာရီ"
+
+msgid "Rakhine"
+msgstr "ရခိုင်"
+
+msgid "Mon"
+msgstr "မွန်"
+
+msgid "Kayin"
+msgstr "ကရင်"
+
+msgid "Kayah"
+msgstr "ကယား"
+
+msgid "Chin"
+msgstr "ချင်း"
+
+# Crop Categories
+msgid "Coffee"
+msgstr "ကော်ဖီ"
+
+msgid "Fruits"
+msgstr "အသီးအနှံ"
+
+msgid "Plantain"
+msgstr "ငှက်ပျော"
+
+msgid "Potato"
+msgstr "အာလူး"
+
+msgid "Sugarcane"
+msgstr "ကြံ"
+
+msgid "Tea"
+msgstr "လက်ဖက်"
+
+msgid "Toddy_Palm"
+msgstr "ထန်း"
+
+msgid "Vegetables"
+msgstr "ဟင်းသီးဟင်းရွက်"
+
+#: marketPrice/views.py
+msgid "Prices are rising strongly. Consider holding for better price."
+msgstr "စျေးနှုန်းများ သိသိသာသာ မြင့်တက်နေပါသည်။ ပိုမိုကောင်းမွန်သော ဈေးနှုန်းရရှိရန် စောင့်ဆိုင်းရန် စဉ်းစားပါ။"
+
+msgid "Prices are falling. Consider selling before further decline."
+msgstr "စျေးနှုန်းများ ကျဆင်းနေပါသည်။ ထပ်မံမကျဆင်းမီ ရောင်းချရန် စဉ်းစားပါ။"
+
+msgid "Prices are trending up. Good time to monitor."
+msgstr "စျေးနှုန်းများ အလားအလာကောင်းနေပါသည်။ စောင့်ကြည့်ရန် အချိန်ကောင်းဖြစ်ပါသည်။"
+
+msgid "Prices are trending down. Consider selling soon."
+msgstr "စျေးနှုန်းများ အလားအလာကျဆင်းနေပါသည်။ မကြာမီ ရောင်းချရန် စဉ်းစားပါ။"
+
+msgid "Prices are stable. Monitor market conditions."
+msgstr "စျေးနှုန်းများ တည်ငြိမ်နေပါသည်။ ဈေးကွက်အခြေအနေကို စောင့်ကြည့်ပါ။"
+
+
+
+# ============================================================
+# DAILY MARKET COMMODITY TRANSLATIONS
+# ============================================================
+
+# Edible Oils
+msgid "Groundnut oil (Medium)"
+msgstr "မြေပဲဆီ (အလတ်စား)"
+
+msgid "Groundnut oil (Special) (A May Htwar)"
+msgstr "မြေပဲဆီ (အထူး) (အမေ့ထွား)"
+
+msgid "Palm Oil (Not include box_Measurement)"
+msgstr "စားအုန်းဆီ (သေတ္တာအပါအဝင်)"
+
+msgid "Sesamum oil (Hnan Oo Yee Thant)"
+msgstr "နှမ်းဆီ (နှမ်းဦးညီသန့်)"
+
+# Gold
+msgid "Gold (24 carat)"
+msgstr "ရွှေ (၂၄ ကရက်)"
+
+# Meat, Fish and Prawn
+msgid "Beef (without bone)"
+msgstr "အမဲသား (အရိုးမပါ)"
+
+msgid "Chicken (Slice)"
+msgstr "ကြက်သား (အတုံး)"
+
+msgid "Lobster (Medium/13 cm)"
+msgstr "ပုဇွန် (အလတ်စား/၁၃ စင်တီမီတာ)"
+
+msgid "Mutton (without bone)"
+msgstr "ဆိတ်သား (အရိုးမပါ)"
+
+msgid "Ngagyi (Medium)"
+msgstr "ငါးကြီး (အလတ်စား)"
+
+msgid "Ngagyin (Slice, Medium)"
+msgstr "ငါးကျင် (အတုံး၊ အလတ်စား)"
+
+msgid "Ngakhu (Yecho, Medium)"
+msgstr "ငါးခူ (ရေချို၊ အလတ်စား)"
+
+msgid "Ngamyitchin (Slice, Medium)"
+msgstr "ငါးမြိတ်ချဉ် (အတုံး၊ အလတ်စား)"
+
+msgid "Ngathalauk (Whole, Medium)"
+msgstr "ငါးသလောက် (တစ်ကောင်လုံး၊ အလတ်စား)"
+
+msgid "Pazunkyawt (4 cm)"
+msgstr "ပဇွန်ကြော့ (၄ စင်တီမီတာ)"
+
+msgid "Pork (Belly)"
+msgstr "ဝက်သား (ဝမ်းဗိုက်)"
+
+# Pulses
+msgid "Gram"
+msgstr "ကုလားပဲ"
+
+msgid "Pegyi"
+msgstr "ပဲကြီး"
+
+msgid "Penilay (Myanmar)"
+msgstr "ပဲနီလေး (မြန်မာ)"
+
+msgid "Satawpe"
+msgstr "စားတော်ပဲ"
+
+# Paddy (Rice)
+msgid "Rice (Emata Medium, Sinthwe Old)"
+msgstr "စပါး (ဧမတာအလတ်၊ ဆင်းသွေးဟောင်း)"
+
+msgid "Rice (ShweBo Pawsan Medium, Old)"
+msgstr "စပါး (ရွှေဘိုပေါ်ဆန်အလတ်၊ ဟောင်း)"
+
+# Spices
+msgid "Dried Chillies (Long)"
+msgstr "ငရုတ်သီးခြောက် (ရှည်)"
+
+msgid "Garlic (ShanHmwar,Medium)"
+msgstr "ကြက်သွန်ဖြူ (ရှမ်းမှာ၊ အလတ်စား)"
+
+msgid "Onion (SeikPhyu, Medium)"
+msgstr "ကြက်သွန်နီ (စိပ်ဖြူ၊ အလတ်စား)"
+
+msgid "Potato (Medium Size)"
+msgstr "အာလူး (အလတ်စား)"
+
+
+# ============================================================
+# CATEGORY TRANSLATIONS
+# ============================================================
+
+msgid "Edible Oil"
+msgstr "စားသုံးဆီ"
+
+msgid "Gold"
+msgstr "ရွှေ"
+
+msgid "Meat, Fish and Prawn"
+msgstr "အသား၊ ငါးနှင့် ပုဇွန်"
+
+msgid "Pulses"
+msgstr "ပဲမျိုးစုံ"
+
+msgid "စပါး"
+msgstr "Paddy"
+
+msgid "Spices"
+msgstr "ဟင်းခတ်အမွှေးအကြိုင်များ"
+
+
+# ============================================================
+# ADDITIONAL DAILY MARKET UI TRANSLATIONS
+# ============================================================
+
+#: templates/marketPrice/daily_prices.html
+msgid "Total"
+msgstr "စုစုပေါင်း"
+
+#: templates/marketPrice/daily_prices.html
+msgid "No price data available for the selected filters."
+msgstr "ရွေးချယ်ထားသော စစ်ထုတ်မှုများအတွက် စျေးနှုန်းအချက်အလက်မရှိပါ"
+
+
+# ============================================================
+# COMPARE PAGE TRANSLATIONS (Add these if missing)
+# ============================================================
+
+#: templates/marketPrice/compare.html
+msgid "Select Crops to Compare"
+msgstr "နှိုင်းယှဉ်ရန် သီးနှံများရွေးချယ်ပါ"
+
+#: templates/marketPrice/compare.html
+msgid "Choose multiple crops to view their historical price trends and performance side by side."
+msgstr "သီးနှံများစွာကို ရွေးချယ်ပြီး ၎င်းတို့၏ သမိုင်းဝင်စျေးနှုန်းလမ်းကြောင်းနှင့် စွမ်းဆောင်ရည်များကို ဘေးချင်းယှဉ်ကြည့်ရှုပါ"
+
+#: templates/marketPrice/compare.html
+msgid "Select All"
+msgstr "အားလုံးရွေးချယ်ရန်"
+
+#: templates/marketPrice/compare.html
+msgid "Select All Crops"
+msgstr "သီးနှံအားလုံးရွေးချယ်ရန်"
+
+#: templates/marketPrice/compare.html
+msgid "selected"
+msgstr "ရွေးချယ်ထားသည်"
+
+#: templates/marketPrice/compare.html
+msgid "Compare Now"
+msgstr "ယခုနှိုင်းယှဉ်ရန်"
+
+#: templates/marketPrice/compare.html
+msgid "Clear Selection"
+msgstr "ရွေးချယ်မှုများရှင်းလင်းရန်"
+
+#: templates/marketPrice/compare.html
+msgid "Reset All"
+msgstr "အားလုံးပြန်လည်သတ်မှတ်ရန်"
+
+#: templates/marketPrice/compare.html
+msgid "Comparing"
+msgstr "နှိုင်းယှဉ်နေသည်"
+
+#: templates/marketPrice/compare.html
+msgid "Price Trend Analysis"
+msgstr "စျေးနှုန်းလမ်းကြောင်းခွဲခြမ်းစိတ်ဖြာခြင်း"
+
+#: templates/marketPrice/compare.html
+msgid "Historical Comparison"
+msgstr "သမိုင်းဝင်နှိုင်းယှဉ်မှု"
+
+#: templates/marketPrice/compare.html
+msgid "Latest Price"
+msgstr "နောက်ဆုံးစျေးနှုန်း"
+
+#: templates/marketPrice/compare.html
+msgid "Daily Price"
+msgstr "နေ့စဉ်စျေးနှုန်း"
+
+#: templates/marketPrice/compare.html
+msgid "Market"
+msgstr "စျေးကွက်"
+
+#: templates/marketPrice/compare.html
+msgid "Ready to Compare?"
+msgstr "နှိုင်းယှဉ်ရန် အဆင်သင့်ဖြစ်ပြီလား"
+
+#: templates/marketPrice/compare.html
+msgid "Select at least two crops from above and click 'Compare Now' to see their historical price trends side by side."
+msgstr "အထက်မှ အနည်းဆုံး သီးနှံနှစ်မျိုးကို ရွေးချယ်ပြီး 'ယခုနှိုင်းယှဉ်ရန်' ကိုနှိပ်ပါ။ ၎င်းတို့၏ သမိုင်းဝင်စျေးနှုန်းလမ်းကြောင်းများကို ဘေးချင်းယှဉ်ကြည့်ရှုပါ"
+
+#: templates/marketPrice/compare.html
+msgid "STEP 1"
+msgstr "အဆင့် ၁"
+
+
+# ============================================================
+# PROFITABILITY PAGE TRANSLATIONS (Add if missing)
+# ============================================================
+
+#: templates/marketPrice/profitability.html
+msgid "Crop Profitability Ranking"
+msgstr "သီးနှံအမြတ်အစွန်းအဆင့်သတ်မှတ်ချက်"
+
+#: templates/marketPrice/profitability.html
+msgid "Crops ranked by profit per acre"
+msgstr "တစ်ဧကအမြတ်အစွန်းအလိုက် သီးနှံများကို အဆင့်သတ်မှတ်ထားသည်"
+
+#: templates/marketPrice/profitability.html
+msgid "Profit per Acre Ranking"
+msgstr "တစ်ဧကအမြတ်အစွန်းအဆင့်သတ်မှတ်ချက်"
+
+#: templates/marketPrice/profitability.html
+msgid "Price/Ton"
+msgstr "စျေးနှုန်း/တန်"
+
+#: templates/marketPrice/profitability.html
+msgid "Yield (Tons/Acre)"
+msgstr "အထွက်နှုန်း (တန်/ဧက)"
+
+#: templates/marketPrice/profitability.html
+msgid "Profit/Acre"
+msgstr "အမြတ်/ဧက"
+
+#: templates/marketPrice/profitability.html
+msgid "ROI"
+msgstr "ရင်းနှီးမြှုပ်နှံမှုအပေါ်အမြတ်"
+
+#: templates/marketPrice/profitability.html
+msgid "No profitability data available."
+msgstr "အမြတ်အစွန်းအချက်အလက်မရှိပါ"
+
+#: templates/marketPrice/profitability.html
+msgid "Year"
+msgstr "ခုနှစ်"
+
+
+# ============================================================
+# RECOMMENDATIONS PAGE TRANSLATIONS (Add if missing)
+# ============================================================
+
+#: templates/marketPrice/recommendations.html
+msgid "Crop Decision Support"
+msgstr "သီးနှံဆုံးဖြတ်ချက်အကူအညီ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Get data-driven recommendations on whether to sell, hold, or export your crops based on market trends."
+msgstr "စျေးကွက်လမ်းကြောင်းများကိုအခြေခံ၍ သင့်သီးနှံများကို ရောင်းရန်၊ ထားရန် သို့မဟုတ် တင်ပို့ရန် အချက်အလက်အခြေပြု အကြံပြုချက်များကို ရယူပါ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Crops Analyzed"
+msgstr "ခွဲခြမ်းစိတ်ဖြာထားသော သီးနှံများ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommend SELL"
+msgstr "ရောင်းရန် အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommend HOLD"
+msgstr "ထားရန် အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommend MONITOR"
+msgstr "စောင့်ကြည့်ရန် အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Current Price"
+msgstr "လက်ရှိစျေးနှုန်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Avg"
+msgstr "ပျမ်းမျှ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Profit per Acre"
+msgstr "တစ်ဧကအမြတ်အစွန်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Trend"
+msgstr "လမ်းကြောင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Why"
+msgstr "အကြောင်းအရင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Export"
+msgstr "တင်ပို့ရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Recommended"
+msgstr "အကြံပြုသည်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Consider"
+msgstr "စဉ်းစားရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Local Better"
+msgstr "ပြည်တွင်းပိုကောင်း"
+
+#: templates/marketPrice/recommendations.html
+msgid "Season"
+msgstr "ရာသီ"
+
+#: templates/marketPrice/recommendations.html
+msgid "Sell Now"
+msgstr "ယခုရောင်းရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "Hold"
+msgstr "ထားရန်"
+
+#: templates/marketPrice/recommendations.html
+msgid "No Recommendations Available"
+msgstr "အကြံပြုချက်များမရှိပါ"
+
+
+# ============================================================
+# REGIONAL DATA PAGE TRANSLATIONS (Add if missing)
+# ============================================================
+
+#: templates/marketPrice/region_analysis.html
+msgid "Regional Crop Production Analysis"
+msgstr "ဒေသဆိုင်ရာ သီးနှံထုတ်လုပ်မှုခွဲခြမ်းစိတ်ဖြာခြင်း"
+
+#: templates/marketPrice/region_analysis.html
+msgid "All Regions"
+msgstr "ဒေသအားလုံး"
+
+#: templates/marketPrice/region_analysis.html
+msgid "All Categories"
+msgstr "အမျိုးအစားအားလုံး"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Apply Filters"
+msgstr "စစ်ထုတ်မှုများအသုံးပြုရန်"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Sown (Acres)"
+msgstr "စိုက်ပျိုးဧရိယာ (ဧက)"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Harvested (Acres)"
+msgstr "ရိတ်သိမ်းဧရိယာ (ဧက)"
+
+#: templates/marketPrice/region_analysis.html
+msgid "Production (Tons)"
+msgstr "ထုတ်လုပ်မှု (တန်)"
+
+
+#: crops/templates/crops/harvest_recommendations.html
+msgid "Harvest Advisor"
+msgstr "ရိတ်သိမ်းအကြံပေး"
+
+msgid "Harvest & Price Advisor"
+msgstr "ရိတ်သိမ်းခြင်းနှင့် ဈေးနှုန်းအကြံပေး"
+
+msgid "Smart harvest timing based on 3-year historical market price trends."
+msgstr "၃ နှစ်တာ ဈေးကွက်သမိုင်းကြောင်းအပေါ် အခြေခံ၍ စမတ်ကျသော ရိတ်သိမ်းချိန်ကို အကြံပြုခြင်း။"
+
+msgid "Active Crops"
+msgstr "လက်ရှိစိုက်ပျိုးနေသော သီးနှံများ"
+
+msgid "Hold Candidates"
+msgstr "စောင့်ဆိုင်းသင့်သော သီးနှံများ"
+
+msgid "Sell Candidates"
+msgstr "ရောင်းချသင့်သော သီးနှံများ"
+
+msgid "Current Price"
+msgstr "လက်ရှိဈေးနှုန်း"
+
+msgid "3-Year Avg"
+msgstr "၃ နှစ်ပျမ်းမျှ"
+
+msgid "Target Peak"
+msgstr "ရည်မှန်းထားသည့် အမြင့်ဆုံးဈေး"
+
+msgid "days until planned harvest"
+msgstr "ရိတ်သိမ်းရန် ရက်ပေါင်း"
+
+msgid "Harvest is TODAY!"
+msgstr "ယနေ့ ရိတ်သိမ်းရမည့်နေ့ဖြစ်ပါသည်!"
+
+msgid "Past harvest date!"
+msgstr "ရိတ်သိမ်းရက် ကျော်လွန်နေပါပြီ!"
+
+msgid "Suggestion: Hold until peak season"
+msgstr "အကြံပြုချက် - ဈေးအမြင့်ဆုံးရာသီအထိ စောင့်ဆိုင်းပါ"
+
+msgid "Suggestion: Sell immediately"
+msgstr "အကြံပြုချက် - ချက်ချင်းရောင်းချပါ"
+
+msgid "Suggestion: Monitor market"
+msgstr "အကြံပြုချက် - ဈေးကွက်ကို စောင့်ကြည့်ပါ"
+
+msgid "View Full Details"
+msgstr "အသေးစိတ်ကြည့်ရှုရန်"
+
+msgid "No active crops found"
+msgstr "လက်ရှိစိုက်ပျိုးနေသော သီးနှံများ မတွေ့ပါ"
+
+msgid "Add crops to your farms to get price recommendations."
+msgstr "ဈေးနှုန်းအကြံပြုချက်များ ရရှိရန် သင့်လယ်ယာများတွင် သီးနှံများကို ထည့်သွင်းပါ။"
+
+#: crops/templates/crops/harvest_recommendations.html
+msgctxt "crop name"
+msgid "potato"
+msgstr "အာလူး"
+
+msgid "September"
+msgstr "စက်တင်ဘာလ"
+
+msgid "October"
+msgstr "အောက်တိုဘာလ"
+
+msgid "January"
+msgstr "ဇန်နဝါရီလ"
+
+msgid "February"
+msgstr "ဖေဖော်ဝါရီလ"
+
+msgid "March"
+msgstr "မတ်လ"
+
+msgid "April"
+msgstr "ဧပြီလ"
+
+msgid "May"
+msgstr "မေလ"
+
+msgid "June"
+msgstr "ဇွန်လ"
+
+msgid "July"
+msgstr "ဇူလိုင်လ"
+
+msgid "August"
+msgstr "သြဂုတ်လ"
+
+msgid "November"
+msgstr "နိုဝင်ဘာလ"
+
+msgid "December"
+msgstr "ဒီဇင်ဘာလ"
+#: crops/templates/crops/harvest_recommendations.html
+msgid "Historical prices peak around %s."
+msgstr "သမိုင်းဝင်စျေးနှုန်းများသည် %s တွင် အမြင့်ဆုံးဖြစ်သည်။"
+
+msgid "Aim to sell when price reaches %s Ks / Viss."
+msgstr "%s Ks / Viss စျေးရောက်သည့်အခါ ရောင်းရန် ရည်ရွယ်ပါ။"
+
+#: crops/templates/crops/crop_growth_advisor.html
+msgid "Real-time growth advice based on your planting and harvest dates."
+msgstr "စိုက်ပျိုးခြင်းနှင့် ရိတ်သိမ်းခြင်းရက်စွဲများကို အခြေခံ၍ အချိန်နှင့်တပြေးညီ ကြီးထွားမှုဆိုင်ရာ အကြံပြုချက်များ။"
+
+msgid "Growth Advisor"
+msgstr "ကြီးထွားမှုအကြံပေး"
+
+msgid "Back to List"
+msgstr "စာရင်းသို့ ပြန်သွားရန်"
+
+msgid "Planted"
+msgstr "စိုက်ပြီး"
+
+msgid "Harvest"
+msgstr "ရိတ်သိမ်းမည့်ရက်"
+
+msgid "Advice"
+msgstr "အကြံပြုချက်"
+
+msgid "View Full Details"
+msgstr "အသေးစိတ်ကြည့်ရှုရန်"
+
+msgid "No active crops found"
+msgstr "လက်ရှိစိုက်ပျိုးနေသော သီးနှံများ မတွေ့ပါ"
+
+msgid "Add crops to your farms to get growth advice."
+msgstr "ကြီးထွားမှုအကြံပြုချက်များ ရရှိရန် သင့်လယ်ယာများတွင် သီးနှံများကို ထည့်သွင်းပါ။"
+
+# Advice strings
+msgid "Harvest date has passed. Check crop condition immediately."
+msgstr "ရိတ်သိမ်းရက် ကျော်လွန်နေပြီ။ သီးနှံအခြေအနေကို ချက်ချင်းစစ်ဆေးပါ။"
+
+msgid "Stop watering 2 weeks before harvest to improve quality. Prepare your harvesting tools."
+msgstr "အရည်အသွေးကောင်းမွန်ရန် ရိတ်သိမ်းခြင်းမပြုမီ ၂ ပတ်အလိုတွင် ရေသွင်းခြင်းကို ရပ်တန့်ပါ။ ရိတ်သိမ်းရေးကိရိယာများကို ပြင်ဆင်ပါ။"
+
+msgid "Ensure consistent moisture for germination. Watch for pests."
+msgstr "အပင်ပေါက်ရန် စိုထိုင်းဆကို ထိန်းသိမ်းပါ။ ပိုးမွှားများကို စောင့်ကြည့်ပါ။"
+
+msgid "Apply fertilizer based on growth stage. Monitor for pests. Ensure adequate irrigation."
+msgstr "ကြီးထွားမှုအဆင့်အလိုက် မြေသြဇာကျွေးပါ။ ပိုးမွှားများကို စောင့်ကြည့်ပါ။ လုံလောက်သော ရေသွင်းမှုကို သေချာပါစေ။"
+
+# Stage labels
+msgid "Past Harvest Date"
+msgstr "ရိတ်သိမ်းရက် လွန်နေပြီ"
+
+msgid "Ready to Harvest"
+msgstr "ရိတ်သိမ်းရန် အဆင်သင့်"
+
+msgid "Just Planted"
+msgstr "စိုက်ပျိုးပြီးစ"
+
+msgid "Active Growing"
+msgstr "ကြီးထွားနေဆဲ"

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'crops',
     'weather',
     'community',
+    'marketPrice',
     'stock',
 ]
 

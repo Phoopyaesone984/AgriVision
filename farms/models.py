@@ -36,7 +36,7 @@ class Activity(models.Model):
     
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='activities')
     # Use string reference instead of importing Crop directly
-    crop = models.ForeignKey('crops.Crop', on_delete=models.SET_NULL, null=True, blank=True, related_name='activities')
+    crop = models.ForeignKey('crops.Crop', on_delete=models.SET_NULL, null=True, blank=True, related_name='farms')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     due_date = models.DateField()
