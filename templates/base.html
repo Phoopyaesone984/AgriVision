@@ -740,55 +740,69 @@
         </div>
 
         <nav class="sidebar-nav">
-<<<<<<<<< Temporary merge branch 1
-    <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
-        <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
-    </a>
-    <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
-        <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
-    </a>
-    <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
-        <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
-    </a>
-    <!-- ADD THE TASKS LINK RIGHT HERE -->
-    <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
-        <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
-    </a>
-    <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
-        <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
-    </a>
-   <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
-        <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
-    </a>
-    <!-- Add this right after the weather link -->
-<a href="{% url 'farms:market_prices' %}" class="nav-item {% block nav_market_prices %}{% endblock %}">
-    <span class="material-symbols-outlined">trending_up</span> {% trans "Market Prices" %}
-</a>
-    <a href="#" class="nav-item {% block nav_community %}{% endblock %}">
-        <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
-    </a>
-    <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
-        <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
-    </a>
-</nav>
-=========
+            <!-- Dashboard -->
             <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
                 <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
             </a>
+            
+            <!-- Farm Management -->
             <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
                 <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
             </a>
+            
+            <!-- Crops -->
             <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
                 <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
             </a>
+            
+            <!-- ===== MARKET INTELLIGENCE SECTION ===== -->
+            <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
+                {% trans "Market Intelligence" %}
+            </div>
+            <a href="{% url 'crops:harvest_recommendations' %}" class="nav-item {% block nav_harvest_advisor %}{% endblock %}">
+                <span class="material-symbols-outlined">timeline</span> {% trans "Harvest Advisor" %}
+            </a>
+            <a href="{% url 'marketPrice:index' %}" class="nav-item {% block nav_market_dashboard %}{% endblock %}">
+                <span class="material-symbols-outlined">analytics</span> {% trans "Market Dashboard" %}
+            </a>
+            
+            <a href="{% url 'marketPrice:crop_list' %}" class="nav-item {% block nav_market_crops %}{% endblock %}">
+                <span class="material-symbols-outlined">inventory_2</span> {% trans "Crop Prices" %}
+            </a>
+            
+            <a href="{% url 'marketPrice:daily_prices' %}" class="nav-item {% block nav_market_prices %}{% endblock %}">
+                <span class="material-symbols-outlined">trending_up</span> {% trans "Daily Market" %}
+            </a>
+            
+            <a href="{% url 'marketPrice:profitability' %}" class="nav-item {% block nav_profitability %}{% endblock %}">
+                <span class="material-symbols-outlined">payments</span> {% trans "Profitability" %}
+            </a>
+            
+            <a href="{% url 'marketPrice:compare' %}" class="nav-item {% block nav_compare %}{% endblock %}">
+                <span class="material-symbols-outlined">compare_arrows</span> {% trans "Compare" %}
+            </a>
+            <a href="{% url 'marketPrice:recommendations' %}" class="nav-item {% block nav_recommendations %}{% endblock %}">
+                <span class="material-symbols-outlined">lightbulb</span> {% trans "Recommendations" %}
+            </a>
+            <a href="{% url 'marketPrice:regions' %}" class="nav-item {% block nav_regions %}{% endblock %}">
+                <span class="material-symbols-outlined">map</span> {% trans "Regional Data" %}
+            </a>
+            
+            <!-- ===== END MARKET INTELLIGENCE ===== -->
+            
+            <!-- Tasks -->
             <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
                 <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
             </a>
-            <a href="#" class="nav-item {% block nav_soil %}{% endblock %}">
-                <span class="material-symbols-outlined">science</span> {% trans "Soil Analysis" %}
-            </a>
+            
+            <!-- Weather -->
             <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
                 <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
+            </a>
+            
+            <!-- Stock & Sales -->
+            <a href="{% url 'stock:material_list' %}" class="nav-item {% block nav_stock %}{% endblock %}">
+                <span class="material-symbols-outlined">inventory_2</span> {% trans "Stock & Sales" %}
             </a>
             
             <!-- Community -->
