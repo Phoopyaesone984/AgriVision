@@ -72,3 +72,33 @@ class ActivityForm(forms.ModelForm):
             self.fields['farm'].queryset = Farm.objects.filter(owner=user)
             self.fields['crop'].queryset = Crop.objects.filter(farm__owner=user)
             self.fields['crop'].required = False
+
+
+
+from .models import Farm, Activity, Harvest  # add Harvest here
+
+class HarvestForm(forms.ModelForm):
+    class Meta:
+        model = Harvest
+        fields = ['harvest_date', 'quantity_tonnes', 'quality_grade', 'notes']
+        widgets = {
+            'harvest_date': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'field-input',
+            }),
+            'quantity_tonnes': forms.NumberInput(attrs={
+                'class': 'field-input',
+                'placeholder': 'e.g. 3.50',
+                'step': '0.01',
+                'min': '0',
+            }),
+            'quality_grade': forms.TextInput(attrs={
+                'class': 'field-input',
+                'placeholder': 'e.g. Grade A (optional)',
+            }),
+            'notes': forms.Textarea(attrs={
+                'class': 'field-textarea',
+                'rows': 3,
+                'placeholder': 'Any notes about this harvest (optional)',
+            }),
+        }

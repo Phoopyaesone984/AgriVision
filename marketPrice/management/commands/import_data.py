@@ -1,329 +1,112 @@
-# marketPrice/management/commands/import_data.py
 import pandas as pd
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from decimal import Decimal
 from marketPrice.models import Crop, HarvestPrice, DailyMarketPrice, YieldData, Profitability
 import os
+from datetime import datetime
 
 class Command(BaseCommand):
-    help = 'Import all market data from CSV files'
+    help = 'DIAGNOSTIC - Check what crops exist and what CSV contains'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('🚀 Starting data import...'))
+        self.stdout.write(self.style.SUCCESS('🔍 DIAGNOSTIC: Checking data...'))
         
-        # Check if data directory exists
-        if not os.path.exists('data'):
-            self.stdout.write(self.style.ERROR('❌ Data directory not found!'))
+        data_dir = os.path.join(os.getcwd(), 'data')
+        
+        if not os.path.exists(data_dir):
+            self.stdout.write(self.style.ERROR(f'❌ Data directory not found at: {data_dir}'))
             return
         
-        try:
-            self.import_crops()
-            self.import_prices()
-            self.import_daily_prices()
-            self.import_yields()
-            self.calculate_profitability()
-            self.stdout.write(self.style.SUCCESS('✅ All data imported successfully!'))
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f'❌ Error: {e}'))
-            import traceback
-            traceback.print_exc()
-
-    def import_crops(self):
-        """Import crops from the price CSV"""
-        self.stdout.write('📊 Importing crops...')
+        self.stdout.write(self.style.SUCCESS(f'📂 Data directory found at: {data_dir}'))
         
-        df = pd.read_csv('data/crop_prices_2019_2025.csv')
-        df.columns = df.columns.str.strip()
+        # 1. Check existing crops in database
+        self.stdout.write('\n📋 EXISTING CROPS IN DATABASE:')
+        existing_crops = Crop.objects.all().order_by('name')
+        self.stdout.write(f'  Total crops: {existing_crops.count()}')
+        for crop in existing_crops:
+            self.stdout.write(f'    - {crop.name}')
         
-        imported = 0
-        for idx, row in df.iterrows():
-            crop_name = str(row['crop_name']).strip()
-            unit = str(row['unit']).strip() if pd.notna(row['unit']) else 'Ton'
+        # 2. Check crop_prices_2019_2025.csv
+        self.stdout.write('\n📊 CROPS IN crop_prices_2019_2025.csv:')
+        price_file = os.path.join(data_dir, 'crop_prices_2019_2025.csv')
+        if os.path.exists(price_file):
+            df_prices = pd.read_csv(price_file)
+            df_prices.columns = df_prices.columns.str.strip()
+            self.stdout.write(f'  Columns: {df_prices.columns.tolist()}')
+            self.stdout.write(f'  Total rows: {len(df_prices)}')
             
-            crop, created = Crop.objects.get_or_create(
-                name=crop_name,
-                defaults={'unit': unit}
-            )
-            
-            # Try to determine category from crop name
-            if not crop.category:
-                categories = {
-                    'Paddy': 'Cereal',
-                    'Wheat': 'Cereal',
-                    'Maize': 'Cereal',
-                    'Groundnut': 'Oilseed',
-                    'Sesamum': 'Oilseed',
-                    'Sunflower': 'Oilseed',
-                    'Mustard': 'Oilseed',
-                    'Cotton': 'Fiber',
-                    'Jute': 'Fiber',
-                    'Rubber': 'Industrial',
-                    'Sugarcane': 'Cash Crop',
-                    'Tobacco': 'Cash Crop',
-                    'Betel': 'Cash Crop',
-                    'Chillies': 'Spice',
-                    'Onion': 'Vegetable',
-                    'Garlic': 'Vegetable',
-                    'Potato': 'Vegetable',
-                    'Coffee': 'Beverage',
-                    'Tea': 'Beverage',
-                    'Coconut': 'Fruit',
-                    'Tapioca': 'Root Crop',
-                    'Gram': 'Pulse',
-                    'Matpe': 'Pulse',
-                    'Pedisein': 'Pulse',
-                    'Bocate': 'Pulse',
-                    'Peboke': 'Pulse',
-                    'Pelun': 'Pulse',
-                    'Pesingon': 'Pulse',
-                    'Peyin': 'Pulse',
-                    'Pebyugale': 'Pulse',
-                    'Pegyi': 'Pulse',
-                    'Sadawpe': 'Pulse',
-                    'Peyazar': 'Pulse',
-                    'Penauk': 'Pulse',
-                    'Sultani': 'Pulse',
-                    'Sultapya': 'Pulse',
-                    'Butter Bean': 'Pulse',
-                }
-                
-                for key, value in categories.items():
-                    if key in crop_name:
-                        crop.category = value
-                        crop.save()
-                        break
-            
-            if created:
-                imported += 1
-        
-        self.stdout.write(self.style.SUCCESS(f'✅ Imported {imported} crops'))
-
-    def import_prices(self):
-        """Import harvest prices"""
-        self.stdout.write('📊 Importing harvest prices...')
-        
-        df = pd.read_csv('data/crop_prices_2019_2025.csv')
-        df.columns = df.columns.str.strip()
-        
-        imported = 0
-        
-        for idx, row in df.iterrows():
-            try:
+            # Show first 5 rows
+            self.stdout.write('  First 5 rows:')
+            for idx in range(min(5, len(df_prices))):
+                row = df_prices.iloc[idx]
                 crop_name = str(row['crop_name']).strip()
-                crop = Crop.objects.get(name=crop_name)
+                self.stdout.write(f'    - {crop_name}')
+            
+            # Check if these crops exist in database
+            self.stdout.write('\n  🔍 Matching CSV crops to database:')
+            for idx, row in df_prices.iterrows():
+                crop_name = str(row['crop_name']).strip()
+                if crop_name and crop_name != 'nan':
+                    exists = Crop.objects.filter(name__icontains=crop_name).exists()
+                    if exists:
+                        self.stdout.write(f'    ✅ {crop_name} - EXISTS in database')
+                    else:
+                        self.stdout.write(f'    ❌ {crop_name} - NOT FOUND in database')
+                        
+                    # Also try to find by different name formats
+                    crop_variants = [
+                        crop_name,
+                        crop_name.replace(' (', '('),
+                        crop_name.split('(')[0].strip(),
+                        crop_name.lower(),
+                        crop_name.title()
+                    ]
+                    
+                    found_variant = False
+                    for variant in set(crop_variants):
+                        if variant != crop_name:
+                            if Crop.objects.filter(name__icontains=variant).exists():
+                                self.stdout.write(f'      ℹ️  Found as: "{variant}"')
+                                found_variant = True
+                                break
+                    
+                    if not found_variant and not Crop.objects.filter(name__icontains=crop_name).exists():
+                        self.stdout.write(f'      ℹ️  No matching crop found in database')
+        
+        # 3. Check yield data file
+        self.stdout.write('\n📊 CROPS IN table_3_04_average_yield_per_harvested_acre.csv:')
+        yield_file = os.path.join(data_dir, 'table_3_04_average_yield_per_harvested_acre.csv')
+        if os.path.exists(yield_file):
+            df_yields = pd.read_csv(yield_file)
+            df_yields.columns = df_yields.columns.str.strip()
+            self.stdout.write(f'  Columns: {df_yields.columns.tolist()}')
+            self.stdout.write(f'  Total rows: {len(df_yields)}')
+            
+            # Show first 10 rows
+            self.stdout.write('  First 10 rows:')
+            for idx in range(min(10, len(df_yields))):
+                row = df_yields.iloc[idx]
+                crop_name = str(row['sn_crop']).strip()
+                self.stdout.write(f'    - {crop_name}')
                 
-                # Get price columns
-                year_columns = [col for col in df.columns if col.startswith('price_')]
-                
-                for col in year_columns:
-                    # Extract year from column name
-                    year = col.replace('price_', '').replace('_', '-')
-                    
-                    # Check if value is not empty
-                    if pd.notna(row[col]) and str(row[col]).strip():
-                        try:
-                            price_value = float(str(row[col]).strip().replace(',', ''))
-                            if price_value > 0:
-                                hp, created = HarvestPrice.objects.get_or_create(
-                                    crop=crop,
-                                    year=year,
-                                    defaults={'price': Decimal(str(price_value))}
-                                )
-                                if created:
-                                    imported += 1
-                        except (ValueError, TypeError) as e:
-                            self.stdout.write(f'  ⚠️ Skipping {crop_name} {year}: invalid price "{row[col]}"')
-                            continue
-                            
-            except Crop.DoesNotExist:
-                self.stdout.write(f'  ⚠️ Crop not found: {crop_name}')
-                continue
-            except Exception as e:
-                self.stdout.write(f'  ⚠️ Error with row {idx}: {e}')
-                continue
+                # Check if exists in database
+                crop_clean = crop_name.split('.', 1)[1].strip() if '.' in crop_name else crop_name
+                crop_clean = crop_clean.split('(')[0].strip()
+                exists = Crop.objects.filter(name__icontains=crop_clean).exists()
+                if exists:
+                    self.stdout.write(f'      ✅ Exists in database as: {crop_clean}')
+                else:
+                    self.stdout.write(f'      ❌ NOT found in database')
         
-        self.stdout.write(self.style.SUCCESS(f'✅ Imported {imported} harvest prices'))
-
-    def import_daily_prices(self):
-        """Import daily market prices"""
-        self.stdout.write('📊 Importing daily market prices...')
+        # 4. Suggest crops to create
+        self.stdout.write('\n💡 SUGGESTION: Run this to create missing crops:')
+        self.stdout.write('  python manage.py create_missing_crops')
         
-        try:
-            df = pd.read_csv('data/market_prices_yangon_july_2026.csv')
-            df.columns = df.columns.str.strip()
-            
-            imported = 0
-            
-            for idx, row in df.iterrows():
-                try:
-                    category = str(row['Category']).strip()
-                    commodity = str(row['Commodity']).strip()
-                    unit = str(row['Unit']).strip()
-                    
-                    # Get date columns
-                    date_columns = [col for col in df.columns if '-' in col and '2026' in col]
-                    
-                    for date_str in date_columns:
-                        if pd.notna(row[date_str]) and str(row[date_str]).strip():
-                            try:
-                                price_value = float(str(row[date_str]).strip().replace(',', ''))
-                                if price_value > 0:
-                                    # Parse date
-                                    from datetime import datetime
-                                    date_obj = datetime.strptime(date_str, '%d-%m-%Y').date()
-                                    
-                                    # Try to find matching crop
-                                    crop = None
-                                    crop_name = commodity.split('(')[0].strip()
-                                    crop = Crop.objects.filter(name__icontains=crop_name).first()
-                                    
-                                    # Create daily price
-                                    dp, created = DailyMarketPrice.objects.get_or_create(
-                                        commodity=commodity,
-                                        recorded_date=date_obj,
-                                        defaults={
-                                            'crop': crop,
-                                            'category': category,
-                                            'market': 'Yangon',
-                                            'price': Decimal(str(price_value)),
-                                            'unit': unit
-                                        }
-                                    )
-                                    
-                                    if created:
-                                        imported += 1
-                            except (ValueError, TypeError) as e:
-                                self.stdout.write(f'  ⚠️ Skipping {commodity} {date_str}: invalid price')
-                                continue
-                                
-                except Exception as e:
-                    self.stdout.write(f'  ⚠️ Error with row {idx}: {e}')
-                    continue
-            
-            self.stdout.write(self.style.SUCCESS(f'✅ Imported {imported} daily prices'))
-            
-        except FileNotFoundError:
-            self.stdout.write(self.style.WARNING('⚠️ Daily prices file not found, skipping...'))
-        except Exception as e:
-            self.stdout.write(self.style.WARNING(f'⚠️ Error importing daily prices: {e}'))
-
-    def import_yields(self):
-        """Import yield data"""
-        self.stdout.write('📊 Importing yield data...')
-        
-        try:
-            df = pd.read_csv('data/table_3_04_average_yield_per_harvested_acre.csv')
-            df.columns = df.columns.str.strip()
-            
-            imported = 0
-            
-            for idx, row in df.iterrows():
-                try:
-                    crop_name = str(row['sn_crop']).strip()
-                    
-                    # Clean crop name
-                    if '.' in crop_name:
-                        crop_name = crop_name.split('.', 1)[1].strip()
-                    
-                    # Remove parentheses content if present
-                    crop_name_clean = crop_name.split('(')[0].strip()
-                    
-                    # Find matching crop
-                    crop = Crop.objects.filter(name__icontains=crop_name_clean).first()
-                    
-                    if not crop:
-                        # Try exact match
-                        crop = Crop.objects.filter(name=crop_name).first()
-                    
-                    if not crop:
-                        self.stdout.write(f'  ⚠️ Crop not found: {crop_name}')
-                        continue
-                    
-                    unit = str(row['unit']).strip() if pd.notna(row['unit']) else 'Ton'
-                    
-                    # Get year columns
-                    year_columns = [col for col in df.columns if col not in ['sn_crop', 'unit']]
-                    
-                    for col in year_columns:
-                        if pd.notna(row[col]) and str(row[col]).strip():
-                            try:
-                                yield_value = float(str(row[col]).strip().replace(',', ''))
-                                if yield_value > 0:
-                                    # Convert year format
-                                    year = col.replace('_', '-')
-                                    
-                                    yd, created = YieldData.objects.get_or_create(
-                                        crop=crop,
-                                        year=year,
-                                        defaults={
-                                            'yield_value': Decimal(str(yield_value)),
-                                            'unit': unit
-                                        }
-                                    )
-                                    
-                                    if created:
-                                        imported += 1
-                            except (ValueError, TypeError) as e:
-                                self.stdout.write(f'  ⚠️ Skipping {crop_name} {col}: invalid yield value')
-                                continue
-                                
-                except Exception as e:
-                    self.stdout.write(f'  ⚠️ Error with row {idx}: {e}')
-                    continue
-            
-            self.stdout.write(self.style.SUCCESS(f'✅ Imported {imported} yield records'))
-            
-        except FileNotFoundError:
-            self.stdout.write(self.style.WARNING('⚠️ Yield data file not found, skipping...'))
-        except Exception as e:
-            self.stdout.write(self.style.WARNING(f'⚠️ Error importing yield data: {e}'))
-
-    def calculate_profitability(self):
-        """Calculate profitability from harvest prices and yields"""
-        self.stdout.write('📊 Calculating profitability...')
-        
-        try:
-            # Get all crops with both harvest prices and yield data
-            crops = Crop.objects.filter(
-                harvest_prices__isnull=False,
-                yields__isnull=False
-            ).distinct()
-            
-            imported = 0
-            
-            for crop in crops:
-                # Get all harvest prices and yields
-                harvest_prices = crop.harvest_prices.all().order_by('year')
-                
-                for hp in harvest_prices:
-                    # Find matching yield data for the same year
-                    yield_data = crop.yields.filter(year=hp.year).first()
-                    
-                    if yield_data and hp.price and yield_data.yield_value:
-                        try:
-                            # Calculate profit per acre
-                            price_per_ton = hp.price
-                            yield_tons_per_acre = yield_data.yield_value
-                            profit_per_acre = price_per_ton * yield_tons_per_acre
-                            
-                            # Create or update profitability record
-                            profit, created = Profitability.objects.get_or_create(
-                                crop=crop,
-                                year=hp.year,
-                                defaults={
-                                    'price_per_ton': price_per_ton,
-                                    'yield_tons_per_acre': yield_tons_per_acre,
-                                    'profit_per_acre': profit_per_acre
-                                }
-                            )
-                            
-                            if created:
-                                imported += 1
-                        except Exception as e:
-                            self.stdout.write(f'  ⚠️ Error calculating profit for {crop.name} {hp.year}: {e}')
-            
-            self.stdout.write(self.style.SUCCESS(f'✅ Calculated profitability for {imported} crops'))
-            
-        except Exception as e:
-            self.stdout.write(self.style.WARNING(f'⚠️ Error calculating profitability: {e}'))
+        # 5. Show current database stats
+        self.stdout.write('\n📊 DATABASE STATISTICS:')
+        self.stdout.write(f'  Crops: {Crop.objects.count()}')
+        self.stdout.write(f'  Harvest Prices: {HarvestPrice.objects.count()}')
+        self.stdout.write(f'  Yield Data: {YieldData.objects.count()}')
+        self.stdout.write(f'  Daily Market Prices: {DailyMarketPrice.objects.count()}')
+        self.stdout.write(f'  Profitability Records: {Profitability.objects.count()}')

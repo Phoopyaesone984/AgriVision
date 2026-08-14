@@ -1,6 +1,6 @@
 {% load static %}
 {% load i18n %}
-{% load humanize %} 
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -755,14 +755,13 @@
                 <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
             </a>
             
-            
             <!-- ===== MARKET INTELLIGENCE SECTION ===== -->
             <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
                 {% trans "Market Intelligence" %}
             </div>
             <a href="{% url 'crops:harvest_recommendations' %}" class="nav-item {% block nav_harvest_advisor %}{% endblock %}">
-        <span class="material-symbols-outlined">timeline</span> {% trans "Harvest Advisor" %}
-    </a>
+                <span class="material-symbols-outlined">timeline</span> {% trans "Harvest Advisor" %}
+            </a>
             <a href="{% url 'marketPrice:index' %}" class="nav-item {% block nav_market_dashboard %}{% endblock %}">
                 <span class="material-symbols-outlined">analytics</span> {% trans "Market Dashboard" %}
             </a>
@@ -783,8 +782,8 @@
                 <span class="material-symbols-outlined">compare_arrows</span> {% trans "Compare" %}
             </a>
             <a href="{% url 'marketPrice:recommendations' %}" class="nav-item {% block nav_recommendations %}{% endblock %}">
-    <span class="material-symbols-outlined">lightbulb</span> {% trans "Recommendations" %}
-</a>
+                <span class="material-symbols-outlined">lightbulb</span> {% trans "Recommendations" %}
+            </a>
             <a href="{% url 'marketPrice:regions' %}" class="nav-item {% block nav_regions %}{% endblock %}">
                 <span class="material-symbols-outlined">map</span> {% trans "Regional Data" %}
             </a>
@@ -799,6 +798,11 @@
             <!-- Weather -->
             <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
                 <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
+            </a>
+            
+            <!-- Stock & Sales -->
+            <a href="{% url 'stock:material_list' %}" class="nav-item {% block nav_stock %}{% endblock %}">
+                <span class="material-symbols-outlined">inventory_2</span> {% trans "Stock & Sales" %}
             </a>
             
             <!-- Community -->

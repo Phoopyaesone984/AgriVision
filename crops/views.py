@@ -5,35 +5,40 @@ from django.db.models import Q
 from .models import Crop
 from .forms import CropForm
 from farms.models import Farm
+from decimal import Decimal
+from datetime import date
+from django.db.models import Avg
+from django.utils.translation import gettext as _
+from marketPrice.models import Crop as PriceCrop, HarvestPrice
+
 
 @login_required
 def crop_list(request):
-    farms = Farm.objects.filter(owner=request.user)  # Changed: user -> owner
+    farms = Farm.objects.filter(owner=request.user)
     crops = Crop.objects.filter(farm__in=farms).select_related('farm')
-    
-    # Optional: Add filtering
+
     status_filter = request.GET.get('status')
     if status_filter:
         crops = crops.filter(status=status_filter)
-    
+
     return render(request, 'crops/crop_list.html', {
         'crops': crops,
         'status_filter': status_filter,
     })
 
+
 @login_required
 def crop_create(request):
-    # Check if user has any farms
-    if not Farm.objects.filter(owner=request.user).exists():  # Changed: user -> owner
+    if not Farm.objects.filter(owner=request.user).exists():
         messages.warning(request, 'Please create a farm first before adding crops.')
         return redirect('farms:farm_list')
-    
+
     if request.method == 'POST':
         form = CropForm(request.POST, user=request.user)
         if form.is_valid():
             crop = form.save()
             messages.success(request, f'✅ Crop "{crop.name}" created successfully!')
-            return redirect('crops:crop_list')
+            return redirect('stock:crop_material_plan', pk=crop.pk)
     else:
         form = CropForm(user=request.user)
     
@@ -43,15 +48,25 @@ def crop_create(request):
         'submit_text': 'Create Crop'
     })
 
+
 @login_required
 def crop_edit(request, pk):
-    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)  # Changed: farm__user -> farm__owner
+    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)
     
     if request.method == 'POST':
+        # ✅ Capture old status BEFORE saving
+        old_status = crop.status
+        
         form = CropForm(request.POST, instance=crop, user=request.user)
         if form.is_valid():
             crop = form.save()
             messages.success(request, f'✅ Crop "{crop.name}" updated successfully!')
+
+            # Status just changed to HARVESTED for the first time
+            if old_status != 'HARVESTED' and crop.status == 'HARVESTED':
+                messages.info(request, 'Now log your actual harvest results below.')
+                return redirect('farms:harvest_create', crop_pk=crop.pk)
+
             return redirect('crops:crop_list')
     else:
         form = CropForm(instance=crop, user=request.user)
@@ -63,27 +78,25 @@ def crop_edit(request, pk):
         'crop': crop
     })
 
+
 @login_required
 def crop_delete(request, pk):
-    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)  # Changed: farm__user -> farm__owner
-    
+    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)
+
     if request.method == 'POST':
         crop_name = crop.name
         crop.delete()
         messages.success(request, f'🗑️ Crop "{crop_name}" deleted successfully!')
         return redirect('crops:crop_list')
-    
+
     return render(request, 'crops/crop_confirm_delete.html', {'crop': crop})
+
 
 @login_required
 def crop_detail(request, pk):
-    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)  # Changed: farm__user -> farm__owner
+    crop = get_object_or_404(Crop, pk=pk, farm__owner=request.user)
     return render(request, 'crops/crop_detail.html', {'crop': crop})
-from decimal import Decimal
-from datetime import date
-from django.db.models import Avg
-from django.utils.translation import gettext as _  # <-- Import this!
-from marketPrice.models import Crop as PriceCrop, HarvestPrice
+
 
 @login_required
 def harvest_recommendations(request):
@@ -119,8 +132,8 @@ def harvest_recommendations(request):
         if prices.count() < 2:
             recommendations.append({
                 'crop': crop,
-                'crop_name_translated': _(crop.name),  # <-- Translate crop name
-                'farm_name_translated': _(crop.farm.name),  # <-- Translate farm name
+                'crop_name_translated': _(crop.name),
+                'farm_name_translated': _(crop.farm.name),
                 'recommendation': 'N/A',
                 'current_price_viss': 0,
                 'avg_price_viss': 0,
@@ -167,12 +180,12 @@ def harvest_recommendations(request):
         
         recommendations.append({
             'crop': crop,
-            'crop_name_translated': _(crop.name),          # <-- Translated name
-            'farm_name_translated': _(crop.farm.name),      # <-- Translated farm
+            'crop_name_translated': _(crop.name),
+            'farm_name_translated': _(crop.farm.name),
             'recommendation': recommendation,
             'current_price_viss': current_market_price,
             'target_price_viss': peak_market_price,
-            'best_sell_month': best_sell_month,             # <-- Translated month
+            'best_sell_month': best_sell_month,
             'days_to_harvest': days_to_harvest,
         })
     
@@ -184,13 +197,13 @@ def harvest_recommendations(request):
     }
     return render(request, 'crops/harvest_recommendations.html', context)
 
+
 @login_required
 def crop_growth_advisor(request):
     """Display crops with actionable advice based on planting vs harvest dates."""
     farms = Farm.objects.filter(owner=request.user)
     crops = Crop.objects.filter(farm__in=farms, is_active=True).select_related('farm')
     
-    from datetime import date
     advisor_data = []
     
     for crop in crops:

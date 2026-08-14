@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Stock & Sales" %} | AgriVision{% endblock %}
+{% block nav_stock %}active{% endblock %}
+{% block page_title %}{% trans "Stock & Sales" %}{% endblock %}
+
+{% block extra_css %}
+    .stock-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .tab-link {
+        padding: 10px 18px; font-size: 13.5px; font-weight: 600;
+        color: var(--ink-soft); text-decoration: none; border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+    .tab-link:hover { color: var(--ink); }
+    .tab-link.active { color: var(--mint-deep); border-bottom-color: var(--mint-deep); }
+
+    .summary-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .summary-pill {
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card); padding: 14px 20px; flex: 1; min-width: 160px;
+    }
+    .summary-pill .label { font-size: 12px; color: var(--ink-faint); }
+    .summary-pill .value { font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+    .summary-pill.rose .value { color: var(--rose-ink); }
+
+    .data-card {
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+        padding: 20px; margin-bottom: 14px;
+    }
+    .data-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .data-card-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .data-card-sub { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; }
+    .badge-low { background: var(--rose-bg); color: var(--rose-ink); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+    .badge-ok { background: #ddf3ea; color: var(--mint-deep); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+
+    .data-card-stats { display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap; }
+    .stat-mini .label { font-size: 11.5px; color: var(--ink-faint); }
+    .stat-mini .value { font-size: 16px; font-weight: 700; color: var(--ink); }
+
+    .view-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--mint-deep); text-decoration: none;
+    }
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--ink-faint); }
+{% endblock %}
+
+{% block app_content %}
+<div class="stock-tabs">
+    <a href="{% url 'stock:material_list' %}" class="tab-link {% if active_tab == 'materials' %}active{% endif %}">
+        {% trans "Materials" %}
+    </a>
+    <a href="{% url 'stock:material_stock' %}" class="tab-link {% if active_tab == 'material_stock' %}active{% endif %}">
+        {% trans "Material Stock" %}
+    </a>
+    <a href="{% url 'stock:demand_planning' %}" class="tab-link {% if active_tab == 'demand' %}active{% endif %}">
+        {% trans "Demand Planning" %}
+    </a>
+    <a href="{% url 'stock:stock_list' %}" class="tab-link {% if active_tab == 'stock' %}active{% endif %}">
+        {% trans "Harvest Stock" %}
+    </a>
+</div>
+
+<div class="summary-row">
+    <div class="summary-pill {% if low_stock_count > 0 %}rose{% endif %}">
+        <div class="label">{% trans "Low Stock Alerts" %}</div>
+        <div class="value">{{ low_stock_count }}</div>
+    </div>
+    <div class="summary-pill">
+        <div class="label">{% trans "Total Harvests Tracked" %}</div>
+        <div class="value">{{ harvests|length }}</div>
+    </div>
+</div>
+
+{% for h in harvests %}
+    <div class="data-card">
+        <div class="data-card-head">
+            <div>
+                <div class="data-card-title">{{ h.crop.name }} <span style="font-weight:400; color:var(--ink-faint);">· {{ h.crop.farm.name }}</span></div>
+                <div class="data-card-sub">{% trans "Harvested" %} {{ h.harvest_date }} · {{ h.quantity_tonnes }}t</div>
+            </div>
+            {% if h.is_low_stock %}
+                <span class="badge-low">{% trans "Low Stock" %}</span>
+            {% else %}
+                <span class="badge-ok">{% trans "OK" %}</span>
+            {% endif %}
+        </div>
+
+        <div class="data-card-stats">
+            <div class="stat-mini"><div class="label">{% trans "Remaining" %}</div><div class="value">{{ h.remaining_stock }}t</div></div>
+            <div class="stat-mini"><div class="label">{% trans "Sold" %}</div><div class="value">{{ h.sold_quantity }}t</div></div>
+            <div class="stat-mini"><div class="label">{% trans "Revenue" %}</div><div class="value">{{ h.total_revenue }}</div></div>
+        </div>
+
+        <a href="{% url 'stock:harvest_detail' h.pk %}" class="view-link">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span> {% trans "Manage Stock" %}
+        </a>
+    </div>
+{% empty %}
+    <div class="empty-state">
+        <span class="material-symbols-outlined" style="font-size:36px; display:block; margin-bottom:8px;">inventory_2</span>
+        {% trans "No harvests logged yet. Add a harvest under Farm Management first." %}
+    </div>
+{% endfor %}
+{% endblock %}

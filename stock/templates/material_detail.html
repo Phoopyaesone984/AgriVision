@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ material.name }} | AgriVision{% endblock %}
+{% block nav_stock %}active{% endblock %}
+{% block page_title %}{% trans "Material Detail" %}{% endblock %}
+
+{% block extra_css %}
+    .back-link { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-soft); font-size: 13.5px; text-decoration: none; margin-bottom: 16px; }
+    .back-link:hover { color: var(--ink); }
+
+    .summary-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .summary-pill { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 14px 20px; flex: 1; min-width: 140px; }
+    .summary-pill .label { font-size: 12px; color: var(--ink-faint); }
+    .summary-pill .value { font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+    .panel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px; margin-bottom: 20px; }
+    .panel-card h3 { font-size: 15.5px; font-weight: 700; margin: 0 0 14px; color: var(--ink); }
+
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        margin-bottom: 4px;
+        margin-top: 2px;
+    }
+
+    .field-input, .field-select, .field-textarea {
+        width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+        padding: 9px 12px; font-family: inherit; font-size: 13.5px; color: var(--ink);
+        background: var(--bg-page); outline: none; margin-bottom: 10px;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--mint-deep); }
+    .btn-mint { display: inline-flex; align-items: center; gap: 8px; border: none; border-radius: 50px; padding: 9px 22px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--mint); color: var(--mint-deep); }
+    .btn-mint:hover { opacity: 0.9; }
+    .btn-danger { background: var(--rose-bg); color: var(--rose-ink); }
+
+    table.txn-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.txn-table th { text-align: left; color: var(--ink-faint); font-weight: 600; padding: 8px; border-bottom: 1px solid var(--border); font-size: 11.5px; text-transform: uppercase; }
+    table.txn-table td { padding: 8px; border-bottom: 1px solid var(--border); color: var(--ink); }
+    .del-btn { background: none; border: none; color: var(--ink-faint); cursor: pointer; }
+    .del-btn:hover { color: var(--rose-ink); }
+{% endblock %}
+
+{% block app_content %}
+<a href="{% url 'stock:material_stock' %}" class="back-link">
+    <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> {% trans "Back to Materials" %}
+</a>
+
+<div class="summary-row">
+    <div class="summary-pill"><div class="label">{% trans "Material" %}</div><div class="value">{{ material.name }}</div></div>
+    <div class="summary-pill"><div class="label">{% trans "On Hand" %}</div><div class="value">{{ material.quantity_on_hand }} {{ material.unit }}</div></div>
+    <div class="summary-pill"><div class="label">{% trans "Latest Cost/Unit" %}</div><div class="value">{{ material.latest_cost_per_unit }}</div></div>
+</div>
+<div class="panel-card">
+    <h3>{% trans "Low Stock Alert" %}</h3>
+    <p style="font-size:12.5px; color:var(--ink-faint); margin-top:-8px; margin-bottom:14px;">
+        {% trans "Get flagged when this material's stock drops to or below this amount." %}
+        {% if material.reorder_threshold > 0 %}
+            {% trans "Current threshold:" %} <strong>{{ material.reorder_threshold }} {{ material.unit }}</strong>
+        {% else %}
+            {% trans "No threshold set \u2014 low stock alerts are off for this material." %}
+        {% endif %}
+    </p>
+    <form method="post" style="display:flex; gap:10px; align-items:flex-start;">
+        {% csrf_token %}
+        <div style="flex:1;">
+            <label class="field-label">{% trans "Threshold" %} ({{ material.unit }})</label>
+            {{ threshold_form.reorder_threshold }}
+        </div>
+        <button type="submit" name="update_threshold" class="btn-mint" style="margin-top:22px;">{% trans "Save" %}</button>
+    </form>
+</div>
+
+<form method="post" action="{% url 'stock:delete_material' material.pk %}" onsubmit="return confirm('{% trans "Delete this material and all its history? This cannot be undone." %}');" style="margin-bottom:20px;">
+    {% csrf_token %}
+    <button type="submit" class="btn-mint btn-danger">{% trans "Delete Material" %}</button>
+</form>
+
+<div class="two-col">
+    <div class="panel-card">
+        <h3>{% trans "Log Purchase" %}</h3>
+        <form method="post">
+            {% csrf_token %}
+
+            <label class="field-label">{% trans "Quantity" %}</label>
+            {{ purchase_form.quantity }}
+
+            <label class="field-label">{% trans "Cost per Unit (MMK)" %}</label>
+            {{ purchase_form.cost_per_unit }}
+
+            <label class="field-label">{% trans "Supplier" %}</label>
+            {{ purchase_form.supplier }}
+
+            <label class="field-label">{% trans "Purchase Date" %}</label>
+            {{ purchase_form.purchase_date }}
+
+            <label class="field-label">{% trans "Notes" %}</label>
+            {{ purchase_form.notes }}
+
+            <button type="submit" name="log_purchase" class="btn-mint">{% trans "Add Purchase" %}</button>
+        </form>
+    </div>
+
+    <div class="panel-card">
+        <h3>{% trans "Log Usage" %}</h3>
+        <form method="post">
+            {% csrf_token %}
+
+            <label class="field-label">{% trans "Which Crop" %}</label>
+            {{ usage_form.crop }}
+
+            <label class="field-label">{% trans "Quantity Used" %}</label>
+            {{ usage_form.quantity_used }}
+
+            <label class="field-label">{% trans "Usage Date" %}</label>
+            {{ usage_form.usage_date }}
+
+            <label class="field-label">{% trans "Notes" %}</label>
+            {{ usage_form.notes }}
+
+            {% if usage_form.quantity_used.errors %}<p style="color:var(--rose-ink); font-size:12.5px;">{{ usage_form.quantity_used.errors }}</p>{% endif %}
+            <button type="submit" name="log_usage" class="btn-mint">{% trans "Log Usage" %}</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3>{% trans "Purchase History" %}</h3>
+    {% if purchases %}
+    <table class="txn-table">
+        <thead><tr><th>{% trans "Qty" %}</th><th>{% trans "Cost/Unit" %}</th><th>{% trans "Total" %}</th><th>{% trans "Supplier" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
+        <tbody>
+            {% for p in purchases %}
+            <tr>
+                <td>{{ p.quantity }}</td><td>{{ p.cost_per_unit }}</td><td>{{ p.total_cost }}</td>
+                <td>{{ p.supplier|default:"—" }}</td><td>{{ p.purchase_date }}</td>
+                <td>
+                    <form method="post" action="{% url 'stock:delete_purchase' p.pk %}" onsubmit="return confirm('{% trans "Delete this purchase?" %}');">
+                        {% csrf_token %}
+                        <button type="submit" class="del-btn"><span class="material-symbols-outlined" style="font-size:18px;">delete</span></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<p style="color:var(--ink-faint); font-size:13.5px;">{% trans "No purchases yet." %}</p>{% endif %}
+</div>
+
+<div class="panel-card">
+    <h3>{% trans "Usage History" %}</h3>
+    {% if usages %}
+    <table class="txn-table">
+        <thead><tr><th>{% trans "Crop" %}</th><th>{% trans "Qty" %}</th><th>{% trans "Cost" %}</th><th>{% trans "Date" %}</th><th></th></tr></thead>
+        <tbody>
+            {% for u in usages %}
+            <tr>
+                <td>{{ u.crop.name }}</td><td>{{ u.quantity_used }}</td><td>{{ u.total_cost }}</td><td>{{ u.usage_date }}</td>
+                <td>
+                    <form method="post" action="{% url 'stock:delete_usage' u.pk %}" onsubmit="return confirm('{% trans "Delete this usage record?" %}');">
+                        {% csrf_token %}
+                        <button type="submit" class="del-btn"><span class="material-symbols-outlined" style="font-size:18px;">delete</span></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<p style="color:var(--ink-faint); font-size:13.5px;">{% trans "No usage logged yet." %}</p>{% endif %}
+</div>
+{% endblock %}

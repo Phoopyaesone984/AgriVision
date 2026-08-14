@@ -89,6 +89,45 @@ class Harvest(models.Model):
     class Meta:
         ordering = ['-harvest_date']
 
+    @property
+    def sold_quantity(self):
+        total = self.transactions.filter(transaction_type="sell").aggregate(
+            total=models.Sum("quantity_tonnes")
+        )["total"]
+        return total or Decimal("0")
+
+    @property
+    def used_or_wasted_quantity(self):
+        total = self.transactions.filter(transaction_type__in=["use", "waste"]).aggregate(
+            total=models.Sum("quantity_tonnes")
+        )["total"]
+        return total or Decimal("0")
+
+    @property
+    def restocked_quantity(self):
+        total = self.transactions.filter(transaction_type="restock").aggregate(
+            total=models.Sum("quantity_tonnes")
+        )["total"]
+        return total or Decimal("0")
+
+    @property
+    def remaining_stock(self):
+        return self.quantity_tonnes + self.restocked_quantity - self.sold_quantity - self.used_or_wasted_quantity
+
+    @property
+    def total_revenue(self):
+        total = Decimal("0")
+        for t in self.transactions.filter(transaction_type="sell"):
+            total += t.total_value
+        return total
+
+    @property
+    def is_low_stock(self):
+        setting = getattr(self, "alert_setting", None)
+        if not setting or setting.low_stock_threshold_tonnes <= 0:
+            return False
+        return self.remaining_stock <= setting.low_stock_threshold_tonnes
+
 # Add these models at the bottom of farms/models.py
 
 class MarketPrice(models.Model):
