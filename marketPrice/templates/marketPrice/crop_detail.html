@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %}{{ crop.name }} - AgriVision{% endblock %}
+{% block nav_market_crops %}active{% endblock %}
+{% block page_title %}{{ crop.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+.text-accent {
+    color: var(--accent-green);
+}
+
+.price-up { color: #28a745; }
+.price-down { color: #dc3545; }
+.price-stable { color: #6c757d; }
+
+.viss-unit {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+@media (max-width: 768px) {
+    .chart-container { height: 200px; }
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<!-- Breadcrumbs & Action Buttons -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'marketPrice:crop_list' %}">{% trans "Crops" %}</a></li>
+                <li class="breadcrumb-item active">{{ crop.name }}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-4 text-end d-flex justify-content-end gap-2">
+        <a href="{% url 'crops:harvest_recommendations' %}" class="btn btn-outline-success btn-sm">
+            <i class="bi bi-clock-history me-1"></i> {% trans "Back to Advisor" %}
+        </a>
+        <a href="{% url 'marketPrice:compare' %}?crops={{ crop.id }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left-right me-1"></i> {% trans "Compare" %}
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards (Converted to Ks / Viss) -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">{% trans "Latest Price" %}</h6>
+                <h3 class="mb-0 text-accent">
+                    {% if stats.latest_price %}
+                        {{ stats.latest_price|floatformat:0|intcomma }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </h3>
+                <small class="text-muted">
+                    {{ latest_harvest.year|default:"" }}
+                    <span class="viss-unit">Ks / Viss</span>
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">{% trans "Average Price" %}</h6>
+                <h3 class="mb-0">{{ stats.avg_price|floatformat:0|intcomma|default:"N/A" }}</h3>
+                <small class="text-muted">
+                    {% trans "All years" %}
+                    <span class="viss-unit">Ks / Viss</span>
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">{% trans "Price Range" %}</h6>
+                <h3 class="mb-0">
+                    {{ stats.min_price|floatformat:0|intcomma|default:"N/A" }} - {{ stats.max_price|floatformat:0|intcomma|default:"N/A" }}
+                </h3>
+                <small class="text-muted">
+                    {% trans "Min - Max" %}
+                    <span class="viss-unit">Ks / Viss</span>
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">{% trans "Category" %}</h6>
+                <h4 class="mb-0">{{ crop.category|default:"Uncategorized" }}</h4>
+                <small class="text-muted">{{ crop.unit|default:"Ton" }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    {% if has_harvest_data %}
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>{% trans "Harvest Price Trend" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="harvestChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if has_daily_data %}
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>{% trans "Daily Market Prices (30 Days)" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="dailyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% if has_yield_data %}
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-tree me-2"></i>{% trans "Yield Data" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="yieldChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if has_profit_data %}
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-coin me-2"></i>{% trans "Profitability Trend" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="profitChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Historical Price Table (Viss Converted & Change Fixed) -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-table me-2"></i>{% trans "Historical Harvest Prices" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Year" %}</th>
+                                <th class="text-end">{% trans "Price (Ks / Viss)" %}</th>
+                                <th class="text-end">{% trans "Change" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in table_data %}
+                            <tr>
+                                <td><strong>{{ item.year }}</strong></td>
+                                <td class="text-end fw-bold">
+                                    {{ item.price_viss|floatformat:0|intcomma }}
+                                </td>
+                                <td class="text-end">
+                                    {% if forloop.counter0 > 0 %}
+                                        <span class="{% if item.change_viss > 0 %}price-up{% else %}price-down{% endif %}">
+                                            {% if item.change_viss > 0 %}+{% endif %}{{ item.change_viss|floatformat:0|intcomma }}
+                                        </span>
+                                    {% else %}
+                                        <span class="price-stable">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                                    {% trans "No harvest price data available" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Harvest Price Chart
+    {% if has_harvest_data %}
+    const harvestCtx = document.getElementById('harvestChart').getContext('2d');
+    new Chart(harvestCtx, {
+        type: 'line',
+        data: {
+            labels: {{ harvest_years|safe }},
+            datasets: [{
+                label: '{% trans "Price (Ks / Viss)" %}',
+                data: {{ harvest_values|safe }},
+                borderColor: '#2e7d32',
+                backgroundColor: 'rgba(46,125,50,0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toLocaleString() + ' Ks / Viss';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+    {% endif %}
+    
+    // Daily Price Chart
+    {% if has_daily_data %}
+    const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+    new Chart(dailyCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ daily_dates|safe }},
+            datasets: [{
+                label: '{% trans "Daily Price" %}',
+                data: {{ daily_values|safe }},
+                backgroundColor: 'rgba(46,125,50,0.6)',
+                borderColor: '#2e7d32',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toLocaleString() + ' Ks / Viss';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+    {% endif %}
+    
+    // Yield Chart
+    {% if has_yield_data %}
+    const yieldCtx = document.getElementById('yieldChart').getContext('2d');
+    new Chart(yieldCtx, {
+        type: 'line',
+        data: {
+            labels: {{ yield_years|safe }},
+            datasets: [{
+                label: '{% trans "Yield per Acre" %}',
+                data: {{ yield_values|safe }},
+                borderColor: '#ff9800',
+                backgroundColor: 'rgba(255,152,0,0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+    {% endif %}
+    
+    // Profitability Chart
+    {% if has_profit_data %}
+    const profitCtx = document.getElementById('profitChart').getContext('2d');
+    new Chart(profitCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ profit_years|safe }},
+            datasets: [{
+                label: '{% trans "Profit per Acre" %}',
+                data: {{ profit_values|safe }},
+                backgroundColor: 'rgba(46,125,50,0.6)',
+                borderColor: '#2e7d32',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

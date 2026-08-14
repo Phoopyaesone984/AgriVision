@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Market Dashboard" %} - AgriVision{% endblock %}
+{% block nav_market_dashboard %}active{% endblock %}
+{% block page_title %}{% trans "Market Intelligence Dashboard" %}{{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ===== Stats Cards ===== */
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+}
+
+.stat-card .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.stat-card .stat-icon.green { background: rgba(46, 125, 50, 0.12); color: #2e7d32; }
+.stat-card .stat-icon.blue { background: rgba(13, 110, 253, 0.12); color: #0d6efd; }
+.stat-card .stat-icon.orange { background: rgba(255, 152, 0, 0.12); color: #ff9800; }
+.stat-card .stat-icon.purple { background: rgba(156, 39, 176, 0.12); color: #9c27b0; }
+
+[data-theme="dark"] .stat-card .stat-icon.green { background: rgba(46, 125, 50, 0.25); }
+[data-theme="dark"] .stat-card .stat-icon.blue { background: rgba(13, 110, 253, 0.25); }
+[data-theme="dark"] .stat-card .stat-icon.orange { background: rgba(255, 152, 0, 0.25); }
+[data-theme="dark"] .stat-card .stat-icon.purple { background: rgba(156, 39, 176, 0.25); }
+
+.stat-card .stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 2px;
+}
+
+.stat-card .stat-label {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* ===== Chart Containers ===== */
+.chart-wrapper {
+    position: relative;
+    height: 260px;
+    width: 100%;
+}
+
+.chart-wrapper-sm {
+    height: 220px;
+}
+
+/* ===== Table Styles ===== */
+.table-crop {
+    margin-bottom: 0;
+}
+
+.table-crop th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink-faint);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem;
+    background: transparent;
+}
+
+.table-crop td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+}
+
+.table-crop tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-crop .crop-name {
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.table-crop .crop-sub {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-top: 1px;
+}
+
+.table-crop .price {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.table-crop .badge-cat {
+    font-size: 0.65rem;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: var(--bg-glass);
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    font-weight: 500;
+}
+
+/* ===== Card Headers ===== */
+.card-header-clean {
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+}
+
+.card-header-clean h5 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+}
+
+.card-header-clean h5 i {
+    color: var(--accent-green);
+    margin-right: 0.5rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .stat-card .stat-number { font-size: 1.25rem; }
+    .stat-card { padding: 1rem; }
+    .chart-wrapper { height: 200px; }
+    .chart-wrapper-sm { height: 180px; }
+}
+</style>
+{% endblock %}
+
+{% block app_content %}
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bi bi-seedling"></i>
+            </div>
+            <div>
+                <div class="stat-number">{{ total_crops }}</div>
+                <div class="stat-label">{% trans "Total Crops" %}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="bi bi-shop"></i>
+            </div>
+            <div>
+                <div class="stat-number">{{ total_markets }}</div>
+                <div class="stat-label">{% trans "Markets Tracked" %}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <div>
+                <div class="stat-number">{{ total_commodities }}</div>
+                <div class="stat-label">{% trans "Active Commodities" %}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="bi bi-calendar3"></i>
+            </div>
+            <div>
+                <div class="stat-number" style="font-size: 0.9rem; font-weight: 600;">{{ latest_date|date:"M d, Y"|default:"N/A" }}</div>
+                <div class="stat-label">{% trans "Latest Price Update" %}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0" style="background: var(--bg-card); border-color: var(--border) !important;">
+            <div class="card-header-clean">
+                <h5><i class="bi bi-graph-up-arrow"></i>{% trans "Top Crop Price Trends" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="priceTrendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0" style="background: var(--bg-card); border-color: var(--border) !important;">
+            <div class="card-header-clean">
+                <h5><i class="bi bi-pie-chart"></i>{% trans "Crop Categories" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrapper-sm">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Prices Row -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0" style="background: var(--bg-card); border-color: var(--border) !important;">
+            <div class="card-header-clean d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-trophy"></i>{% trans "Top Harvest Prices" %} <span class="text-muted fw-normal" style="font-size:0.7rem;">({{ latest_year }})</span></h5>
+                <a href="{% url 'marketPrice:crop_list' %}" class="text-decoration-none small fw-medium" style="color: var(--accent-green);">
+                    {% trans "View all" %} <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-crop">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>{% trans "Crop" %}</th>
+                                <th class="text-end">{% trans "Price (Ks)" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in top_harvest_prices %}
+                            <tr>
+                                <td style="color:var(--ink-faint);font-size:0.8rem;">{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{% url 'marketPrice:crop_detail' item.id %}" class="text-decoration-none crop-name">
+                                        <!-- ✅ Uses the Burmese translation passed from the View -->
+                                        {{ item.name_translated }}
+                                        <span class="crop-sub">{{ item.name_original }}</span>
+                                    </a>
+                                </td>
+                                <td class="text-end price">{{ item.price|floatformat:0 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center py-4 text-muted">{% trans "No harvest data available" %}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0" style="background: var(--bg-card); border-color: var(--border) !important;">
+            <div class="card-header-clean d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-tag"></i>{% trans "Top Daily Prices" %}</h5>
+                <span class="text-muted small fw-medium">{{ latest_date|date:"M d, Y" }}</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-crop">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>{% trans "Commodity" %}</th>
+                                <th>{% trans "Category" %}</th>
+                                <th class="text-end">{% trans "Price (Ks)" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in top_daily_prices %}
+                            <tr>
+                                <td style="color:var(--ink-faint);font-size:0.8rem;">{{ forloop.counter }}</td>
+                                <!-- ✅ Uses the Burmese commodity translation passed from the View -->
+                                <td class="crop-name">{{ item.commodity_translated }}</td>
+                                <!-- ✅ Uses the Burmese category translation passed from the View -->
+                                <td><span class="badge-cat">{{ item.category_translated }}</span></td>
+                                <td class="text-end price">{{ item.price|floatformat:0 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center py-4 text-muted">{% trans "No daily market data available" %}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Price Trends Chart
+    const priceData = {{ price_trends|safe }};
+    const years = {{ years_list|safe }};
+    
+    if (Object.keys(priceData).length > 0) {
+        const ctx = document.getElementById('priceTrendsChart').getContext('2d');
+        const colors = ['#2e7d32', '#4caf50', '#ff9800', '#f44336', '#2196f3', '#9c27b0', '#00bcd4'];
+        
+        const datasets = Object.keys(priceData).slice(0, 6).map((crop, index) => ({
+            label: crop,
+            data: priceData[crop],
+            borderColor: colors[index % colors.length],
+            backgroundColor: colors[index % colors.length] + '15',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+        }));
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: { labels: years, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: { size: 10, family: "'Inter', sans-serif" },
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--ink-soft').trim() || '#6c757d'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false },
+                        ticks: { font: { size: 10 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10 } }
+                    }
+                },
+                interaction: { intersect: false, mode: 'index' }
+            }
+        });
+    }
+    
+    // Category Chart
+    const categoryLabels = {{ category_labels|safe }};
+    const categoryCounts = {{ category_counts|safe }};
+    
+    if (categoryLabels.length > 0) {
+        const ctx2 = document.getElementById('categoryChart').getContext('2d');
+        const colors = ['#2e7d32', '#4caf50', '#ff9800', '#f44336', '#2196f3', '#9c27b0', '#00bcd4', '#ffeb3b'];
+        
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    data: categoryCounts,
+                    backgroundColor: colors.slice(0, categoryLabels.length),
+                    borderWidth: 2,
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                            padding: 8,
+                            font: { size: 9, family: "'Inter', sans-serif" },
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--ink-soft').trim() || '#6c757d'
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
