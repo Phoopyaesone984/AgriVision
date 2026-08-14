@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} | AgriVision{% endblock %}
+{% block page_title %}{% trans "Log Harvest" %}{% endblock %}
+
+{% block extra_css %}
+    .back-link { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-soft); font-size: 13.5px; text-decoration: none; margin-bottom: 16px; }
+    .back-link:hover { color: var(--ink); }
+
+    .summary-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .summary-pill {
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card); padding: 14px 20px; flex: 1; min-width: 140px;
+    }
+    .summary-pill .label { font-size: 12px; color: var(--ink-faint); }
+    .summary-pill .value { font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+
+    .panel-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px; margin-bottom: 20px; max-width: 520px; }
+    .panel-card h3 { font-size: 15.5px; font-weight: 700; margin: 0 0 4px; color: var(--ink); }
+    .panel-card .sub { font-size: 12.5px; color: var(--ink-faint); margin-bottom: 14px; }
+
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        margin-bottom: 4px;
+        margin-top: 2px;
+    }
+
+    .field-input, .field-select, .field-textarea {
+        width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+        padding: 9px 12px; font-family: inherit; font-size: 13.5px; color: var(--ink);
+        background: var(--bg-page); outline: none; margin-bottom: 10px;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--mint-deep); }
+
+    .form-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .btn-mint {
+        display: inline-flex; align-items: center; gap: 8px; border: none; border-radius: 50px;
+        padding: 9px 22px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+        background: var(--mint); color: var(--mint-deep);
+    }
+    .btn-mint:hover { opacity: 0.9; }
+    .btn-outline {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--bg-card); border: 1.5px solid var(--border); color: var(--ink);
+        border-radius: 50px; padding: 9px 18px; font-size: 13.5px; font-weight: 600;
+        cursor: pointer; text-decoration: none;
+    }
+    .btn-outline:hover { background: rgba(20,32,24,0.04); }
+{% endblock %}
+
+{% block app_content %}
+<a href="{% url 'crops:crop_detail' crop.pk %}" class="back-link">
+    <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> {% trans "Back to Crop" %}
+</a>
+
+<div class="summary-row">
+    <div class="summary-pill"><div class="label">{% trans "Crop" %}</div><div class="value">{{ crop.name }}</div></div>
+    <div class="summary-pill"><div class="label">{% trans "Farm" %}</div><div class="value">{{ crop.farm.name }}</div></div>
+    <div class="summary-pill"><div class="label">{% trans "Area" %}</div><div class="value">{{ crop.area_acres }} {% trans "acres" %}</div></div>
+</div>
+
+<div class="panel-card">
+    <h3>{{ title }}</h3>
+    <div class="sub">{% trans "Enter the real harvest results \u2014 this creates a Harvest record you can track under Stock & Sales." %}</div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label class="field-label">{% trans "Harvest Date" %}</label>
+        {{ form.harvest_date }}
+        {% if form.harvest_date.errors %}<p style="color:var(--rose-ink); font-size:12.5px; margin-top:-6px;">{{ form.harvest_date.errors }}</p>{% endif %}
+
+        <label class="field-label">{% trans "Quantity (Tonnes)" %}</label>
+        {{ form.quantity_tonnes }}
+        {% if form.quantity_tonnes.errors %}<p style="color:var(--rose-ink); font-size:12.5px; margin-top:-6px;">{{ form.quantity_tonnes.errors }}</p>{% endif %}
+
+        <label class="field-label">{% trans "Quality Grade" %}</label>
+        {{ form.quality_grade }}
+
+        <label class="field-label">{% trans "Notes" %}</label>
+        {{ form.notes }}
+
+        <div class="form-actions">
+            <button type="submit" class="btn-mint">{{ button_text|default:"Save Harvest" }}</button>
+            <a href="{% url 'crops:crop_detail' crop.pk %}" class="btn-outline">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

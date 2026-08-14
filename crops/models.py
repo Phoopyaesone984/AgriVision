@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from decimal import Decimal
 # Don't import Farm directly - use string reference
 
 class Crop(models.Model):
@@ -42,3 +43,15 @@ class Crop(models.Model):
     
     def get_absolute_url(self):
         return reverse('crops:crop_detail', kwargs={'pk': self.pk})
+
+    @property
+    def total_material_cost(self):
+        return sum((u.total_cost for u in self.material_usages.all()), Decimal("0"))
+
+    @property
+    def total_harvest_revenue(self):
+        return sum((h.total_revenue for h in self.harvests.all()), Decimal("0"))
+
+    @property
+    def net_profit(self):
+        return self.total_harvest_revenue - self.total_material_cost

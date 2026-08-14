@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'weather',
     'community',
     'marketPrice',
+    'stock',
 ]
 
 MIDDLEWARE = [

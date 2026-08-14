@@ -3,18 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
 from django.utils import timezone
-from .models import Farm, Activity, SoilReading, MarketPrice, PriceAlert, MarketNews
+from .models import Farm, Activity, SoilReading, MarketPrice, PriceAlert, MarketNews,UserProfile
 from crops.models import Crop
 from .forms import FarmForm, ActivityForm
-from .services.market_price import MarketPriceService
+
 
 # Import weather service
 from weather.services import WeatherService
 
 
-# ============================================================
-# DASHBOARD VIEW
-# ============================================================
 @login_required
 def dashboard(request):
     """Main dashboard with real data from database"""
@@ -242,7 +239,31 @@ def farm_delete(request, pk):
     
     return render(request, 'farm_confirm_delete.html', {'farm': farm})
 
+from .forms import FarmForm, ActivityForm, HarvestForm  # add HarvestForm here
 
+
+@login_required
+def harvest_create(request, crop_pk):
+    """Log a harvest for a specific crop — triggered when crop status becomes HARVESTED."""
+    crop = get_object_or_404(Crop, pk=crop_pk, farm__owner=request.user)
+
+    if request.method == 'POST':
+        form = HarvestForm(request.POST)
+        if form.is_valid():
+            harvest = form.save(commit=False)
+            harvest.crop = crop
+            harvest.save()
+            messages.success(request, f'✅ Harvest logged for "{crop.name}"! Track it under Stock & Sales.')
+            return redirect('stock:harvest_detail', pk=harvest.pk)
+    else:
+        form = HarvestForm(initial={'harvest_date': timezone.now().date()})
+
+    return render(request, 'harvest_form.html', {
+        'form': form,
+        'crop': crop,
+        'title': f'Log Harvest: {crop.name}',
+        'button_text': 'Save Harvest',
+    })
 # ============================================================
 # ACTIVITY/TASK MANAGEMENT VIEWS
 # ============================================================
