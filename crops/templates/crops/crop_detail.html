@@ -1,3 +1,4 @@
+```html
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
@@ -5,72 +6,1192 @@
 {% block nav_crops %}active{% endblock %}
 {% block page_title %}{{ crop.name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+
+/* =========================================================
+   CROP DETAIL PAGE
+   ========================================================= */
+
+.crop-detail-page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-bottom: 4rem;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.crop-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.crop-header .title-section {
+    min-width: 0;
+}
+
+.crop-header .title-section h2 {
+    margin: 0 0 0.45rem;
+
+    color: var(--ink);
+
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.crop-header .title-section .subtitle {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+
+    color: var(--ink-faint);
+    font-size: 0.82rem;
+}
+
+.crop-header .title-section .subtitle i {
+    color: var(--accent-green);
+}
+
+.crop-header .title-section .subtitle strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.crop-header .separator {
+    color: var(--border);
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.action-btn-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.action-btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+
+    min-height: 40px;
+
+    padding: 0.5rem 0.95rem;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.action-btn-group .btn .material-symbols-outlined {
+    font-size: 17px;
+}
+
+.action-btn-group .btn-success {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: #fff;
+}
+
+.action-btn-group .btn-success:hover {
+    background: #1b5e20;
+    border-color: #1b5e20;
+
+    transform: translateY(-1px);
+
+    box-shadow: var(--shadow-soft);
+}
+
+.action-btn-group .btn-outline-success:hover,
+.action-btn-group .btn-outline-warning:hover,
+.action-btn-group .btn-outline-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.crop-detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(270px, 0.85fr);
+
+    gap: 2rem;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   GENERAL CARD
+   ========================================================= */
+
+.info-card,
+.sidebar-card {
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+}
+
+.info-card {
+    padding: 1.75rem 1.75rem;
+    margin-bottom: 1.5rem;
+
+    transition:
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.info-card:hover,
+.sidebar-card:hover {
+    border-color: rgba(46, 125, 50, 0.16);
+    box-shadow: var(--shadow-soft);
+}
+
+
+/* =========================================================
+   SECTION HEADERS
+   ========================================================= */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 1.5rem;
+}
+
+.section-heading .heading-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.section-heading .heading-icon {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    color: var(--accent-green);
+    background: rgba(46, 125, 50, 0.08);
+
+    font-size: 0.9rem;
+}
+
+.section-heading h5 {
+    margin: 0;
+
+    color: var(--ink);
+
+    font-size: 0.92rem;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   CROP INFORMATION
+   ========================================================= */
+
+.info-card .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    column-gap: 3rem;
+    row-gap: 0;
+}
+
+.info-card .info-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    min-height: 52px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.info-card .info-item:nth-last-child(-n + 2) {
+    border-bottom: none;
+}
+
+.info-card .info-item .label {
+    color: var(--ink-faint);
+
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.info-card .info-item .value {
+    color: var(--ink);
+
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 62px;
+
+    padding: 0.3rem 0.7rem;
+
+    border-radius: 50px;
+
+    font-size: 0.65rem;
+    font-weight: 650;
+}
+
+.bg-success-soft {
+    background: rgba(46, 125, 50, 0.10);
+    color: #2e7d32;
+}
+
+.bg-warning-soft {
+    background: rgba(255, 152, 0, 0.10);
+    color: #e65100;
+}
+
+.bg-primary-soft {
+    background: rgba(13, 110, 253, 0.10);
+    color: #0d6efd;
+}
+
+.bg-secondary-soft {
+    background: rgba(108, 117, 125, 0.10);
+    color: #6c757d;
+}
+
+.bg-danger-soft {
+    background: rgba(220, 53, 69, 0.10);
+    color: #dc3545;
+}
+
+
+/* =========================================================
+   MARKET INTELLIGENCE
+   ========================================================= */
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 0.9rem;
+}
+
+.market-grid .market-item {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 42px 1fr;
+
+    column-gap: 0.85rem;
+    align-items: center;
+
+    min-height: 92px;
+
+    padding: 1rem;
+
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    text-decoration: none;
+    color: var(--ink);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.market-grid .market-item:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(46, 125, 50, 0.35);
+
+    box-shadow: var(--shadow-soft);
+
+    background: var(--bg-card);
+}
+
+.market-grid .market-item .icon {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    font-size: 1rem;
+}
+
+.market-grid .market-item .icon.green {
+    color: #2e7d32;
+    background: rgba(46, 125, 50, 0.10);
+}
+
+.market-grid .market-item .icon.blue {
+    color: #1976d2;
+    background: rgba(25, 118, 210, 0.10);
+}
+
+.market-grid .market-item .icon.orange {
+    color: #ff9800;
+    background: rgba(255, 152, 0, 0.10);
+}
+
+.market-grid .market-item .icon.purple {
+    color: #7b1fa2;
+    background: rgba(123, 31, 162, 0.10);
+}
+
+.market-grid .market-item .title {
+    margin-bottom: 0.25rem;
+
+    font-size: 0.84rem;
+    font-weight: 650;
+}
+
+.market-grid .market-item .desc {
+    color: var(--ink-faint);
+
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar-card {
+    padding: 1.35rem 1.4rem;
+    margin-bottom: 1.25rem;
+}
+
+.sidebar-card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--ink);
+
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.sidebar-card .card-title i {
+    color: var(--accent-green);
+    font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.sidebar-card .btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.5rem;
+}
+
+.sidebar-card .btn-group-vertical .btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.55rem;
+
+    min-height: 40px;
+
+    padding: 0.55rem 0.8rem;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 0.76rem;
+    font-weight: 600;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.sidebar-card .btn-group-vertical .btn:hover {
+    transform: translateX(2px);
+    box-shadow: var(--shadow-soft);
+}
+
+.sidebar-card .btn-group-vertical .material-symbols-outlined {
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   TIMELINE / STATS
+   ========================================================= */
+
+.sidebar-card .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    min-height: 42px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.sidebar-card .stat-row:last-child {
+    border-bottom: none;
+}
+
+.sidebar-card .stat-row .label {
+    color: var(--ink-faint);
+
+    font-size: 0.72rem;
+}
+
+.sidebar-card .stat-row .value {
+    color: var(--ink);
+
+    font-size: 0.75rem;
+    font-weight: 650;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .crop-detail-layout {
+        grid-template-columns: minmax(0, 1.6fr) minmax(250px, 0.8fr);
+
+        gap: 1.5rem;
+    }
+
+    .action-btn-group {
+        max-width: 520px;
+    }
+
+}
+
+
+@media (max-width: 992px) {
+
+    .crop-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .action-btn-group {
+        width: 100%;
+        max-width: none;
+
+        justify-content: flex-start;
+    }
+
+    .crop-detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .crop-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.25rem;
+    }
+
+    .crop-header .title-section h2 {
+        font-size: 1.45rem;
+    }
+
+    .action-btn-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+
+        width: 100%;
+    }
+
+    .action-btn-group .btn {
+        width: 100%;
+    }
+
+    .info-card {
+        padding: 1.35rem;
+    }
+
+    .info-card .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-card .info-item:nth-last-child(-n + 2) {
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .info-card .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .market-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .crop-detail-page {
+        padding-bottom: 2.5rem;
+    }
+
+    .action-btn-group {
+        grid-template-columns: 1fr;
+    }
+
+    .crop-header .title-section .subtitle {
+        line-height: 1.7;
+    }
+
+    .market-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .market-grid .market-item {
+        min-height: 78px;
+    }
+
+    .info-card {
+        padding: 1.15rem;
+    }
+
+    .sidebar-card {
+        padding: 1.15rem;
+    }
+
+}
+
+</style>
+{% endblock %}
+
+
 {% block app_content %}
-<div class="container-fluid px-0">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1">{{ crop.name }}</h2>
-            <p class="text-muted mb-0">
-                {% trans "Farm:" %} <strong>{{ crop.farm.name }}</strong>
-            </p>
+
+<div class="crop-detail-page">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="crop-header">
+
+        <div class="title-section">
+
+            <h2>
+                {{ crop.name }}
+            </h2>
+
+            <div class="subtitle">
+
+                <span>
+                    <i class="bi bi-house me-1"></i>
+                    {% trans "Farm:" %}
+                    <strong>{{ crop.farm.name }}</strong>
+                </span>
+
+                <span class="separator">|</span>
+
+                <span>
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {{ crop.farm.location }}
+                </span>
+
+            </div>
+
         </div>
-        <div>
-            <a href="{% url 'crops:crop_edit' crop.pk %}" class="btn btn-warning">
-                <span class="material-symbols-outlined">edit</span> {% trans "Edit" %}
+
+
+        <!-- ACTIONS -->
+
+        <div class="action-btn-group">
+
+            <a
+                href="{% url 'marketPrice:best_market_finder' %}?crop={{ crop.name }}"
+                class="btn btn-success"
+            >
+                <span class="material-symbols-outlined">
+                    storefront
+                </span>
+
+                {% trans "Best Market" %}
             </a>
-            <a href="{% url 'crops:crop_list' %}" class="btn btn-secondary">
-                <span class="material-symbols-outlined">arrow_back</span> {% trans "Back" %}
+
+
+            <a
+                href="{% url 'crops:planting_advisor' %}"
+                class="btn btn-outline-success"
+            >
+                <span class="material-symbols-outlined">
+                    recommend
+                </span>
+
+                {% trans "Planting Advisor" %}
             </a>
+
+
+            <a
+                href="{% url 'crops:crop_edit' crop.pk %}"
+                class="btn btn-outline-warning"
+            >
+                <span class="material-symbols-outlined">
+                    edit
+                </span>
+
+                {% trans "Edit" %}
+            </a>
+
+
+            <a
+                href="{% url 'crops:crop_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                <span class="material-symbols-outlined">
+                    arrow_back
+                </span>
+
+                {% trans "Back" %}
+            </a>
+
         </div>
+
     </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Crop Type:" %}</strong> {{ crop.get_crop_type_display }}</p>
-                            <p><strong>{% trans "Status:" %}</strong> 
-                                <span class="badge {% if crop.status == 'PLANNED' %}bg-secondary{% elif crop.status == 'PLANTED' %}bg-primary{% elif crop.status == 'GROWING' %}bg-warning{% elif crop.status == 'HARVESTED' %}bg-success{% else %}bg-danger{% endif %}">
-                                    {{ crop.get_status_display }}
-                                </span>
-                            </p>
-                            <p><strong>{% trans "Area:" %}</strong> {{ crop.area_acres }} {% trans "acres" %}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Planting Date:" %}</strong> {{ crop.planting_date|date:"F d, Y" }}</p>
-                            <p><strong>{% trans "Expected Harvest:" %}</strong> {{ crop.expected_harvest_date|date:"F d, Y" }}</p>
-                            <p><strong>{% trans "Active:" %}</strong> 
-                                {% if crop.is_active %}
-                                    <span class="badge bg-success">{% trans "Yes" %}</span>
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <div class="crop-detail-layout">
+
+
+        <!-- =================================================
+             LEFT COLUMN
+             ================================================= -->
+
+        <div>
+
+
+            <!-- CROP INFORMATION -->
+
+            <div class="info-card">
+
+                <div class="section-heading">
+
+                    <div class="heading-left">
+
+                        <span class="heading-icon">
+                            <i class="bi bi-info-circle"></i>
+                        </span>
+
+                        <h5>
+                            {% trans "Crop Information" %}
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-grid">
+
+
+                    <div class="info-item">
+
+                        <span class="label">
+                            {% trans "Crop Type" %}
+                        </span>
+
+                        <span class="value">
+                            {{ crop.get_crop_type_display }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="label">
+                            {% trans "Status" %}
+                        </span>
+
+                        <span class="value">
+
+                            <span class="badge-status
+                                {% if crop.status == 'PLANNED' %}
+                                    bg-secondary-soft
+                                {% elif crop.status == 'PLANTED' %}
+                                    bg-primary-soft
+                                {% elif crop.status == 'GROWING' %}
+                                    bg-warning-soft
+                                {% elif crop.status == 'HARVESTED' %}
+                                    bg-success-soft
                                 {% else %}
-                                    <span class="badge bg-danger">{% trans "No" %}</span>
+                                    bg-danger-soft
                                 {% endif %}
-                            </p>
+                            ">
+
+                                {{ crop.get_status_display }}
+
+                            </span>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="label">
+                            {% trans "Area" %}
+                        </span>
+
+                        <span class="value">
+                            {{ crop.area_acres }}
+                            {% trans "acres" %}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="label">
+                            {% trans "Active" %}
+                        </span>
+
+                        <span class="value">
+
+                            {% if crop.is_active %}
+
+                                <span class="badge-status bg-success-soft">
+                                    {% trans "Yes" %}
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge-status bg-danger-soft">
+                                    {% trans "No" %}
+                                </span>
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="label">
+                            {% trans "Planting Date" %}
+                        </span>
+
+                        <span class="value">
+                            {{ crop.planting_date|date:"F d, Y" }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span class="label">
+                            {% trans "Expected Harvest" %}
+                        </span>
+
+                        <span class="value">
+                            {{ crop.expected_harvest_date|date:"F d, Y" }}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- MARKET INTELLIGENCE -->
+
+            <div class="info-card">
+
+                <div class="section-heading">
+
+                    <div class="heading-left">
+
+                        <span class="heading-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </span>
+
+                        <h5>
+                            {% trans "Market Intelligence" %}
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <div class="market-grid">
+
+
+                    <!-- BEST MARKET -->
+
+                    <a
+                        href="{% url 'marketPrice:best_market_finder' %}?crop={{ crop.name }}"
+                        class="market-item"
+                    >
+
+                        <span class="icon green">
+                            <i class="bi bi-storefront"></i>
+                        </span>
+
+                        <div>
+
+                            <div class="title">
+                                {% trans "Best Market" %}
+                            </div>
+
+                            <div class="desc">
+                                {% trans "Find where to sell" %}
+                            </div>
+
                         </div>
-                    </div>
+
+                    </a>
+
+
+                    <!-- PRICE HISTORY -->
+
+                    <a
+                        href="{% url 'marketPrice:crop_detail' crop.id %}"
+                        class="market-item"
+                    >
+
+                        <span class="icon blue">
+                            <i class="bi bi-bar-chart"></i>
+                        </span>
+
+                        <div>
+
+                            <div class="title">
+                                {% trans "Price History" %}
+                            </div>
+
+                            <div class="desc">
+                                {% trans "View price trends" %}
+                            </div>
+
+                        </div>
+
+                    </a>
+
+
+                    <!-- COMPARE -->
+
+                    <a
+                        href="{% url 'marketPrice:compare' %}?crops={{ crop.id }}"
+                        class="market-item"
+                    >
+
+                        <span class="icon orange">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </span>
+
+                        <div>
+
+                            <div class="title">
+                                {% trans "Compare" %}
+                            </div>
+
+                            <div class="desc">
+                                {% trans "Compare with other crops" %}
+                            </div>
+
+                        </div>
+
+                    </a>
+
+
+                    <!-- HARVEST ADVISOR -->
+
+                    <a
+                        href="{% url 'crops:harvest_recommendations' %}"
+                        class="market-item"
+                    >
+
+                        <span class="icon purple">
+                            <i class="bi bi-clock-history"></i>
+                        </span>
+
+                        <div>
+
+                            <div class="title">
+                                {% trans "Harvest Advisor" %}
+                            </div>
+
+                            <div class="desc">
+                                {% trans "When to harvest & sell" %}
+                            </div>
+
+                        </div>
+
+                    </a>
+
+
                 </div>
+
             </div>
+
+
         </div>
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-transparent">
-                    <h5 class="mb-0">{% trans "Quick Actions" %}</h5>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+             ================================================= -->
+
+        <div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="sidebar-card">
+
+                <div class="card-title">
+
+                    <i class="bi bi-lightning"></i>
+
+                    {% trans "Quick Actions" %}
+
                 </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'crops:crop_edit' crop.pk %}" class="btn btn-outline-warning">
-                            <span class="material-symbols-outlined">edit</span> {% trans "Edit Crop" %}
-                        </a>
-                        <a href="{% url 'crops:crop_delete' crop.pk %}" class="btn btn-outline-danger">
-                            <span class="material-symbols-outlined">delete</span> {% trans "Delete Crop" %}
-                        </a>
-                    </div>
+
+
+                <div class="btn-group-vertical">
+
+
+                    <a
+                        href="{% url 'marketPrice:best_market_finder' %}?crop={{ crop.name }}"
+                        class="btn btn-success"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            storefront
+                        </span>
+
+                        {% trans "Find Best Market" %}
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'crops:planting_advisor' %}"
+                        class="btn btn-outline-success"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            recommend
+                        </span>
+
+                        {% trans "Planting Advisor" %}
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'crops:crop_growth_advisor' %}"
+                        class="btn btn-outline-info"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            lightbulb
+                        </span>
+
+                        {% trans "Growth Advisor" %}
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'crops:crop_edit' crop.pk %}"
+                        class="btn btn-outline-warning"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
+
+                        {% trans "Edit Crop" %}
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'crops:crop_delete' crop.pk %}"
+                        class="btn btn-outline-danger"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            delete
+                        </span>
+
+                        {% trans "Delete Crop" %}
+
+                    </a>
+
+
                 </div>
+
             </div>
+
+
+            <!-- CROP TIMELINE -->
+
+            <div class="sidebar-card">
+
+                <div class="card-title">
+
+                    <i class="bi bi-clock"></i>
+
+                    {% trans "Crop Timeline" %}
+
+                </div>
+
+
+                <div class="stat-row">
+
+                    <span class="label">
+                        {% trans "Days since planting" %}
+                    </span>
+
+                    <span class="value">
+                        {{ crop.planting_date|timesince }}
+                    </span>
+
+                </div>
+
+
+                <div class="stat-row">
+
+                    <span class="label">
+                        {% trans "Days to harvest" %}
+                    </span>
+
+                    <span class="value">
+                        {{ crop.expected_harvest_date|timeuntil }}
+                    </span>
+
+                </div>
+
+
+                <div class="stat-row">
+
+                    <span class="label">
+                        {% trans "Crop age" %}
+                    </span>
+
+                    <span class="value">
+                        {{ crop.created_at|timesince }}
+                    </span>
+
+                </div>
+
+
+                <div class="stat-row">
+
+                    <span class="label">
+                        {% trans "Last updated" %}
+                    </span>
+
+                    <span class="value">
+                        {{ crop.updated_at|timesince }}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
         </div>
+
+
     </div>
+
 </div>
+
 {% endblock %}
+

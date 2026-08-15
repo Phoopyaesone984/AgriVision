@@ -4,7 +4,7 @@
 
 {% block title %}{% trans "Market Dashboard" %} - AgriVision{% endblock %}
 {% block nav_market_dashboard %}active{% endblock %}
-{% block page_title %}{% trans "Market Intelligence Dashboard" %}{{% endblock %}
+{% block page_title %}{% trans "Market Intelligence Dashboard" %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -64,7 +64,7 @@
 /* ===== Chart Containers ===== */
 .chart-wrapper {
     position: relative;
-    height: 260px;
+    height: 300px;
     width: 100%;
 }
 
@@ -145,11 +145,50 @@
     margin-right: 0.5rem;
 }
 
+/* ===== Chart Control Buttons ===== */
+.chart-controls .btn-group .btn {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.75rem;
+    border-color: var(--border);
+    color: var(--ink-soft);
+}
+
+.chart-controls .btn-group .btn.active {
+    background: var(--accent-green);
+    color: white;
+    border-color: var(--accent-green);
+}
+
+.chart-controls .btn-group .btn:hover:not(.active) {
+    background: var(--bg-hover);
+}
+
+/* ===== Growth Summary Cards ===== */
+.growth-summary {
+    background: var(--bg-glass);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+}
+
+.growth-summary .label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    letter-spacing: 0.3px;
+}
+
+.growth-summary .value {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .stat-card .stat-number { font-size: 1.25rem; }
     .stat-card { padding: 1rem; }
-    .chart-wrapper { height: 200px; }
+    .chart-wrapper { height: 250px; }
     .chart-wrapper-sm { height: 180px; }
 }
 </style>
@@ -204,16 +243,57 @@
     </div>
 </div>
 
-<!-- Charts Row -->
+<!-- Charts Row - With Growth Chart -->
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
         <div class="card shadow-sm border-0" style="background: var(--bg-card); border-color: var(--border) !important;">
-            <div class="card-header-clean">
-                <h5><i class="bi bi-graph-up-arrow"></i>{% trans "Top Crop Price Trends" %}</h5>
+            <div class="card-header-clean d-flex justify-content-between align-items-center flex-wrap">
+                <h5><i class="bi bi-graph-up-arrow"></i> {% trans "Price Growth Analysis" %}</h5>
+                <div class="chart-controls">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary active" onclick="switchChart('growth')">
+                            <i class="bi bi-percent"></i> Growth
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="switchChart('bar')">
+                            <i class="bi bi-bar-chart"></i> Compare
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="switchChart('radar')">
+                            <i class="bi bi-radar"></i> Profile
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="chart-wrapper">
                     <canvas id="priceTrendsChart"></canvas>
+                </div>
+                
+                <!-- Growth Summary Cards -->
+                <div class="row mt-3 g-2" id="growthSummary">
+                    <div class="col-md-3 col-6">
+                        <div class="growth-summary">
+                            <div class="label">{% trans "Best Performer" %}</div>
+                            <div class="value text-success" id="bestPerformer">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="growth-summary">
+                            <div class="label">{% trans "Highest Growth" %}</div>
+                            <div class="value text-primary" id="highestGrowth">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="growth-summary">
+                            <div class="label">{% trans "Avg Growth" %}</div>
+                            <div class="value text-warning" id="avgGrowth">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="growth-summary">
+                            <div class="label">{% trans "Most Volatile" %}</div>
+                            <div class="value text-danger" id="mostVolatile">-</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,7 +301,7 @@
     <div class="col-lg-4">
         <div class="card shadow-sm border-0" style="background: var(--bg-card); border-color: var(--border) !important;">
             <div class="card-header-clean">
-                <h5><i class="bi bi-pie-chart"></i>{% trans "Crop Categories" %}</h5>
+                <h5><i class="bi bi-pie-chart"></i> {% trans "Crop Categories" %}</h5>
             </div>
             <div class="card-body">
                 <div class="chart-wrapper-sm">
@@ -249,7 +329,7 @@
                             <tr>
                                 <th style="width: 30px;">#</th>
                                 <th>{% trans "Crop" %}</th>
-                                <th class="text-end">{% trans "Price (Ks)" %}</th>
+                                <th class="text-end">{% trans "Price (Ks/Viss)" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -258,7 +338,6 @@
                                 <td style="color:var(--ink-faint);font-size:0.8rem;">{{ forloop.counter }}</td>
                                 <td>
                                     <a href="{% url 'marketPrice:crop_detail' item.id %}" class="text-decoration-none crop-name">
-                                        <!-- ✅ Uses the Burmese translation passed from the View -->
                                         {{ item.name_translated }}
                                         <span class="crop-sub">{{ item.name_original }}</span>
                                     </a>
@@ -296,9 +375,7 @@
                             {% for item in top_daily_prices %}
                             <tr>
                                 <td style="color:var(--ink-faint);font-size:0.8rem;">{{ forloop.counter }}</td>
-                                <!-- ✅ Uses the Burmese commodity translation passed from the View -->
                                 <td class="crop-name">{{ item.commodity_translated }}</td>
-                                <!-- ✅ Uses the Burmese category translation passed from the View -->
                                 <td><span class="badge-cat">{{ item.category_translated }}</span></td>
                                 <td class="text-end price">{{ item.price|floatformat:0 }}</td>
                             </tr>
@@ -316,30 +393,114 @@
 
 {% block extra_js %}
 <script>
+// ================================================================
+// COMPLETE JAVASCRIPT FOR OPTION 3: GROWTH CHART
+// ================================================================
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Price Trends Chart
+    // Get data from Django
     const priceData = {{ price_trends|safe }};
     const years = {{ years_list|safe }};
+    let currentChart = null;
+    let currentChartType = 'growth';
     
-    if (Object.keys(priceData).length > 0) {
+    // Color palette
+    const colors = [
+        '#2e7d32', '#1976d2', '#f57c00', '#c62828', 
+        '#6a1b9a', '#00838f', '#f9a825', '#4e342e',
+        '#00695c', '#ad1457'
+    ];
+    
+    // ============================================================
+    // 1. GROWTH CHART - Shows year-over-year percentage changes
+    // ============================================================
+    function createGrowthChart() {
+        if (currentChart) currentChart.destroy();
+        
+        // Calculate year-over-year growth percentages
+        const growthData = {};
+        const growthStats = {};
+        
+        Object.keys(priceData).forEach(crop => {
+            const values = priceData[crop];
+            const changes = [];
+            let totalGrowth = 0;
+            let maxGrowth = -Infinity;
+            let minGrowth = Infinity;
+            
+            for (let i = 1; i < values.length; i++) {
+                const prev = values[i-1];
+                const curr = values[i];
+                let pctChange = 0;
+                if (prev > 0) {
+                    pctChange = ((curr - prev) / prev) * 100;
+                }
+                changes.push(parseFloat(pctChange.toFixed(1)));
+                
+                if (pctChange > maxGrowth) maxGrowth = pctChange;
+                if (pctChange < minGrowth) minGrowth = pctChange;
+                totalGrowth += pctChange;
+            }
+            
+            growthData[crop] = changes;
+            growthStats[crop] = {
+                avg: changes.length > 0 ? totalGrowth / changes.length : 0,
+                max: maxGrowth > -Infinity ? maxGrowth : 0,
+                min: minGrowth < Infinity ? minGrowth : 0,
+                total: totalGrowth,
+                first: values[0],
+                last: values[values.length - 1]
+            };
+        });
+        
+        // Sort crops by latest growth
+        const sortedCrops = Object.keys(growthData).sort((a, b) => {
+            const aLast = growthData[a][growthData[a].length - 1] || 0;
+            const bLast = growthData[b][growthData[b].length - 1] || 0;
+            return bLast - aLast;
+        });
+        
+        const filteredCrops = sortedCrops.slice(0, 6);
+        const changeYears = years.slice(1);
+        
+        // Prepare datasets with color coding for positive/negative
+        const datasets = filteredCrops.map((crop, index) => {
+            const data = growthData[crop];
+            const color = colors[index % colors.length];
+            
+            // Create gradient colors based on positive/negative values
+            const backgroundColors = data.map(value => {
+                if (value > 5) return color + '99';
+                if (value > 0) return color + '66';
+                if (value > -5) return 'rgba(255, 152, 0, 0.6)';
+                return 'rgba(198, 40, 40, 0.7)';
+            });
+            
+            const borderColors = data.map(value => {
+                if (value > 5) return color;
+                if (value > 0) return color;
+                if (value > -5) return '#ff9800';
+                return '#c62828';
+            });
+            
+            return {
+                label: crop,
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 2,
+                borderRadius: 3,
+                barPercentage: 0.6,
+            };
+        });
+        
         const ctx = document.getElementById('priceTrendsChart').getContext('2d');
-        const colors = ['#2e7d32', '#4caf50', '#ff9800', '#f44336', '#2196f3', '#9c27b0', '#00bcd4'];
-        
-        const datasets = Object.keys(priceData).slice(0, 6).map((crop, index) => ({
-            label: crop,
-            data: priceData[crop],
-            borderColor: colors[index % colors.length],
-            backgroundColor: colors[index % colors.length] + '15',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true,
-            pointRadius: 3,
-            pointHoverRadius: 5,
-        }));
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: { labels: years, datasets: datasets },
+        currentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: changeYears.map(y => y.toString()),
+                datasets: datasets
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -349,34 +510,318 @@ document.addEventListener('DOMContentLoaded', function() {
                         labels: {
                             boxWidth: 12,
                             padding: 10,
-                            font: { size: 10, family: "'Inter', sans-serif" },
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--ink-soft').trim() || '#6c757d'
+                            font: { size: 10, weight: '500' },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleFont: { size: 13, weight: '600' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                const crop = context.dataset.label;
+                                const stats = growthStats[crop];
+                                let label = context.dataset.label + ': ' + value.toFixed(1) + '%';
+                                
+                                // Add context info
+                                if (stats) {
+                                    label += '\n└ Avg: ' + stats.avg.toFixed(1) + '%';
+                                    label += ' | Range: ' + stats.min.toFixed(1) + '% to ' + stats.max.toFixed(1) + '%';
+                                }
+                                return label;
+                            }
                         }
                     }
                 },
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false },
-                        ticks: { font: { size: 10 } }
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            font: { size: 10 },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
                     },
                     x: {
                         grid: { display: false },
                         ticks: { font: { size: 10 } }
                     }
                 },
-                interaction: { intersect: false, mode: 'index' }
+                onClick: function(event, elements) {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const datasetIndex = elements[0].datasetIndex;
+                        const crop = this.data.datasets[datasetIndex].label;
+                        const year = this.data.labels[index];
+                        const value = this.data.datasets[datasetIndex].data[index];
+                        alert(crop + ' in ' + year + ': ' + value.toFixed(1) + '% growth');
+                    }
+                }
+            }
+        });
+        
+        // Update growth summary cards
+        updateGrowthSummary(growthStats, filteredCrops);
+    }
+    
+    // ============================================================
+    // 2. UPDATE GROWTH SUMMARY CARDS
+    // ============================================================
+    function updateGrowthSummary(growthStats, filteredCrops) {
+        if (Object.keys(growthStats).length === 0) return;
+        
+        // Best performer (highest latest price)
+        let bestPerformer = '';
+        let bestPrice = -Infinity;
+        
+        // Highest growth
+        let highestGrowth = '';
+        let highestGrowthValue = -Infinity;
+        
+        // Most volatile (largest range between min and max growth)
+        let mostVolatile = '';
+        let largestRange = -Infinity;
+        
+        // Calculate average growth across all crops
+        let totalAvgGrowth = 0;
+        let count = 0;
+        
+        Object.keys(growthStats).forEach(crop => {
+            const stats = growthStats[crop];
+            
+            // Best performer
+            if (stats.last > bestPrice) {
+                bestPrice = stats.last;
+                bestPerformer = crop;
+            }
+            
+            // Highest growth (total growth)
+            if (stats.total > highestGrowthValue) {
+                highestGrowthValue = stats.total;
+                highestGrowth = crop;
+            }
+            
+            // Most volatile (range between max and min growth)
+            const range = stats.max - stats.min;
+            if (range > largestRange && stats.max > -Infinity && stats.min < Infinity) {
+                largestRange = range;
+                mostVolatile = crop;
+            }
+            
+            totalAvgGrowth += stats.avg;
+            count++;
+        });
+        
+        // Update DOM
+        document.getElementById('bestPerformer').textContent = bestPerformer + ' (' + bestPrice.toFixed(0) + ' Ks)';
+        document.getElementById('highestGrowth').textContent = highestGrowth + ' (+' + highestGrowthValue.toFixed(1) + '%)';
+        document.getElementById('mostVolatile').textContent = mostVolatile + ' (Δ' + largestRange.toFixed(1) + '%)';
+        
+        if (count > 0) {
+            const avgGrowth = totalAvgGrowth / count;
+            document.getElementById('avgGrowth').textContent = avgGrowth.toFixed(1) + '%';
+            document.getElementById('avgGrowth').className = 'value ' + (avgGrowth > 0 ? 'text-success' : 'text-danger');
+        }
+    }
+    
+    // ============================================================
+    // 3. BAR CHART - Price comparison
+    // ============================================================
+    function createBarChart() {
+        if (currentChart) currentChart.destroy();
+        
+        const ctx = document.getElementById('priceTrendsChart').getContext('2d');
+        const cropNames = Object.keys(priceData);
+        const displayCrops = cropNames.slice(0, 6);
+        
+        currentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: years.map(y => y.toString()),
+                datasets: displayCrops.map((crop, index) => ({
+                    label: crop,
+                    data: priceData[crop],
+                    backgroundColor: colors[index % colors.length] + '80',
+                    borderColor: colors[index % colors.length],
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    barPercentage: 0.7,
+                }))
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: { size: 10, weight: '500' },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toFixed(0) + ' Ks/Viss';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000) return (value/1000).toFixed(1) + 'K';
+                                return value;
+                            }
+                        }
+                    },
+                    x: { grid: { display: false } }
+                }
             }
         });
     }
     
-    // Category Chart
+    // ============================================================
+    // 4. RADAR CHART - Price profile comparison
+    // ============================================================
+    function createRadarChart() {
+        if (currentChart) currentChart.destroy();
+        
+        const ctx = document.getElementById('priceTrendsChart').getContext('2d');
+        const cropNames = Object.keys(priceData);
+        const displayCrops = cropNames.slice(0, 6);
+        
+        // Normalize data for radar chart
+        const allValues = [];
+        Object.keys(priceData).forEach(crop => {
+            allValues.push(...priceData[crop]);
+        });
+        const maxValue = Math.max(...allValues);
+        
+        currentChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: years.map(y => y.toString()),
+                datasets: displayCrops.map((crop, index) => ({
+                    label: crop,
+                    data: priceData[crop],
+                    backgroundColor: colors[index % colors.length] + '20',
+                    borderColor: colors[index % colors.length],
+                    borderWidth: 2,
+                    pointBackgroundColor: colors[index % colors.length],
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                }))
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: { size: 10, weight: '500' },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.r.toFixed(0) + ' Ks/Viss';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: { size: 9 },
+                            callback: function(value) {
+                                if (value >= 1000) return (value/1000).toFixed(1) + 'K';
+                                return value;
+                            }
+                        },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    }
+    
+    // ============================================================
+    // 5. CHART SWITCHING FUNCTION
+    // ============================================================
+    window.switchChart = function(type) {
+        currentChartType = type;
+        
+        // Update button states
+        document.querySelectorAll('.chart-controls .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.closest('.btn').classList.add('active');
+        
+        // Create the selected chart
+        if (type === 'growth') {
+            createGrowthChart();
+        } else if (type === 'bar') {
+            createBarChart();
+        } else if (type === 'radar') {
+            createRadarChart();
+        }
+    };
+    
+    // ============================================================
+    // 6. INITIALIZE - Default to Growth Chart
+    // ============================================================
+    if (Object.keys(priceData).length > 0 && years.length > 1) {
+        createGrowthChart();
+    } else if (Object.keys(priceData).length > 0 && years.length === 1) {
+        // If only one year of data, show bar chart instead
+        createBarChart();
+        document.querySelector('.chart-controls .btn-group .btn:first-child').classList.remove('active');
+        document.querySelector('.chart-controls .btn-group .btn:nth-child(2)').classList.add('active');
+    } else {
+        // No data - show message
+        const canvas = document.getElementById('priceTrendsChart');
+        const parent = canvas.parentElement;
+        if (parent) {
+            parent.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                    <div class="text-center">
+                        <i class="bi bi-bar-chart-line" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                        <p class="mt-2 mb-0">${gettext('No price trend data available')}</p>
+                        <small class="text-muted">${gettext('Add harvest prices to see growth analysis')}</small>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // ============================================================
+    // 7. CATEGORY CHART
+    // ============================================================
     const categoryLabels = {{ category_labels|safe }};
     const categoryCounts = {{ category_counts|safe }};
     
     if (categoryLabels.length > 0) {
         const ctx2 = document.getElementById('categoryChart').getContext('2d');
-        const colors = ['#2e7d32', '#4caf50', '#ff9800', '#f44336', '#2196f3', '#9c27b0', '#00bcd4', '#ffeb3b'];
+        const categoryColors = ['#2e7d32', '#1976d2', '#f57c00', '#c62828', '#6a1b9a', '#00838f', '#f9a825', '#4e342e'];
         
         new Chart(ctx2, {
             type: 'doughnut',
@@ -384,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: categoryLabels,
                 datasets: [{
                     data: categoryCounts,
-                    backgroundColor: colors.slice(0, categoryLabels.length),
+                    backgroundColor: categoryColors.slice(0, categoryLabels.length),
                     borderWidth: 2,
                     borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#fff'
                 }]
@@ -408,5 +853,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ================================================================
+// 8. GETTEXT FALLBACK FOR JAVASCRIPT
+// ================================================================
+function gettext(message) {
+    // Simple fallback - Django will replace this
+    return message;
+}
 </script>
 {% endblock %}
