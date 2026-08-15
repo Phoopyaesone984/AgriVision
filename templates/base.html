@@ -1071,5 +1071,699 @@
 </script>
 
 {% block extra_js %}{% endblock %}
+<!-- =========================================================
+     AGRIVISION AI CHAT
+     ========================================================= -->
+
+<style>
+/* ================================
+   FLOATING AI BUTTON
+   ================================ */
+
+.agrivision-ai {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 9999;
+}
+
+.agrivision-ai-button {
+    position: relative;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: var(--accent-green);
+    color: #fff;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.16);
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.agrivision-ai-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.20);
+}
+
+.agrivision-ai-button i {
+    font-size: 1.35rem;
+}
+
+
+/* ================================
+   STATUS DOT
+   ================================ */
+
+.agrivision-ai-status {
+    position: absolute;
+
+    right: 1px;
+    bottom: 1px;
+
+    width: 11px;
+    height: 11px;
+
+    background: #2e7d32;
+
+    border: 2px solid var(--bg-card);
+    border-radius: 50%;
+}
+
+
+/* ================================
+   CHAT WINDOW
+   ================================ */
+
+.agrivision-ai-window {
+    position: absolute;
+
+    right: 0;
+    bottom: 72px;
+
+    width: 360px;
+    max-width: calc(100vw - 30px);
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    overflow: hidden;
+
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(12px) scale(0.97);
+
+    transform-origin: bottom right;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.agrivision-ai.open .agrivision-ai-window {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0) scale(1);
+}
+
+
+/* ================================
+   CHAT HEADER
+   ================================ */
+
+.agrivision-ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1rem 1.1rem;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.agrivision-ai-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 0.7rem;
+}
+
+.agrivision-ai-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(46, 125, 50, 0.09);
+
+    border-radius: 10px;
+
+    color: var(--accent-green);
+}
+
+.agrivision-ai-title {
+    color: var(--ink);
+
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.agrivision-ai-subtitle {
+    margin-top: 2px;
+
+    color: var(--ink-faint);
+
+    font-size: 0.62rem;
+}
+
+.agrivision-ai-close {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: var(--ink-faint);
+
+    cursor: pointer;
+}
+
+.agrivision-ai-close:hover {
+    background: var(--bg-glass);
+    color: var(--ink);
+}
+
+
+/* ================================
+   CHAT BODY
+   ================================ */
+
+.agrivision-ai-body {
+    height: 300px;
+
+    padding: 1rem;
+
+    overflow-y: auto;
+
+    background: var(--bg-glass);
+}
+
+
+/* ================================
+   MESSAGES
+   ================================ */
+
+.agrivision-message {
+    max-width: 85%;
+
+    margin-bottom: 0.75rem;
+
+    padding: 0.7rem 0.85rem;
+
+    border-radius: 12px;
+
+    font-size: 0.74rem;
+
+    line-height: 1.6;
+}
+
+.agrivision-message.bot {
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+
+    color: var(--ink-soft);
+
+    border-bottom-left-radius: 4px;
+}
+
+.agrivision-message.user {
+    margin-left: auto;
+
+    background: var(--accent-green);
+
+    color: #fff;
+
+    border-bottom-right-radius: 4px;
+}
+
+
+/* ================================
+   QUICK QUESTIONS
+   ================================ */
+
+.agrivision-suggestions {
+    display: flex;
+
+    gap: 0.4rem;
+
+    padding: 0.7rem 0.9rem;
+
+    overflow-x: auto;
+
+    border-top: 1px solid var(--border);
+}
+
+.agrivision-suggestion {
+    flex: 0 0 auto;
+
+    padding: 0.38rem 0.65rem;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 50px;
+
+    color: var(--ink-soft);
+
+    font-size: 0.62rem;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.agrivision-suggestion:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+
+/* ================================
+   INPUT
+   ================================ */
+
+.agrivision-ai-input {
+    display: flex;
+
+    gap: 0.45rem;
+
+    padding: 0.8rem;
+
+    border-top: 1px solid var(--border);
+
+    background: var(--bg-card);
+}
+
+.agrivision-ai-input input {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 38px;
+
+    padding: 0.5rem 0.75rem;
+
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-sm);
+
+    color: var(--ink);
+
+    font-size: 0.72rem;
+
+    outline: none;
+}
+
+.agrivision-ai-input input:focus {
+    border-color: var(--accent-green);
+
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.08);
+}
+
+.agrivision-ai-send {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--accent-green);
+
+    color: #fff;
+
+    cursor: pointer;
+}
+
+.agrivision-ai-send:hover {
+    opacity: 0.9;
+}
+
+
+/* ================================
+   MOBILE
+   ================================ */
+
+@media (max-width: 480px) {
+
+    .agrivision-ai {
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .agrivision-ai-button {
+        width: 54px;
+        height: 54px;
+    }
+
+    .agrivision-ai-window {
+        right: -4px;
+        bottom: 66px;
+
+        width: calc(100vw - 24px);
+    }
+
+    .agrivision-ai-body {
+        height: 270px;
+    }
+
+}
+</style>
+
+
+<!-- =========================================================
+     CHATBOT HTML
+     ========================================================= -->
+
+<div class="agrivision-ai" id="agrivisionAI">
+
+    <!-- CHAT WINDOW -->
+
+    <div class="agrivision-ai-window">
+
+        <!-- HEADER -->
+
+        <div class="agrivision-ai-header">
+
+            <div class="agrivision-ai-brand">
+
+                <div class="agrivision-ai-icon">
+                    <i class="bi bi-stars"></i>
+                </div>
+
+                <div>
+
+                    <div class="agrivision-ai-title">
+                        AgriVision AI
+                    </div>
+
+                    <div class="agrivision-ai-subtitle">
+                        Agricultural market assistant
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="agrivision-ai-close"
+                id="agrivisionAIClose"
+            >
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div
+            class="agrivision-ai-body"
+            id="agrivisionAIBody"
+        >
+
+            <div class="agrivision-message bot">
+
+                Hello. I'm your AgriVision AI assistant.
+                Ask me about crop prices, market trends,
+                or where to sell your crops.
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK QUESTIONS -->
+
+        <div class="agrivision-suggestions">
+
+            <button
+                type="button"
+                class="agrivision-suggestion"
+                data-question="Which crop has the best price?"
+            >
+                Best crop price
+            </button>
+
+            <button
+                type="button"
+                class="agrivision-suggestion"
+                data-question="What are the current market trends?"
+            >
+                Market trends
+            </button>
+
+            <button
+                type="button"
+                class="agrivision-suggestion"
+                data-question="Where should I sell my crop?"
+            >
+                Best market
+            </button>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <form
+            class="agrivision-ai-input"
+            id="agrivisionAIForm"
+        >
+
+            <input
+                type="text"
+                id="agrivisionAIInput"
+                placeholder="Ask AgriVision..."
+                autocomplete="off"
+            >
+
+            <button
+                type="submit"
+                class="agrivision-ai-send"
+            >
+                <i class="bi bi-arrow-up"></i>
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- FLOATING BUTTON -->
+
+    <button
+        type="button"
+        class="agrivision-ai-button"
+        id="agrivisionAIButton"
+        aria-label="Open AgriVision AI"
+    >
+
+        <i class="bi bi-chat-dots-fill"></i>
+
+        <span class="agrivision-ai-status"></span>
+
+    </button>
+
+</div>
+
+
+<!-- =========================================================
+     CHATBOT JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const chatbot =
+        document.getElementById("agrivisionAI");
+
+    const button =
+        document.getElementById("agrivisionAIButton");
+
+    const closeButton =
+        document.getElementById("agrivisionAIClose");
+
+    const form =
+        document.getElementById("agrivisionAIForm");
+
+    const input =
+        document.getElementById("agrivisionAIInput");
+
+    const body =
+        document.getElementById("agrivisionAIBody");
+
+    const suggestions =
+        document.querySelectorAll(
+            ".agrivision-suggestion"
+        );
+
+
+    /* ================================================
+       OPEN / CLOSE
+       ================================================ */
+
+    button.addEventListener("click", function () {
+
+        chatbot.classList.toggle("open");
+
+        if (chatbot.classList.contains("open")) {
+
+            setTimeout(function () {
+                input.focus();
+            }, 200);
+
+        }
+
+    });
+
+
+    closeButton.addEventListener("click", function () {
+
+        chatbot.classList.remove("open");
+
+    });
+
+
+    /* ================================================
+       ADD MESSAGE
+       ================================================ */
+
+    function addMessage(text, type) {
+
+        const message =
+            document.createElement("div");
+
+        message.className =
+            "agrivision-message " + type;
+
+        message.textContent = text;
+
+        body.appendChild(message);
+
+        body.scrollTop =
+            body.scrollHeight;
+
+    }
+
+
+    /* ================================================
+       SEND MESSAGE
+       ================================================ */
+
+    function sendMessage(text) {
+
+        text = text.trim();
+
+        if (!text) {
+            return;
+        }
+
+        addMessage(text, "user");
+
+        input.value = "";
+
+
+        /*
+         * TEMPORARY RESPONSE
+         *
+         * Replace this later with your Django
+         * AI API endpoint.
+         */
+
+        setTimeout(function () {
+
+            addMessage(
+                "Your question has been received. The AgriVision AI service will be connected here.",
+                "bot"
+            );
+
+        }, 600);
+
+    }
+
+
+    /* ================================================
+       FORM
+       ================================================ */
+
+    form.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        sendMessage(input.value);
+
+    });
+
+
+    /* ================================================
+       QUICK QUESTIONS
+       ================================================ */
+
+    suggestions.forEach(function (suggestion) {
+
+        suggestion.addEventListener(
+            "click",
+            function () {
+
+                sendMessage(
+                    suggestion.dataset.question
+                );
+
+            }
+        );
+
+    });
+
+
+    /* ================================================
+       ESCAPE KEY
+       ================================================ */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                chatbot.classList.contains("open")
+            ) {
+
+                chatbot.classList.remove("open");
+
+            }
+
+        }
+    );
+
+});
+
+</script>
 </body>
 </html>
