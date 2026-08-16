@@ -103,7 +103,7 @@ def harvest_recommendations(request):
     
     # === EXACT CONVERSION CONSTANTS ===
     TON_TO_VISS = 612.4
-    RETAIL_MARKUP = 3.0
+    RETAIL_MARKUP = 1.2
     
     recommendations = []
     hold_count = 0

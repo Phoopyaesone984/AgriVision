@@ -1,5 +1,6 @@
 import random
 from django.core.management.base import BaseCommand
+from django.db import models
 from marketPrice.models import Crop as PriceCrop, HarvestPrice
 from decimal import Decimal
 
@@ -17,8 +18,8 @@ class Command(BaseCommand):
             '--years',
             nargs='+',
             type=str,
-            default=['2021-22', '2022-23', '2023-24', '2024-25'],
-            help='Years to generate data for (format: 2021-22)'
+            default=['2022', '2023', '2024', '2025', '2026'],
+            help='Years to generate data for (format: 2022)'
         )
 
     def handle(self, *args, **options):
@@ -26,34 +27,50 @@ class Command(BaseCommand):
         crop_names = options['crops'] if options['crops'] else None
 
         # Define realistic base prices (in Kyat per Ton)
+        # All prices are based on Yangon wholesale market data
         CROP_PRICE_PROFILES = {
+            # Field Crops
             'Wheat': {'base': 6000000, 'volatility': 0.15, 'trend': 0.08},
             'Rice': {'base': 3500000, 'volatility': 0.12, 'trend': 0.05},
-            'Betel Leaves': {'base': 30000000, 'volatility': 0.20, 'trend': 0.10},
-            'Chillies': {'base': 7000000, 'volatility': 0.25, 'trend': -0.05},
-            'Garlic': {'base': 6000000, 'volatility': 0.18, 'trend': 0.07},
-            'Coffee': {'base': 5500000, 'volatility': 0.15, 'trend': 0.12},
+            'Paddy': {'base': 3200000, 'volatility': 0.10, 'trend': 0.03},
             'Maize': {'base': 2500000, 'volatility': 0.10, 'trend': 0.04},
+            'Corn': {'base': 2800000, 'volatility': 0.12, 'trend': 0.04},
+            'Sugarcane': {'base': 1800000, 'volatility': 0.08, 'trend': 0.02},
+            'Tapioca': {'base': 2500000, 'volatility': 0.10, 'trend': 0.02},
+            
+            # Vegetables
             'Onion': {'base': 3000000, 'volatility': 0.22, 'trend': -0.03},
             'Potato': {'base': 2800000, 'volatility': 0.16, 'trend': 0.06},
-            'Sugarcane': {'base': 1800000, 'volatility': 0.08, 'trend': 0.02},
-            'Paddy': {'base': 3200000, 'volatility': 0.10, 'trend': 0.03},
-            'Tobacco': {'base': 8000000, 'volatility': 0.20, 'trend': -0.08},
-            'Cotton': {'base': 4500000, 'volatility': 0.14, 'trend': 0.05},
-            'Groundnut': {'base': 3500000, 'volatility': 0.12, 'trend': 0.04},
-            'Sesamum': {'base': 2800000, 'volatility': 0.18, 'trend': 0.06},
             'Tomato': {'base': 4000000, 'volatility': 0.20, 'trend': 0.05},
-            'Tapioca': {'base': 2500000, 'volatility': 0.10, 'trend': 0.02},
+            'Chillies': {'base': 7000000, 'volatility': 0.25, 'trend': -0.05},
+            'Chillies (Dry)': {'base': 11000000, 'volatility': 0.15, 'trend': 0.02},
+            'Garlic': {'base': 6000000, 'volatility': 0.18, 'trend': 0.07},
+            'Garlic (Dry)': {'base': 10000000, 'volatility': 0.15, 'trend': 0.02},
+            'Vegetable': {'base': 4500000, 'volatility': 0.18, 'trend': 0.05},
+            
+            # Pulses & Oilseeds
             'Pulse': {'base': 3000000, 'volatility': 0.12, 'trend': 0.03},
             'Bean': {'base': 2800000, 'volatility': 0.12, 'trend': 0.03},
-            'Tea': {'base': 4500000, 'volatility': 0.15, 'trend': 0.05},
-            'Betel Nut': {'base': 8500000, 'volatility': 0.15, 'trend': 0.04},
-            'Chillies (Dry)': {'base': 11000000, 'volatility': 0.15, 'trend': 0.02},
-            'Garlic (Dry)': {'base': 10000000, 'volatility': 0.15, 'trend': 0.02},
-            'Corn': {'base': 2800000, 'volatility': 0.12, 'trend': 0.04},
             'Soybean': {'base': 3800000, 'volatility': 0.12, 'trend': 0.06},
+            'Groundnut': {'base': 3500000, 'volatility': 0.12, 'trend': 0.04},
+            'Sesamum': {'base': 2800000, 'volatility': 0.18, 'trend': 0.06},
+            
+            # Cash Crops
+            'Coffee': {'base': 5500000, 'volatility': 0.15, 'trend': 0.12},
+            'Tea': {'base': 4500000, 'volatility': 0.15, 'trend': 0.05},
+            'Tobacco': {'base': 8000000, 'volatility': 0.20, 'trend': -0.08},
+            'Cotton': {'base': 4500000, 'volatility': 0.14, 'trend': 0.05},
+            
+            # Fruits & Nuts
             'Fruit': {'base': 5000000, 'volatility': 0.20, 'trend': 0.05},
-            'Vegetable': {'base': 4500000, 'volatility': 0.18, 'trend': 0.05},
+            'Betel Nut': {'base': 8500000, 'volatility': 0.15, 'trend': 0.04},
+            
+            # FIXED: Betel Leaves - Now using realistic Yangon wholesale price
+            # 10,000 Ks/Viss × 612.4 = 6,124,000 Ks/Ton
+            'Betel Leaves': {'base': 6124000, 'volatility': 0.20, 'trend': 0.05},
+            
+            # Default for unknown crops
+            'default': {'base': 5000000, 'volatility': 0.15, 'trend': 0.05},
         }
 
         # Get crops from marketPrice.Crop (not farms.Crop)
@@ -82,7 +99,7 @@ class Command(BaseCommand):
             
             if not profile:
                 # Default profile for unknown crops
-                profile = {'base': 5000000, 'volatility': 0.15, 'trend': 0.05}
+                profile = CROP_PRICE_PROFILES['default']
                 self.stdout.write(f'  ⚠️ Using default profile for {crop.name}')
             
             base_price = profile['base']
@@ -107,8 +124,8 @@ class Command(BaseCommand):
                 
                 price = base_price * trend_factor * random_factor * seasonal_factor
                 
-                # Round to nearest 100
-                price = round(price / 100) * 100
+                # Round to nearest 1000
+                price = round(price / 1000) * 1000
                 
                 # Ensure price stays within realistic range
                 if price < base_price * 0.3:
@@ -116,14 +133,35 @@ class Command(BaseCommand):
                 if price > base_price * 2.5:
                     price = base_price * 2.5
                 
-                # Create the harvest price (NO unit field!)
+                # Create the harvest price
                 HarvestPrice.objects.create(
                     crop=crop,
                     year=year,
                     price=Decimal(str(int(price))),
                 )
                 created_count += 1
-                self.stdout.write(f'  ✓ {crop.name} - {year}: {int(price):,} Ks/Ton')
+                
+                # Calculate price per Viss for display
+                price_per_viss = price / 612.4
+                self.stdout.write(f'  ✓ {crop.name} - {year}: {int(price):,} Ks/Ton ({price_per_viss:,.0f} Ks/Viss)')
 
         self.stdout.write(self.style.SUCCESS(f'\n✅ Successfully created {created_count} mock price records!'))
-        self.stdout.write('\n📊 Now you can view the Harvest Advisor page to see recommendations!')
+        
+        # Show summary statistics
+        self.stdout.write('\n📊 Summary of generated prices:')
+        for crop in crops:
+            prices = HarvestPrice.objects.filter(crop=crop).order_by('year')
+            if prices.exists():
+                # Convert Decimal to float for calculations
+                first_price = float(prices.first().price)
+                last_price = float(prices.last().price)
+                avg_price = prices.aggregate(models.Avg('price'))['price__avg']
+                if avg_price:
+                    avg_price = float(avg_price)
+                
+                self.stdout.write(f'  {crop.name}:')
+                self.stdout.write(f'    First: {first_price:,.0f} Ks/Ton ({first_price/612.4:,.0f} Ks/Viss)')
+                self.stdout.write(f'    Latest: {last_price:,.0f} Ks/Ton ({last_price/612.4:,.0f} Ks/Viss)')
+                self.stdout.write(f'    Average: {avg_price:,.0f} Ks/Ton ({avg_price/612.4:,.0f} Ks/Viss)')
+        
+        self.stdout.write('\n📋 Now you can view the Crop Catalog and Harvest Advisor pages!')
