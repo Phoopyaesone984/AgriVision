@@ -1900,3 +1900,90 @@ def best_market_finder(request):
     }
     
     return render(request, 'marketPrice/best_market_finder.html', context)
+
+# ============================================================
+# AI CHAT API - UPDATED (handles GET + POST)
+# ============================================================
+
+import json
+import logging
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .services.rag_service import AgriRAGService
+
+logger = logging.getLogger(__name__)
+
+# Initialize RAG service
+try:
+    rag_service = AgriRAGService()
+    print("✓ RAG service initialized")
+except Exception as e:
+    print(f"⚠ RAG service error: {e}")
+    rag_service = None
+
+
+@csrf_exempt
+def chat_api(request):
+    """
+    Chat API endpoint for AgriVision AI
+    GET: Returns a friendly message for browser testing
+    POST: Expects JSON with {"query": "your question", "k": 8}
+    Returns: JSON with response and sources
+    """
+    
+    # Handle GET requests - return friendly message (fixes 405 error)
+    if request.method == "GET":
+        return JsonResponse({
+            'success': True,
+            'message': 'AgriVision AI Chat API is running. Send a POST request with your query.',
+            'example': {'query': 'What is the price of bean?', 'k': 8}
+        })
+    
+    # Only allow POST after GET check
+    if request.method != "POST":
+        return JsonResponse({
+            'success': False,
+            'error': 'Method not allowed. Use POST for chat requests.'
+        }, status=405)
+    
+    # Check if RAG service is available
+    if rag_service is None:
+        return JsonResponse({
+            'success': False,
+            'error': 'AI service is not available. Please try again later.'
+        }, status=503)
+    
+    try:
+        # Parse the request body
+        data = json.loads(request.body)
+        query = data.get('query', '').strip()
+        k = data.get('k', 8)  # Default to 8 for better results
+        
+        # Validate query
+        if not query:
+            return JsonResponse({
+                'success': False,
+                'error': 'Please enter a question.'
+            }, status=400)
+        
+        # Get response from RAG service
+        result = rag_service.generate_response(query, k=k)
+        
+        return JsonResponse({
+            'success': True,
+            'response': result['response'],
+            'sources': result['sources'],
+            'query': query
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON format. Please send valid JSON.'
+        }, status=400)
+    except Exception as e:
+        logger.error(f"Chat API error: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': f'Error: {str(e)}'
+        }, status=500)

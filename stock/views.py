@@ -470,3 +470,5 @@ def material_detail(request, pk):
         "threshold_form": threshold_form,
         "active_tab": "materials",
     })
+
+
