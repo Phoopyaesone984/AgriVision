@@ -20,11 +20,13 @@ urlpatterns = [
     # Compare crops
     path('compare/', views.compare, name='compare'),
     
-    # Regional analysis
-    path('regions/', views.regions_view, name='regions'),
-    # Add this to urlpatterns
+    # Regional analysis - ORIGINAL URL
+    path('regions/', views.regions_view, name='regions'),  # <-- CHANGED from 'regional-data/' to 'regions/'
+    path('api/chat/', views.chat_api, name='chat_api'),
+    # Recommendations
     path('recommendations/', views.crop_recommendation, name='recommendations'),
     path('recommendations/<int:crop_id>/', views.crop_recommendation, name='crop_recommendation'),
+    path('best-market/', views.best_market_finder, name='best_market_finder'),
     # API endpoints
     path('api/crop-prices/<int:crop_id>/', views.api_crop_prices, name='api_crop_prices'),
     path('api/daily-prices/', views.api_daily_prices, name='api_daily_prices'),

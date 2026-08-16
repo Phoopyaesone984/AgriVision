@@ -15,6 +15,7 @@
     border-radius: var(--radius-md);
     background: var(--bg-card);
     box-shadow: var(--shadow-card);
+    height: 100%;
 }
 
 .dashboard-card:hover {
@@ -43,34 +44,56 @@
     margin-left: 4px;
 }
 
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
 @media (max-width: 768px) {
     .chart-container { height: 200px; }
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    .action-buttons .btn {
+        width: 100%;
+    }
 }
 </style>
 {% endblock %}
 
 {% block app_content %}
 <!-- Breadcrumbs & Action Buttons -->
-<div class="row mb-4">
-    <div class="col-md-8">
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
+            <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{% url 'marketPrice:crop_list' %}">{% trans "Crops" %}</a></li>
                 <li class="breadcrumb-item active">{{ crop.name }}</li>
             </ol>
         </nav>
     </div>
-    <div class="col-md-4 text-end d-flex justify-content-end gap-2">
-        <a href="{% url 'crops:harvest_recommendations' %}" class="btn btn-outline-success btn-sm">
-            <i class="bi bi-clock-history me-1"></i> {% trans "Back to Advisor" %}
-        </a>
-        <a href="{% url 'marketPrice:compare' %}?crops={{ crop.id }}" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-arrow-left-right me-1"></i> {% trans "Compare" %}
-        </a>
+    <div class="col-md-6">
+        <div class="action-buttons justify-content-end">
+            <!-- Best Market Button -->
+            <a href="{% url 'marketPrice:best_market_finder' %}?crop={{ crop.id }}" class="btn btn-success btn-sm">
+                <i class="bi bi-storefront me-1"></i> {% trans "Find Best Market" %}
+            </a>
+            <!-- Harvest Advisor Button -->
+            <a href="{% url 'crops:harvest_recommendations' %}" class="btn btn-outline-success btn-sm">
+                <i class="bi bi-clock-history me-1"></i> {% trans "Harvest Advisor" %}
+            </a>
+            <!-- Compare Button -->
+            <a href="{% url 'marketPrice:compare' %}?crops={{ crop.id }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-arrow-left-right me-1"></i> {% trans "Compare" %}
+            </a>
+        </div>
     </div>
 </div>
 
-<!-- Stats Cards (Converted to Ks / Viss) -->
+<!-- Stats Cards -->
 <div class="row mb-4">
     <div class="col-md-3 col-sm-6 mb-3">
         <div class="card dashboard-card">
@@ -120,8 +143,8 @@
         <div class="card dashboard-card">
             <div class="card-body">
                 <h6 class="text-muted mb-2">{% trans "Category" %}</h6>
-                <h4 class="mb-0">{{ crop.category|default:"Uncategorized" }}</h4>
-                <small class="text-muted">{{ crop.unit|default:"Ton" }}</small>
+                <h4 class="mb-0">{{ crop.category|default:_("Uncategorized") }}</h4>
+                <small class="text-muted">{{ crop.unit|default:_("Ton") }}</small>
             </div>
         </div>
     </div>
@@ -192,12 +215,15 @@
     {% endif %}
 </div>
 
-<!-- Historical Price Table (Viss Converted & Change Fixed) -->
+<!-- Historical Price Table -->
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-table me-2"></i>{% trans "Historical Harvest Prices" %}</h5>
+                <a href="{% url 'marketPrice:best_market_finder' %}?crop={{ crop.id }}" class="btn btn-sm btn-success">
+                    <i class="bi bi-storefront me-1"></i> {% trans "Find Best Market" %}
+                </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

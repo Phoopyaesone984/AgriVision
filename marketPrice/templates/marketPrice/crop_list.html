@@ -8,258 +8,1279 @@
 
 {% block extra_css %}
 <style>
-/* === Layout === */
-.crop-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+
+/* =========================================================
+   CROP CATALOG
+   ========================================================= */
+
+.crop-catalog {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-bottom: 4rem;
 }
 
-/* === Card Design === */
-.crop-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.catalog-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.catalog-heading {
+    min-width: 0;
+}
+
+.catalog-heading .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    margin-bottom: 0.4rem;
+
+    color: var(--accent-green);
+
+    font-size: 0.68rem;
+    font-weight: 650;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.catalog-heading .eyebrow i {
+    font-size: 0.75rem;
+}
+
+.catalog-heading h4 {
+    margin: 0 0 0.35rem;
+
+    color: var(--ink);
+
+    font-size: 1.45rem;
+    font-weight: 700;
+
+    letter-spacing: -0.25px;
+}
+
+.catalog-heading p {
+    margin: 0;
+
+    color: var(--ink-faint);
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.catalog-search {
+    flex: 0 1 390px;
+
     position: relative;
-    transition: all 0.3s ease;
+}
+
+.catalog-search input {
+    width: 100%;
+
+    height: 43px;
+
+    padding: 0.55rem 3.3rem 0.55rem 1rem;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    color: var(--ink);
+
+    font-size: 0.8rem;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.catalog-search input::placeholder {
+    color: var(--ink-faint);
+}
+
+.catalog-search input:focus {
+    border-color: var(--accent-green);
+
+    box-shadow:
+        0 0 0 3px rgba(46, 125, 50, 0.08);
+}
+
+.catalog-search button {
+    position: absolute;
+
+    top: 4px;
+    right: 4px;
+
+    width: 35px;
+    height: 35px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 7px;
+
+    background: var(--accent-green);
+    color: #fff;
+
+    cursor: pointer;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.catalog-search button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CATEGORY FILTERS
+   ========================================================= */
+
+.category-filter {
+    display: flex;
+    align-items: center;
+
+    gap: 0.55rem;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 1.75rem;
+}
+
+.category-filter .filter-label {
+    margin-right: 0.25rem;
+
+    color: var(--ink-faint);
+
+    font-size: 0.68rem;
+    font-weight: 650;
+
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.category-filter a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 0.4rem 0.85rem;
+
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    background: var(--bg-card);
+
+    color: var(--ink-soft);
+
+    text-decoration: none;
+
+    font-size: 0.7rem;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.category-filter a:hover {
+    border-color: var(--accent-green);
+
+    color: var(--accent-green);
+
+    transform: translateY(-1px);
+}
+
+.category-filter a.active {
+    background: var(--accent-green);
+
+    border-color: var(--accent-green);
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   CROP GRID
+   ========================================================= */
+
+.crop-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(340px, 1fr));
+
+    gap: 1.25rem;
+}
+
+
+/* =========================================================
+   CROP CARD
+   ========================================================= */
+
+.crop-card {
     display: flex;
     flex-direction: column;
+
+    min-width: 0;
+
+    padding: 1.45rem;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
     box-shadow: var(--shadow-card);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .crop-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--accent-green);
+    transform: translateY(-2px);
+
+    border-color: rgba(46, 125, 50, 0.18);
+
     box-shadow: var(--shadow-soft);
 }
 
-/* === Header === */
-.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
-.crop-name-mm { font-size: 1.35rem; font-weight: 700; color: var(--ink); text-decoration: none; line-height: 1.2; display: block; }
-.crop-name-mm:hover { color: var(--accent-green); }
-.crop-name-en { font-size: 0.8rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-top: 2px; }
-.category-badge { background: var(--bg-glass); color: var(--ink-soft); border: 1px solid var(--border); padding: 0.2rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
 
-/* === Price Sections === */
-.price-section { background: var(--bg-glass); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 1rem; margin-bottom: 1rem; }
-.price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-.price-row .label { font-size: 0.8rem; color: var(--ink-faint); }
-.price-row .value { font-size: 1.4rem; font-weight: 700; color: var(--ink); }
-.price-row .unit { font-size: 0.8rem; font-weight: 400; color: var(--ink-faint); }
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
 
-/* Trend Badge */
-.trend-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; }
-.trend-badge.up { background: rgba(40, 167, 69, 0.1); color: #28a745; }
-.trend-badge.down { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
-.trend-badge.stable { background: rgba(108, 117, 125, 0.1); color: #6c757d; }
+.crop-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
 
-/* === Price Range Visual Bar === */
-.range-container { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border); }
-.range-bar-bg { width: 100%; height: 6px; background: var(--border); border-radius: 10px; position: relative; margin-bottom: 5px; }
-.range-bar-fill { height: 100%; background: var(--accent-green); border-radius: 10px; position: absolute; left: 0; top: 0; }
-.range-dot { width: 12px; height: 12px; background: #fff; border: 3px solid var(--accent-green); border-radius: 50%; position: absolute; top: -3px; transform: translateX(-50%); box-shadow: 0 0 0 2px var(--bg-card); }
-.range-labels { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; }
-.range-text { text-align: center; font-size: 0.75rem; color: var(--ink-soft); margin-top: 6px; }
+    gap: 1rem;
 
-/* === Daily Market Footer === */
-.daily-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: auto; font-size: 0.85rem; }
-.daily-footer .market-icon { color: var(--accent-green); margin-right: 5px; }
-.daily-footer .daily-price { font-weight: 700; color: var(--ink); }
-.estimated-text { font-size: 0.7rem; color: var(--ink-faint); font-style: italic; margin-left: 5px; }
+    padding-bottom: 1rem;
 
-/* === Action Button === */
-.btn-outline-green { color: var(--accent-green); border-color: var(--accent-green); border-radius: 50px; margin-top: 1rem; }
-.btn-outline-green:hover { background: var(--accent-green); color: #fff; }
+    border-bottom: 1px solid var(--border);
+}
+
+.crop-identity {
+    min-width: 0;
+}
+
+.crop-name-mm {
+    display: block;
+
+    margin: 0;
+
+    color: var(--ink);
+
+    font-size: 1.05rem;
+    font-weight: 700;
+
+    line-height: 1.35;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.crop-name-mm:hover {
+    color: var(--accent-green);
+}
+
+.crop-name-en {
+    display: block;
+
+    margin-top: 0.3rem;
+
+    color: var(--ink-faint);
+
+    font-size: 0.65rem;
+    font-weight: 600;
+
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.category-badge {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0.3rem 0.65rem;
+
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    color: var(--ink-soft);
+
+    font-size: 0.62rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   PRICE PANEL
+   ========================================================= */
+
+.price-section {
+    margin-top: 1rem;
+    padding: 1rem;
+
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.price-primary {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 1rem;
+}
+
+.price-label {
+    color: var(--ink-faint);
+
+    font-size: 0.68rem;
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+.price-label i {
+    color: var(--accent-green);
+}
+
+.price-main {
+    display: flex;
+    align-items: baseline;
+
+    gap: 0.35rem;
+
+    margin-top: 0.25rem;
+}
+
+.price-main .value {
+    color: var(--ink);
+
+    font-size: 1.35rem;
+    font-weight: 750;
+
+    letter-spacing: -0.3px;
+}
+
+.price-main .unit {
+    color: var(--ink-faint);
+
+    font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   NORMALIZED PRICE
+   ========================================================= */
+
+.normalized-price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-top: 0.9rem;
+    padding-top: 0.8rem;
+
+    border-top: 1px dashed var(--border);
+}
+
+.normalized-price .label {
+    color: var(--ink-faint);
+
+    font-size: 0.68rem;
+}
+
+.normalized-price .value {
+    color: var(--ink-soft);
+
+    font-size: 0.9rem;
+    font-weight: 650;
+}
+
+.normalized-price .unit {
+    color: var(--ink-faint);
+
+    font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   TREND
+   ========================================================= */
+
+.trend-row {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 0.75rem;
+}
+
+.trend-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    padding: 0.3rem 0.65rem;
+
+    border-radius: 50px;
+
+    font-size: 0.65rem;
+    font-weight: 650;
+}
+
+.trend-badge i {
+    font-size: 0.85rem;
+}
+
+.trend-badge.up {
+    background: rgba(40, 167, 69, 0.10);
+    color: #28a745;
+}
+
+.trend-badge.down {
+    background: rgba(220, 53, 69, 0.10);
+    color: #dc3545;
+}
+
+.trend-badge.stable {
+    background: rgba(108, 117, 125, 0.10);
+    color: #6c757d;
+}
+
+
+/* =========================================================
+   PRICE RANGE
+   ========================================================= */
+
+.range-container {
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+
+    border-top: 1px solid var(--border);
+}
+
+.range-bar-bg {
+    position: relative;
+
+    width: 100%;
+    height: 5px;
+
+    margin-bottom: 0.55rem;
+
+    background: var(--border);
+
+    border-radius: 50px;
+}
+
+.range-bar-fill {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    height: 100%;
+
+    background: var(--accent-green);
+
+    border-radius: 50px;
+}
+
+.range-dot {
+    position: absolute;
+
+    top: -4px;
+
+    width: 13px;
+    height: 13px;
+
+    background: var(--bg-card);
+
+    border: 3px solid var(--accent-green);
+
+    border-radius: 50%;
+
+    transform: translateX(-50%);
+
+    box-shadow:
+        0 0 0 2px var(--bg-glass);
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    color: var(--ink-faint);
+
+    font-size: 0.58rem;
+}
+
+.range-text {
+    margin-top: 0.55rem;
+
+    color: var(--ink-soft);
+
+    font-size: 0.65rem;
+    line-height: 1.4;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   DAILY MARKET
+   ========================================================= */
+
+.daily-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+
+    border-top: 1px solid var(--border);
+}
+
+.daily-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    min-width: 0;
+
+    color: var(--ink-faint);
+
+    font-size: 0.67rem;
+}
+
+.daily-label i {
+    color: var(--accent-green);
+}
+
+.daily-value {
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+.daily-price {
+    color: var(--ink);
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.daily-unit {
+    color: var(--ink-faint);
+
+    font-size: 0.62rem;
+}
+
+.estimated-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-left: 0.4rem;
+
+    padding: 0.2rem 0.45rem;
+
+    background: rgba(255, 193, 7, 0.12);
+
+    color: #8a6500;
+
+    border-radius: 50px;
+
+    font-size: 0.58rem;
+    font-weight: 600;
+}
+
+.no-data {
+    color: var(--ink-faint);
+
+    font-size: 0.67rem;
+    font-style: italic;
+}
+
+
+/* =========================================================
+   CARD ACTION
+   ========================================================= */
+
+.btn-outline-green {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    margin-top: 1rem;
+    padding: 0.55rem 1rem;
+
+    border: 1px solid var(--accent-green);
+    border-radius: var(--radius-sm);
+
+    background: transparent;
+
+    color: var(--accent-green);
+
+    text-decoration: none;
+
+    font-size: 0.73rem;
+    font-weight: 650;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-outline-green:hover {
+    background: var(--accent-green);
+
+    color: #fff;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+    grid-column: 1 / -1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 5rem 2rem;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 62px;
+    height: 62px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 1.25rem;
+
+    border-radius: 15px;
+
+    background: var(--bg-glass);
+
+    color: var(--ink-faint);
+
+    opacity: 0.65;
+}
+
+.empty-state-icon i {
+    font-size: 1.7rem;
+}
+
+.empty-state h5 {
+    margin: 0 0 0.5rem;
+
+    color: var(--ink);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.empty-state p {
+    margin: 0 0 1.25rem;
+
+    color: var(--ink-soft);
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .catalog-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .catalog-search {
+        width: 100%;
+
+        flex-basis: auto;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .crop-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .catalog-header {
+        margin-bottom: 1.35rem;
+    }
+
+    .category-filter {
+        margin-bottom: 1.35rem;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .crop-catalog {
+        padding-bottom: 2.5rem;
+    }
+
+    .catalog-heading h4 {
+        font-size: 1.3rem;
+    }
+
+    .crop-card {
+        padding: 1.2rem;
+    }
+
+    .crop-card-header {
+        gap: 0.65rem;
+    }
+
+    .price-primary {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .daily-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .daily-value {
+        width: 100%;
+        text-align: left;
+    }
+
+}
+
 </style>
 {% endblock %}
 
+
 {% block app_content %}
-<!-- Top Bar -->
-<div class="row align-items-center mb-4 g-3">
-    <div class="col-md-6">
-        <h4 class="mb-0 fw-normal text-muted">
-            <i class="bi bi-grid-3x3-gap-fill text-success me-2"></i>
-            {% trans "Crop Market Catalog" %}
-        </h4>
-        <p class="text-muted small mb-0 mt-1">
-            {% trans "Real-time daily prices and yearly market trends." %}
-        </p>
-    </div>
-    <div class="col-md-6">
-        <form method="get" class="d-flex shadow-sm rounded-pill overflow-hidden bg-white border">
-            <input type="text" name="search" class="form-control border-0 ps-3" placeholder="{% trans 'Search crop...' %}" value="{{ search_query }}" style="background: transparent;">
-            <button type="submit" class="btn btn-success rounded-pill px-4 m-1">
+
+<div class="crop-catalog">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="catalog-header">
+
+        <div class="catalog-heading">
+
+            <div class="eyebrow">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                {% trans "Market Intelligence" %}
+            </div>
+
+            <h4>
+                {% trans "Crop Market Catalog" %}
+            </h4>
+
+            <p>
+                {% trans "Daily prices and yearly market trends across available crops." %}
+            </p>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <form method="get" class="catalog-search">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="{% trans 'Search crop...' %}"
+                value="{{ search_query }}"
+                autocomplete="off"
+            >
+
+            <button type="submit" aria-label="{% trans 'Search' %}">
                 <i class="bi bi-search"></i>
             </button>
+
         </form>
+
     </div>
-</div>
 
-<!-- Filters -->
-<div class="d-flex flex-wrap gap-2 mb-4">
-    <a href="{% url 'marketPrice:crop_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill {% if not selected_category %}active text-white bg-success border-success{% endif %}">
-        {% trans "All Crops" %}
-    </a>
-    {% for cat in categories %}
-    <a href="?category={{ cat.value }}" class="btn btn-sm btn-outline-secondary rounded-pill {% if selected_category == cat.value %}active text-white bg-success border-success{% endif %}">
-        {{ cat.label }}
-    </a>
-    {% endfor %}
-</div>
 
-<!-- Main Crop Grid -->
-<div class="crop-grid">
-    {% for item in crop_data %}
-    <div class="crop-card">
-        <!-- Header -->
-        <div class="card-header">
-            <div>
-                <a href="{% url 'marketPrice:crop_detail' item.crop.id %}" class="crop-name-mm">
-                    {{ item.crop_name }}
-                </a>
-                <span class="crop-name-en">{{ item.crop.name }}</span>
-            </div>
-            {% if item.crop_category %}
-            <span class="category-badge">{{ item.crop_category }}</span>
-            {% endif %}
-        </div>
+    <!-- =====================================================
+         CATEGORY FILTERS
+         ===================================================== -->
 
-        <!-- Price Section -->
-              <!-- Price Section -->
-        <div class="price-section">
-            <!-- Yearly Price (Original Unit) -->
-            <div class="price-row">
-                <span class="label">
-                    <i class="bi bi-calendar3 me-1"></i> 
-                    {% trans "Yearly Price" %} ({{ item.latest_harvest.year }})
-                </span>
-                <span>
-                    <span class="value">
-                        {% if item.latest_harvest %}
-                            {{ item.latest_harvest.price|floatformat:0 }}
-                        {% else %}
-                            —
-                        {% endif %}
+    <div class="category-filter">
+
+        <span class="filter-label">
+            {% trans "Category" %}
+        </span>
+
+        <a
+            href="{% url 'marketPrice:crop_list' %}"
+            class="{% if not selected_category %}active{% endif %}"
+        >
+            {% trans "All Crops" %}
+        </a>
+
+        {% for cat in categories %}
+
+        <a
+            href="?category={{ cat.value }}"
+            class="{% if selected_category == cat.value %}active{% endif %}"
+        >
+            {{ cat.label }}
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =====================================================
+         CROP GRID
+         ===================================================== -->
+
+    <div class="crop-grid">
+
+
+        {% for item in crop_data %}
+
+
+        <div class="crop-card">
+
+
+            <!-- =================================================
+                 CROP HEADER
+                 ================================================= -->
+
+            <div class="crop-card-header">
+
+                <div class="crop-identity">
+
+                    <a
+                        href="{% url 'marketPrice:crop_detail' item.crop.id %}"
+                        class="crop-name-mm"
+                    >
+                        {{ item.crop_name }}
+                    </a>
+
+                    <span class="crop-name-en">
+                        {{ item.crop.name }}
                     </span>
-                    <span class="unit">Ks / {{ item.crop_unit }}</span>
+
+                </div>
+
+
+                {% if item.crop_category %}
+
+                <span class="category-badge">
+                    {{ item.crop_category }}
                 </span>
+
+                {% endif %}
+
             </div>
 
-            <!-- NEW: Yearly Converted Price -->
-            {% if item.yearly_price_per_viss %}
-            <div class="price-row" style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 2px;">
-                <span class="label">
-                    <i class="bi bi-arrow-repeat me-1"></i> 
-                    {% trans "Yearly Price (Per Viss)" %}
-                </span>
-                <span>
-                    <span class="value" style="font-size: 1.2rem; color: var(--ink-soft);">
-                        {{ item.yearly_price_per_viss|floatformat:0 }}
+
+            <!-- =================================================
+                 PRICE INFORMATION
+                 ================================================= -->
+
+            <div class="price-section">
+
+
+                <!-- YEARLY PRICE -->
+
+                <div class="price-primary">
+
+                    <div>
+
+                        <div class="price-label">
+
+                            <i class="bi bi-calendar3 me-1"></i>
+
+                            {% trans "Yearly Price" %}
+
+                            {% if item.latest_harvest %}
+                                ({{ item.latest_harvest.year }})
+                            {% endif %}
+
+                        </div>
+
+                        <div class="price-main">
+
+                            <span class="value">
+
+                                {% if item.latest_harvest %}
+                                    {{ item.latest_harvest.price|floatformat:0 }}
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </span>
+
+                            <span class="unit">
+                                Ks / {{ item.crop_unit }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NORMALIZED PRICE -->
+
+                {% if item.yearly_price_per_viss %}
+
+                <div class="normalized-price">
+
+                    <span class="label">
+
+                        <i class="bi bi-arrow-repeat me-1"></i>
+
+                        {% trans "Yearly Price per Viss" %}
+
                     </span>
-                    <span class="unit">Ks / Viss</span>
-                </span>
-            </div>
-            {% endif %}
 
-            <!-- Trend (Percentage) -->
-            {% if item.price_change_percentage %}
-            <div class="text-end" style="margin-top: 5px; margin-bottom: 5px;">
-                <span class="trend-badge {{ item.trend_direction }}">
-                    <i class="bi {% if item.trend_direction == 'up' %}bi-arrow-up-short{% elif item.trend_direction == 'down' %}bi-arrow-down-short{% else %}bi-dash-lg{% endif %}"></i>
-                    {% if item.trend_direction == 'up' %}+{% endif %}{{ item.price_change_percentage|floatformat:1 }}%
-                    <span class="small">({% if item.trend_direction == 'up' %}{% trans "Rising" %}{% elif item.trend_direction == 'down' %}{% trans "Falling" %}{% else %}{% trans "Stable" %}{% endif %})</span>
-                </span>
-            </div>
-            {% endif %}
+                    <span>
 
-            <!-- Price Range Visual Bar -->
-            {% if item.prices_list_length > 0 %}
-            <div class="range-container">
-                <div class="range-bar-bg">
-                    <div class="range-bar-fill" style="width: {% widthratio item.latest_harvest.price item.max_price 100 %}%;"></div>
-                    <div class="range-dot" style="left: {% widthratio item.latest_harvest.price item.max_price 100 %}%;"></div>
-                </div>
-                <div class="range-labels">
-                    <span>{% trans "Low" %}: {{ item.min_price|floatformat:0 }}</span>
-                    <span>{% trans "High" %}: {{ item.max_price|floatformat:0 }}</span>
-                </div>
-                <div class="range-text">
-                    {% if item.latest_harvest.price > item.avg_price %}
-                        <i class="bi bi-graph-up-arrow text-success me-1"></i> 
-                        {% trans "Currently above average price range" %}
-                    {% else %}
-                        <i class="bi bi-graph-down-arrow text-danger me-1"></i> 
-                        {% trans "Currently below average price range" %}
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Daily Market Footer (Real Data Only) -->
-        <div class="daily-footer">
-            <span>
-                <i class="bi bi-shop market-icon"></i> 
-                {% if item.latest_daily %}
-                    {% trans "Latest Daily Market" %}
-                {% else %}
-                    {% trans "Daily Market Data" %}
-                {% endif %}
-            </span>
-            <span>
-                {% if item.latest_daily %}
-                    <span class="daily-price">{{ item.latest_daily.price|floatformat:0 }} Ks</span>
-                    <small class="text-muted fw-normal ms-1">/ {{ item.latest_daily.unit }}</small>
-                {% else %}
-                    <span class="text-muted" style="font-size: 0.8rem; font-style: italic;">
-                        <i class="bi bi-hourglass-split me-1"></i> {% trans "No data available" %}
-                    </span>
-                {% endif %}
-            </span>
-        </div>
-            <!-- Daily Market Footer -->
-        <div class="daily-footer">
-            <span>
-                <i class="bi bi-shop market-icon"></i> 
-                {% if item.latest_daily.is_mock %}
-                    {% trans "Estimated Retail Price" %}
-                {% else %}
-                    {% trans "Latest Daily Market" %}
-                {% endif %}
-            </span>
-            <span>
-                {% if item.latest_daily %}
-                    <span class="daily-price">{{ item.latest_daily.price|floatformat:0 }} Ks</span>
-                    <small class="text-muted fw-normal ms-1">/ {{ item.latest_daily.unit }}</small>
-                    
-                    {% if item.latest_daily.is_mock %}
-                        <span class="badge bg-warning text-dark ms-2" style="font-size: 0.65rem; font-weight: 500;">
-                            <i class="bi bi-flask me-1"></i> new
+                        <span class="value">
+                            {{ item.yearly_price_per_viss|floatformat:0 }}
                         </span>
-                    {% endif %}
-                {% else %}
-                    <span class="text-muted" style="font-size: 0.8rem; font-style: italic;">
-                        <i class="bi bi-hourglass-split me-1"></i> {% trans "No data available" %}
+
+                        <span class="unit">
+                            Ks / Viss
+                        </span>
+
                     </span>
+
+                </div>
+
                 {% endif %}
-            </span>
+
+
+                <!-- TREND -->
+
+                {% if item.price_change_percentage %}
+
+                <div class="trend-row">
+
+                    <span class="trend-badge {{ item.trend_direction }}">
+
+                        <i class="bi
+                            {% if item.trend_direction == 'up' %}
+                                bi-arrow-up-short
+                            {% elif item.trend_direction == 'down' %}
+                                bi-arrow-down-short
+                            {% else %}
+                                bi-dash-lg
+                            {% endif %}
+                        "></i>
+
+                        {% if item.trend_direction == 'up' %}
+                            +
+                        {% endif %}
+
+                        {{ item.price_change_percentage|floatformat:1 }}%
+
+                        <span>
+
+                            {% if item.trend_direction == 'up' %}
+
+                                {% trans "Rising" %}
+
+                            {% elif item.trend_direction == 'down' %}
+
+                                {% trans "Falling" %}
+
+                            {% else %}
+
+                                {% trans "Stable" %}
+
+                            {% endif %}
+
+                        </span>
+
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- PRICE RANGE -->
+
+                {% if item.prices_list_length > 0 %}
+
+                <div class="range-container">
+
+                    <div class="range-bar-bg">
+
+                        <div
+                            class="range-bar-fill"
+                            style="width: {% widthratio item.latest_harvest.price item.max_price 100 %}%;"
+                        ></div>
+
+                        <div
+                            class="range-dot"
+                            style="left: {% widthratio item.latest_harvest.price item.max_price 100 %}%;"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="range-labels">
+
+                        <span>
+                            {% trans "Low" %}:
+                            {{ item.min_price|floatformat:0 }}
+                        </span>
+
+                        <span>
+                            {% trans "High" %}:
+                            {{ item.max_price|floatformat:0 }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="range-text">
+
+                        {% if item.latest_harvest.price > item.avg_price %}
+
+                            <i class="bi bi-graph-up-arrow text-success me-1"></i>
+
+                            {% trans "Currently above average price range" %}
+
+                        {% else %}
+
+                            <i class="bi bi-graph-down-arrow text-danger me-1"></i>
+
+                            {% trans "Currently below average price range" %}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+            <!-- =================================================
+                 DAILY MARKET
+                 ================================================= -->
+
+            <div class="daily-footer">
+
+                <div class="daily-label">
+
+                    <i class="bi bi-shop"></i>
+
+                    {% if item.latest_daily and item.latest_daily.is_mock %}
+
+                        {% trans "Estimated Retail Price" %}
+
+                    {% else %}
+
+                        {% trans "Latest Daily Market" %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="daily-value">
+
+                    {% if item.latest_daily %}
+
+                        <span class="daily-price">
+                            {{ item.latest_daily.price|floatformat:0 }} Ks
+                        </span>
+
+                        <span class="daily-unit">
+                            / {{ item.latest_daily.unit }}
+                        </span>
+
+
+                        {% if item.latest_daily.is_mock %}
+
+                        <span class="estimated-badge">
+
+                            <i class="bi bi-flask me-1"></i>
+
+                            {% trans "Estimated" %}
+
+                        </span>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                        <span class="no-data">
+
+                            <i class="bi bi-hourglass-split me-1"></i>
+
+                            {% trans "No data available" %}
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTION
+                 ================================================= -->
+
+            <a
+                href="{% url 'marketPrice:crop_detail' item.crop.id %}"
+                class="btn-outline-green"
+            >
+
+                <i class="bi bi-arrow-right"></i>
+
+                {% trans "View Full History" %}
+
+            </a>
+
+
         </div>
 
-        <!-- Action Button -->
-        <a href="{% url 'marketPrice:crop_detail' item.crop.id %}" class="btn btn-outline-green w-100">
-            <i class="bi bi-eye me-1"></i> {% trans "View Full History" %}
-        </a>
+
+        {% empty %}
+
+
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+
+                <i class="bi bi-inbox"></i>
+
+            </div>
+
+            <h5>
+                {% trans "No crops found matching your criteria." %}
+            </h5>
+
+            <p>
+                {% trans "Try adjusting your search or filters." %}
+            </p>
+
+            <a
+                href="{% url 'marketPrice:crop_list' %}"
+                class="btn btn-outline-success"
+            >
+
+                <i class="bi bi-arrow-clockwise me-1"></i>
+
+                {% trans "Clear Filters" %}
+
+            </a>
+
+        </div>
+
+
+        {% endfor %}
+
+
     </div>
-    {% empty %}
-    <div class="col-12 text-center py-5" style="grid-column: 1 / -1;">
-        <div class="display-1 text-muted opacity-25 mb-3"><i class="bi bi-inbox"></i></div>
-        <h5>{% trans "No crops found matching your criteria." %}</h5>
-        <p class="text-muted">{% trans "Try adjusting your search or filters." %}</p>
-        <a href="{% url 'marketPrice:crop_list' %}" class="btn btn-outline-success rounded-pill px-4">
-            <i class="bi bi-arrow-clockwise me-1"></i> {% trans "Clear Filters" %}
-        </a>
-    </div>
-    {% endfor %}
+
 </div>
+
 {% endblock %}

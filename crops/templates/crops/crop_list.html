@@ -12,8 +12,13 @@
             <h2 class="mb-1">{% trans "Crops" %}</h2>
             <p class="text-muted mb-0">{% trans "Manage your farm crops and track their progress" %}</p>
         </div>
-        <div class="d-flex gap-2">
-            <!-- ADDED: Growth Advisor Button -->
+        <div class="d-flex gap-2 flex-wrap">
+            <!-- NEW: Planting Advisor Button -->
+            <a href="{% url 'crops:planting_advisor' %}" class="btn btn-outline-success">
+                <span class="material-symbols-outlined">recommend</span> {% trans "Planting Advisor" %}
+            </a>
+            
+            <!-- Growth Advisor Button -->
             <a href="{% url 'crops:crop_growth_advisor' %}" class="btn btn-outline-success">
                 <span class="material-symbols-outlined">lightbulb</span> {% trans "Growth Advisor" %}
             </a>

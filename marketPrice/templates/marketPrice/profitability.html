@@ -90,9 +90,9 @@
                     <tr>
                         <th style="width:40px;">#</th>
                         <th>{% trans "Crop" %}</th>
-                        <th>{% trans "Year" %}</th>
-                        <th class="text-end">{% trans "Farmgate Price" %}</th>
-                        <th class="text-end">{% trans "Est. Market Price" %}</th>
+                    
+                        <th class="text-end">{% trans "Farmgate Price This Year (2025-2026)" %}</th>
+                        <th class="text-end">{% trans "Est. Market Price This Year (2025-2026)" %}</th>
                         <th class="text-end">{% trans "Profit Margin" %}</th>
                         <th class="text-center">{% trans "ROI" %}</th>
                     </tr>
@@ -106,8 +106,7 @@
                                 {{ item.crop_name }}
                             </a>
                         </td>
-                        <td class="text-muted small">{{ item.year }}</td>
-                        
+                       
                         <td class="text-end">
                             <span class="price-mid">{{ item.farmgate_viss|floatformat:0 }}</span>
                             <span class="viss-tag">Ks/Viss</span>

@@ -1,0 +1,1268 @@
+```html
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %}{% trans "Best Market Finder" %} - AgriVision{% endblock %}
+{% block page_title %}{% trans "Where to Sell" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.market-page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-bottom: 4rem;
+}
+
+/* =========================================================
+   FILTER / CONTROL PANEL
+   ========================================================= */
+
+.filter-bar {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) auto;
+    align-items: end;
+    gap: 2rem;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    padding: 2rem 2.25rem;
+    margin-bottom: 2.5rem;
+
+    box-shadow: var(--shadow-soft);
+}
+
+.filter-group {
+    min-width: 0;
+}
+
+.filter-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    margin-bottom: 0.7rem;
+
+    color: var(--ink-faint);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+.filter-group label::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+}
+
+.filter-group select {
+    width: 100%;
+    min-height: 50px;
+
+    padding: 0.75rem 1rem;
+
+    color: var(--ink);
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    font-size: 0.95rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+    cursor: pointer;
+}
+
+.filter-group select:hover {
+    border-color: rgba(46, 125, 50, 0.35);
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--accent-green);
+
+    box-shadow:
+        0 0 0 3px rgba(46, 125, 50, 0.08);
+}
+
+.filter-bar .btn-apply {
+    min-height: 50px;
+
+    padding: 0.75rem 2rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: var(--accent-green);
+    color: #fff;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.filter-bar .btn-apply::before {
+    content: "\f4fe";
+    font-family: "bootstrap-icons";
+    font-size: 0.95rem;
+}
+
+.filter-bar .btn-apply:hover {
+    opacity: 0.94;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+}
+
+.filter-bar .btn-apply:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   INFORMATION STRIP
+   ========================================================= */
+
+.info-alert {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+
+    background: rgba(13, 110, 253, 0.035);
+    border: 1px solid rgba(13, 110, 253, 0.10);
+    border-radius: var(--radius-md);
+
+    color: var(--ink);
+}
+
+.info-alert .crop-label {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.info-alert .text-muted {
+    margin: 0;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+}
+
+.info-alert .location-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+
+    margin-left: auto;
+
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+}
+
+.info-alert .location-tag {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0.25rem 0.65rem;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    color: var(--ink);
+    font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   RECOMMENDATION CARDS
+   ========================================================= */
+
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 1.25rem;
+
+    margin-bottom: 2.5rem;
+}
+
+.recommendation-card {
+    position: relative;
+
+    min-height: 155px;
+
+    padding: 1.5rem 1.5rem 1.4rem;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    border-color: rgba(46, 125, 50, 0.2);
+}
+
+.recommendation-card .icon {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 1rem;
+
+    border-radius: 10px;
+
+    font-size: 1rem;
+}
+
+.recommendation-card .icon.green {
+    color: #2e7d32;
+    background: rgba(46, 125, 50, 0.10);
+}
+
+.recommendation-card .icon.blue {
+    color: #0d6efd;
+    background: rgba(13, 110, 253, 0.08);
+}
+
+.recommendation-card .icon.orange {
+    color: #ff9800;
+    background: rgba(255, 152, 0, 0.10);
+}
+
+.recommendation-card .title {
+    margin-bottom: 0.35rem;
+
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 650;
+}
+
+.recommendation-card .description {
+    max-width: 420px;
+
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   MARKET TABLE
+   ========================================================= */
+
+.table-wrap {
+    overflow: hidden;
+
+    margin-bottom: 2.5rem;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+}
+
+.table-wrap .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1.35rem 1.5rem;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.table-wrap .table-header h5 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    margin: 0;
+
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 650;
+}
+
+.table-wrap .table-header h5 .icon {
+    color: var(--accent-green);
+    font-size: 1rem;
+}
+
+.table-wrap .table-header .count-badge {
+    padding: 0.3rem 0.7rem;
+
+    color: var(--ink-faint);
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.table-wrap table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.table-wrap table th {
+    padding: 0.9rem 1.5rem;
+
+    background: var(--bg-glass);
+    border-bottom: 1px solid var(--border);
+
+    color: var(--ink-faint);
+
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.table-wrap table td {
+    padding: 1.05rem 1.5rem;
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--ink);
+    font-size: 0.85rem;
+
+    vertical-align: middle;
+}
+
+.table-wrap table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.table-wrap table tbody tr:hover {
+    background: var(--bg-glass);
+}
+
+.table-wrap table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ranking */
+
+.table-wrap table td:first-child {
+    width: 45px;
+
+    color: var(--ink-faint);
+    font-size: 0.75rem;
+}
+
+/* region */
+
+.table-wrap .region-name {
+    font-weight: 550;
+}
+
+.table-wrap .badge-local {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    margin-left: 0.5rem;
+    padding: 0.18rem 0.55rem;
+
+    color: #2e7d32;
+    background: rgba(46, 125, 50, 0.08);
+
+    border-radius: 50px;
+
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+/* price */
+
+.table-wrap .price-value {
+    color: var(--accent-green);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* demand */
+
+.demand-badge {
+    display: inline-flex;
+    align-items: center;
+
+    min-width: 62px;
+    justify-content: center;
+
+    padding: 0.28rem 0.7rem;
+
+    border-radius: 50px;
+
+    font-size: 0.65rem;
+    font-weight: 650;
+}
+
+.demand-high {
+    color: #2e7d32;
+    background: rgba(46, 125, 50, 0.10);
+}
+
+.demand-medium {
+    color: #e65100;
+    background: rgba(255, 152, 0, 0.10);
+}
+
+.demand-low {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.08);
+}
+
+/* status */
+
+.table-wrap .badge {
+    padding: 0.35rem 0.65rem;
+
+    border-radius: 50px;
+
+    font-size: 0.62rem;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CHART
+   ========================================================= */
+
+.chart-card {
+    padding: 1.75rem 1.75rem 1.5rem;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+}
+
+.chart-card .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.chart-card .chart-header h5 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    margin: 0;
+
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 650;
+}
+
+.chart-card .chart-header h5 .icon {
+    color: var(--accent-green);
+}
+
+.chart-wrapper {
+    position: relative;
+
+    width: 100%;
+    height: 330px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+    padding: 5rem 2rem;
+
+    text-align: center;
+
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+}
+
+.empty-state .icon {
+    width: 64px;
+    height: 64px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 1.25rem;
+
+    color: var(--ink-faint);
+    background: var(--bg-glass);
+
+    border-radius: 16px;
+
+    font-size: 1.7rem;
+    opacity: 0.65;
+}
+
+.empty-state h5 {
+    margin-bottom: 0.6rem;
+
+    color: var(--ink);
+    font-size: 1.15rem;
+    font-weight: 650;
+}
+
+.empty-state p {
+    max-width: 500px;
+
+    margin: 0 auto 1.25rem;
+
+    color: var(--ink-soft);
+
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+.empty-state .btn {
+    padding: 0.65rem 1.5rem;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .filter-bar {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .filter-bar .btn-apply {
+        width: 100%;
+    }
+
+    .recommendation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-alert .location-group {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .filter-bar {
+        padding: 1.5rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .info-alert {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    .recommendation-grid {
+        gap: 0.9rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .recommendation-card {
+        min-height: auto;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .table-wrap .table-header {
+        padding: 1rem 1.1rem;
+    }
+
+    .table-wrap table {
+        min-width: 720px;
+    }
+
+    .table-wrap table th,
+    .table-wrap table td {
+        padding: 0.8rem 0.9rem;
+    }
+
+    .chart-card {
+        padding: 1.25rem;
+    }
+
+    .chart-wrapper {
+        height: 250px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .filter-bar {
+        padding: 1.25rem;
+    }
+
+    .info-alert {
+        padding: 0.9rem 1rem;
+    }
+
+    .recommendation-card {
+        padding: 1.25rem;
+    }
+
+    .chart-card {
+        padding: 1rem;
+    }
+
+    .chart-wrapper {
+        height: 220px;
+    }
+
+    .empty-state {
+        padding: 3.5rem 1.25rem;
+    }
+}
+
+</style>
+{% endblock %}
+
+
+{% block app_content %}
+
+<div class="market-page">
+
+    <!-- FILTER -->
+
+    <div class="filter-bar">
+
+        <div class="filter-group">
+
+            <label for="cropSelect">
+                Select Crop
+            </label>
+
+            <select id="cropSelect" class="form-select">
+
+                <option value="">
+                    -- Select a crop --
+                </option>
+
+                {% for crop in all_crops %}
+
+                <option
+                    value="{{ crop.id }}"
+                    {% if selected_crop and selected_crop.id == crop.id %}selected{% endif %}
+                >
+                    {{ crop.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <button class="btn-apply" onclick="applyFilter()">
+            Find Best Market
+        </button>
+
+    </div>
+
+
+    {% if selected_crop and has_data %}
+
+    <!-- CROP INFORMATION -->
+
+    <div class="info-alert">
+
+        <span class="crop-label">
+            {{ selected_crop_name }}
+        </span>
+
+        <span class="text-muted">
+            Market analysis across available regions
+        </span>
+
+        {% if user_locations %}
+
+        <div class="location-group">
+
+            <span>Your farms:</span>
+
+            {% for loc in user_locations %}
+
+            <span class="location-tag">
+                {{ loc }}
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- RECOMMENDATIONS -->
+
+    <div class="recommendation-grid">
+
+        {% for rec in recommendations %}
+
+        <div class="recommendation-card">
+
+            <span class="icon {{ rec.color }}">
+                <i class="bi {{ rec.icon }}"></i>
+            </span>
+
+            <div class="title">
+                {{ rec.title }}
+            </div>
+
+            <div class="description">
+                {{ rec.description }}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- MARKET TABLE -->
+
+    <div class="table-wrap">
+
+        <div class="table-header">
+
+            <h5>
+                <span class="icon">
+                    <i class="bi bi-table"></i>
+                </span>
+
+                Regional Market Comparison
+            </h5>
+
+            <span class="count-badge">
+                {{ market_data|length }} regions
+            </span>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Region</th>
+
+                        <th class="text-end">
+                            Price (Ks/Viss)
+                        </th>
+
+                        <th class="text-end">
+                            Production (Tons)
+                        </th>
+
+                        <th class="text-center">
+                            Demand
+                        </th>
+
+                        <th class="text-center">
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in market_data %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+
+                            <span class="region-name">
+
+                                {{ item.region_translated }}
+
+                                {% if item.is_user_region %}
+
+                                <span class="badge-local">
+                                    <i class="bi bi-house"></i>
+                                    Your Region
+                                </span>
+
+                                {% endif %}
+
+                            </span>
+
+                        </td>
+
+                        <td class="text-end price-value">
+
+                            {{ item.estimated_price|floatformat:0|intcomma }}
+
+                        </td>
+
+                        <td class="text-end">
+
+                            {{ item.production_tons|floatformat:0|intcomma }}
+
+                        </td>
+
+                        <td class="text-center">
+
+                            <span class="demand-badge demand-{{ item.demand_rating }}">
+
+                                {{ item.demand_rating_translated }}
+
+                            </span>
+
+                        </td>
+
+                        <td class="text-center">
+
+                            {% if forloop.counter == 1 %}
+
+                            <span class="badge bg-success">
+                                Best Price
+                            </span>
+
+                            {% elif item.demand_rating == 'high' %}
+
+                            <span class="badge bg-warning text-dark">
+                                High Demand
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-secondary">
+                                —
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHART -->
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+
+            <h5>
+
+                <span class="icon">
+                    <i class="bi bi-bar-chart"></i>
+                </span>
+
+                Price Comparison by Region
+
+            </h5>
+
+        </div>
+
+        <div class="chart-wrapper">
+
+            <canvas id="marketChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    {% elif selected_crop and not has_data %}
+
+
+    <!-- NO DATA -->
+
+    <div class="empty-state">
+
+        <div class="icon">
+            <i class="bi bi-database-slash"></i>
+        </div>
+
+        <h5>
+            No market data available
+        </h5>
+
+        <p>
+            We don't have enough data for
+            <strong>{{ selected_crop_name }}</strong>.
+            Try selecting a different crop from the dropdown above.
+        </p>
+
+        <a
+            href="{% url 'crops:planting_advisor' %}"
+            class="btn btn-outline-success"
+        >
+            View Planting Advisor
+        </a>
+
+    </div>
+
+
+    {% else %}
+
+
+    <!-- INITIAL EMPTY STATE -->
+
+    <div class="empty-state">
+
+        <div class="icon">
+            <i class="bi bi-storefront"></i>
+        </div>
+
+        <h5>
+            Find the Best Market for Your Crops
+        </h5>
+
+        <p>
+            Select a crop from the dropdown above to compare
+            regional prices and identify the strongest market opportunity.
+        </p>
+
+        {% if not user_locations %}
+
+        <p
+            class="text-muted"
+            style="font-size: 0.8rem;"
+        >
+            <i class="bi bi-info-circle"></i>
+            Add your farms to receive location-based recommendations.
+        </p>
+
+        <a
+            href="{% url 'farms:farm_create' %}"
+            class="btn btn-outline-primary"
+        >
+            Add Farm
+        </a>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+function applyFilter() {
+
+    var crop =
+        document.getElementById('cropSelect').value;
+
+    if (crop) {
+
+        window.location.href =
+            '?crop=' + encodeURIComponent(crop);
+
+    } else {
+
+        window.location.href =
+            window.location.pathname;
+
+    }
+
+}
+
+
+document
+    .getElementById('cropSelect')
+    ?.addEventListener('keydown', function(e) {
+
+        if (e.key === 'Enter') {
+            applyFilter();
+        }
+
+    });
+
+
+{% if selected_crop and has_data %}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    var chartRegions =
+        {{ chart_regions|safe }};
+
+    var chartPrices =
+        {{ chart_prices|safe }};
+
+    var chartDemand =
+        {{ chart_demand|safe }};
+
+
+    if (chartRegions.length > 0) {
+
+        var canvas =
+            document.getElementById('marketChart');
+
+        if (!canvas) return;
+
+        var ctx =
+            canvas.getContext('2d');
+
+
+        var colors =
+            chartDemand.map(function(d) {
+
+                if (d === 'high') {
+                    return 'rgba(46, 125, 50, 0.8)';
+                }
+
+                if (d === 'medium') {
+                    return 'rgba(255, 152, 0, 0.8)';
+                }
+
+                return 'rgba(220, 53, 69, 0.8)';
+
+            });
+
+
+        new Chart(ctx, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: chartRegions,
+
+                datasets: [{
+
+                    label: 'Price (Ks/Viss)',
+
+                    data: chartPrices,
+
+                    backgroundColor: colors,
+
+                    borderColor: colors.map(function(c) {
+                        return c.replace('0.8', '1');
+                    }),
+
+                    borderWidth: 1,
+
+                    borderRadius: 5,
+
+                    borderSkipped: false
+
+                }]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+
+                        backgroundColor:
+                            'rgba(20, 20, 20, 0.92)',
+
+                        padding: 10,
+
+                        cornerRadius: 7,
+
+                        displayColors: false,
+
+                        callbacks: {
+
+                            title: function(context) {
+                                return context[0].label;
+                            },
+
+                            label: function(context) {
+
+                                return (
+                                    'Price: ' +
+                                    context.parsed.y
+                                        .toLocaleString() +
+                                    ' Ks/Viss'
+                                );
+
+                            }
+
+                        }
+
+                    }
+
+                },
+
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        border: {
+                            display: false
+                        },
+
+                        grid: {
+                            color: 'rgba(0,0,0,0.045)'
+                        },
+
+                        ticks: {
+
+                            color: '#888',
+
+                            padding: 8,
+
+                            callback: function(value) {
+
+                                return value.toLocaleString();
+
+                            }
+
+                        }
+
+                    },
+
+
+                    x: {
+
+                        border: {
+                            display: false
+                        },
+
+                        grid: {
+                            display: false
+                        },
+
+                        ticks: {
+
+                            color: '#888',
+
+                            padding: 8
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+});
+
+{% endif %}
+
+</script>
+
+{% endblock %}
+

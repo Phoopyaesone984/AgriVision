@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}{% trans "Regional Analysis" %} - AgriVision{% endblock %}
 {% block nav_regions %}active{% endblock %}
@@ -9,28 +10,150 @@
 {% block extra_css %}
 <style>
 /* =========================================================
-   LAYOUT & BREATHING (CORE SPACING)
+   MAIN WRAPPER - Extra breathing room
    ========================================================= */
 .region-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 2rem; /* Adds space between Filter Bar, Chart, and Table */
+    gap: 2rem;
+    padding: 0.5rem 0;
 }
 
 /* =========================================================
-   FLOATING FILTER BAR
+   STATS GRID - 6 cards with proper spacing
+   ========================================================= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    transition: 0.2s ease;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-pill:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+}
+
+.stat-pill .number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+}
+
+.stat-pill .label {
+    font-size: 0.65rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.4rem;
+}
+
+.stat-pill .sub-label {
+    font-size: 0.55rem;
+    color: var(--ink-faint);
+    opacity: 0.7;
+    margin-top: 0.1rem;
+}
+
+/* =========================================================
+   INSIGHTS GRID - 5 cards with proper spacing
+   ========================================================= */
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.insight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: 0.2s ease;
+    box-shadow: var(--shadow-card);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.insight-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+}
+
+.insight-card .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.6rem;
+    font-size: 1.2rem;
+}
+
+.insight-card .icon-wrapper.success { background: rgba(46, 125, 50, 0.15); color: #2e7d32; }
+.insight-card .icon-wrapper.info { background: rgba(13, 110, 253, 0.15); color: #0d6efd; }
+.insight-card .icon-wrapper.warning { background: rgba(255, 152, 0, 0.15); color: #ff9800; }
+.insight-card .icon-wrapper.danger { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+.insight-card .icon-wrapper.primary { background: rgba(13, 110, 253, 0.15); color: #0d6efd; }
+.insight-card .icon-wrapper.secondary { background: rgba(108, 117, 125, 0.15); color: #6c757d; }
+
+.insight-card .insight-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+}
+
+.insight-card .insight-title {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    letter-spacing: 0.3px;
+    margin-top: 0.2rem;
+}
+
+.insight-card .insight-desc {
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    margin-top: 0.2rem;
+    line-height: 1.3;
+}
+
+/* =========================================================
+   FILTER BAR
    ========================================================= */
 .filter-bar {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem; /* Inner breathing space for the bar */
+    padding: 1.25rem 1.5rem;
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     gap: 1.25rem;
     box-shadow: var(--shadow-soft);
-    margin-bottom: 0.5rem; /* Extra space specifically below the filter */
+    margin: 0.5rem 0;
 }
 
 .filter-group {
@@ -74,6 +197,7 @@
     border: none;
     font-weight: 500;
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .filter-bar .btn-apply:hover {
@@ -81,16 +205,33 @@
     transform: translateY(-1px);
 }
 
+.filter-bar .btn-clear {
+    flex: 0 0 auto;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-faint);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.filter-bar .btn-clear:hover {
+    background: var(--bg-glass);
+}
+
 /* =========================================================
-   VISUAL CHART CARD
+   CHART CARD
    ========================================================= */
 .chart-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 1.75rem; /* Generous inner padding */
+    padding: 1.75rem;
     box-shadow: var(--shadow-card);
-    /* No extra margin here; relies on the wrapper gap */
+    margin: 0.5rem 0;
 }
 
 .chart-header {
@@ -100,6 +241,8 @@
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .chart-header h5 {
@@ -118,20 +261,20 @@
 
 .chart-wrapper {
     position: relative;
-    height: 320px; /* Slightly taller for better readability */
+    height: 320px;
     width: 100%;
 }
 
 /* =========================================================
-   BREATHABLE TABLE CARD
+   TABLE CARD
    ========================================================= */
 .table-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 1.75rem; /* Generous inner padding */
+    padding: 1.75rem;
     box-shadow: var(--shadow-card);
-    /* No extra margin here; relies on the wrapper gap */
+    margin: 0.5rem 0;
 }
 
 .table-header-row {
@@ -141,6 +284,8 @@
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .table-header-row h5 {
@@ -191,12 +336,14 @@
     color: var(--ink-faint);
     font-weight: 600;
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
 }
 
 .table-region td {
-    padding: 0.85rem 1rem;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border);
     color: var(--ink);
+    vertical-align: middle;
 }
 
 .table-region tbody tr:last-child td {
@@ -219,12 +366,26 @@
     font-size: 0.8rem;
 }
 
-.table-region .text-muted {
-    color: var(--ink-faint);
-}
-
 .table-region .text-end {
     text-align: right;
+}
+
+.table-region .text-center {
+    text-align: center;
+}
+
+.growth-up {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.growth-down {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.growth-stable {
+    color: #6c757d;
 }
 
 /* =========================================================
@@ -246,6 +407,15 @@
 /* =========================================================
    RESPONSIVE
    ========================================================= */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .insights-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .filter-bar {
         flex-direction: column;
@@ -255,7 +425,8 @@
     .filter-group {
         flex: 1 1 auto;
     }
-    .filter-bar .btn-apply {
+    .filter-bar .btn-apply,
+    .filter-bar .btn-clear {
         width: 100%;
     }
     .chart-wrapper {
@@ -264,7 +435,58 @@
     .table-header-row {
         flex-direction: column;
         align-items: flex-start;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
+    }
+    .insights-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    .stat-pill {
+        padding: 1rem 0.75rem;
+        min-height: 80px;
+    }
+    .stat-pill .number {
+        font-size: 1.2rem;
+    }
+    .insight-card {
+        padding: 1rem 0.75rem;
+        min-height: 100px;
+    }
+    .insight-card .insight-value {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    .insights-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    .stat-pill {
+        padding: 0.75rem 0.5rem;
+        min-height: 70px;
+    }
+    .stat-pill .number {
+        font-size: 1rem;
+    }
+    .insight-card {
+        padding: 0.75rem 0.5rem;
+        min-height: 80px;
+    }
+    .insight-card .insight-value {
+        font-size: 0.9rem;
+    }
+    .insight-card .icon-wrapper {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
     }
 }
 </style>
@@ -273,7 +495,87 @@
 {% block app_content %}
 <div class="region-wrapper">
     
-    <!-- 1. Floating Filter Bar -->
+    <!-- =========================================================
+         SECTION 1: SUMMARY STATS - 6 Cards
+         ========================================================= -->
+    <div class="stats-grid">
+        <div class="stat-pill" style="border-color: #2e7d32;">
+            <div class="number text-success">
+                {% if total_production > 1000000 %}
+                    {{ total_production|floatformat:1 }}M
+                {% else %}
+                    {{ total_production|floatformat:0|intcomma }}
+                {% endif %}
+            </div>
+            <div class="label">{% trans "Total Production" %}</div>
+            <div class="sub-label">{% trans "Tons" %}</div>
+        </div>
+        <div class="stat-pill" style="border-color: #1976d2;">
+            <div class="number text-primary">{{ total_sown_acres|floatformat:0|intcomma }}</div>
+            <div class="label">{% trans "Total Sown" %}</div>
+            <div class="sub-label">{% trans "Acres" %}</div>
+        </div>
+        <div class="stat-pill" style="border-color: #ff9800;">
+            <div class="number text-warning">{{ avg_yield_per_acre|floatformat:2 }}</div>
+            <div class="label">{% trans "Avg Yield" %}</div>
+            <div class="sub-label">{% trans "Tons/Acre" %}</div>
+        </div>
+        <div class="stat-pill" style="border-color: #9c27b0;">
+            <div class="number">
+                {% if harvest_rate > 85 %}
+                    <span class="text-success">{{ harvest_rate|floatformat:1 }}%</span>
+                {% elif harvest_rate > 70 %}
+                    <span class="text-warning">{{ harvest_rate|floatformat:1 }}%</span>
+                {% else %}
+                    <span class="text-danger">{{ harvest_rate|floatformat:1 }}%</span>
+                {% endif %}
+            </div>
+            <div class="label">{% trans "Harvest Rate" %}</div>
+            <div class="sub-label">{% trans "Harvested / Sown" %}</div>
+        </div>
+        <div class="stat-pill" style="border-color: #0d6efd;">
+            <div class="number">
+                {% if yoy_growth > 0 %}
+                    <span class="text-success">+{{ yoy_growth|floatformat:1 }}%</span>
+                {% elif yoy_growth < 0 %}
+                    <span class="text-danger">{{ yoy_growth|floatformat:1 }}%</span>
+                {% else %}
+                    <span class="text-muted">0%</span>
+                {% endif %}
+            </div>
+            <div class="label">{% trans "YoY Growth" %}</div>
+            <div class="sub-label">{% trans "Year-over-Year" %}</div>
+        </div>
+        <div class="stat-pill" style="border-color: #dc3545;">
+            <div class="number text-danger">{{ record_count|intcomma }}</div>
+            <div class="label">{% trans "Total Records" %}</div>
+            <div class="sub-label">{% trans "Crop Records" %}</div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SECTION 2: INSIGHTS CARDS - 5 Cards
+         ========================================================= -->
+    <div class="insights-grid">
+        {% for insight in insights %}
+        <div class="insight-card">
+            <div class="icon-wrapper {{ insight.color }}">
+                <i class="bi {{ insight.icon }}"></i>
+            </div>
+            <div class="insight-value">{{ insight.value }}</div>
+            <div class="insight-title">{{ insight.title }}</div>
+            <div class="insight-desc">{{ insight.description|truncatechars:40 }}</div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-3 text-muted">
+            {% trans "No insights available" %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- =========================================================
+         SECTION 3: FILTER BAR
+         ========================================================= -->
     <div class="filter-bar">
         <div class="filter-group">
             <label for="regionSelect">{% trans "Region" %}</label>
@@ -300,20 +602,31 @@
         <button type="submit" class="btn-apply" form="filterForm">
             <i class="bi bi-funnel me-1"></i> {% trans "Apply Filters" %}
         </button>
+        <a href="{% url 'marketPrice:regions' %}" class="btn-clear">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> {% trans "Clear" %}
+        </a>
     </div>
 
-    <!-- 2. Visual Chart Card -->
+    <!-- =========================================================
+         SECTION 4: CHART
+         ========================================================= -->
     <div class="chart-card">
         <div class="chart-header">
-            <h5><i class="bi bi-bar-chart-fill"></i> {% trans "Regional Production Overview" %}</h5>
-            <span class="count-badge">{% trans "Total" %}: {{ regional_data|length }} {% trans "records" %}</span>
+            <h5><i class="bi bi-bar-chart-fill"></i> {% trans "Regional Production by Year" %}</h5>
+            <span class="count-badge">
+                <i class="bi bi-calendar3 me-1"></i> {{ chart_years|length }} {% trans "years" %}
+                <span class="mx-1">·</span>
+                {{ chart_regions|length }} {% trans "regions" %}
+            </span>
         </div>
         <div class="chart-wrapper">
             <canvas id="regionChart"></canvas>
         </div>
     </div>
 
-    <!-- 3. Breathable Data Table -->
+    <!-- =========================================================
+         SECTION 5: DATA TABLE
+         ========================================================= -->
     <div class="table-card">
         <div class="table-header-row">
             <h5><i class="bi bi-table"></i> {% trans "Detailed Production Records" %}</h5>
@@ -327,12 +640,14 @@
             <table class="table-region">
                 <thead>
                     <tr>
-                        <th style="width: 15%;">{% trans "Region" %}</th>
-                        <th style="width: 20%;">{% trans "Crop" %}</th>
-                        <th style="width: 12%;">{% trans "Year" %}</th>
-                        <th class="text-end" style="width: 18%;">{% trans "Sown (Acres)" %}</th>
-                        <th class="text-end" style="width: 18%;">{% trans "Harvested (Acres)" %}</th>
-                        <th class="text-end" style="width: 17%;">{% trans "Production (Tons)" %}</th>
+                        <th style="min-width: 120px;">{% trans "Region" %}</th>
+                        <th style="min-width: 140px;">{% trans "Crop" %}</th>
+                        <th style="min-width: 80px;">{% trans "Year" %}</th>
+                        <th class="text-end" style="min-width: 120px;">{% trans "Sown (Acres)" %}</th>
+                        <th class="text-end" style="min-width: 130px;">{% trans "Harvested (Acres)" %}</th>
+                        <th class="text-end" style="min-width: 130px;">{% trans "Production (Tons)" %}</th>
+                        <th class="text-end" style="min-width: 110px;">{% trans "Growth" %}</th>
+                        <th class="text-end" style="min-width: 100px;">{% trans "Harvest Rate" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -345,9 +660,43 @@
                         </td>
                         <td>{% translate item.crop_category %}</td>
                         <td><span class="text-muted">{{ item.year }}</span></td>
-                        <td class="text-end fw-medium">{{ item.sown_acres|floatformat:0 }}</td>
-                        <td class="text-end fw-medium">{{ item.harvested_acres|floatformat:0 }}</td>
-                        <td class="text-end fw-bold" style="color: var(--accent-green);">{{ item.production_tons|floatformat:0 }}</td>
+                        <td class="text-end">{{ item.sown_acres|floatformat:0|intcomma }}</td>
+                        <td class="text-end">{{ item.harvested_acres|floatformat:0|intcomma }}</td>
+                        <td class="text-end fw-bold" style="color: var(--accent-green);">
+                            {{ item.production_tons|floatformat:0|intcomma }}
+                        </td>
+                        <td class="text-end">
+                            {% if item.growth_percentage > 5 %}
+                                <span class="growth-up">
+                                    <i class="bi bi-arrow-up"></i> +{{ item.growth_percentage|floatformat:1 }}%
+                                </span>
+                            {% elif item.growth_percentage > 0 %}
+                                <span class="growth-up">
+                                    <i class="bi bi-arrow-up"></i> +{{ item.growth_percentage|floatformat:1 }}%
+                                </span>
+                            {% elif item.growth_percentage < -5 %}
+                                <span class="growth-down">
+                                    <i class="bi bi-arrow-down"></i> {{ item.growth_percentage|floatformat:1 }}%
+                                </span>
+                            {% elif item.growth_percentage < 0 %}
+                                <span class="growth-down">
+                                    <i class="bi bi-arrow-down"></i> {{ item.growth_percentage|floatformat:1 }}%
+                                </span>
+                            {% else %}
+                                <span class="growth-stable">
+                                    <i class="bi bi-dash"></i> 0%
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if item.harvest_rate > 85 %}
+                                <span class="text-success fw-bold">{{ item.harvest_rate|floatformat:1 }}%</span>
+                            {% elif item.harvest_rate > 70 %}
+                                <span class="text-warning fw-bold">{{ item.harvest_rate|floatformat:1 }}%</span>
+                            {% else %}
+                                <span class="text-danger fw-bold">{{ item.harvest_rate|floatformat:1 }}%</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -361,10 +710,9 @@
         </div>
         {% endif %}
     </div>
-
 </div>
 
-<!-- Hidden Form for 'Apply' button to work with GET requests -->
+<!-- Hidden Form for filter submission -->
 <form id="filterForm" method="get" style="display: none;">
     <input type="hidden" name="region" id="hiddenRegion">
     <input type="hidden" name="category" id="hiddenCategory">
@@ -376,81 +724,131 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    // 1. Sync the hidden form inputs when the Apply button is clicked
+    // =========================================================
+    // 1. FILTER FORM HANDLING
+    // =========================================================
     const applyBtn = document.querySelector('.btn-apply');
     const regionSelect = document.getElementById('regionSelect');
     const categorySelect = document.getElementById('categorySelect');
     const hiddenRegion = document.getElementById('hiddenRegion');
     const hiddenCategory = document.getElementById('hiddenCategory');
 
-    applyBtn.addEventListener('click', function(e) {
-        hiddenRegion.value = regionSelect.value;
-        hiddenCategory.value = categorySelect.value;
-        document.getElementById('filterForm').submit();
-    });
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function(e) {
+            hiddenRegion.value = regionSelect.value;
+            hiddenCategory.value = categorySelect.value;
+            document.getElementById('filterForm').submit();
+        });
+    }
 
-    // 2. Setup the Chart
-    const ctx = document.getElementById('regionChart').getContext('2d');
-    
-    // In a real app, you would pass these from Django: {{ chart_labels|safe }} and {{ chart_data|safe }}
-    // For now, I have created beautiful dummy data based on your screenshot.
-    const regions = ['Bago', 'Mandalay', 'Ayeyawady', 'Shan', 'Sagaing'];
-    const productionData = [1850000, 1650000, 3500000, 4800000, 2150000];
-    const colors = ['#2e7d32', '#4caf50', '#8bc34a', '#cddc39', '#ff9800'];
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: regions,
-            datasets: [{
-                label: 'Production (Tons)',
-                data: productionData,
-                backgroundColor: colors,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: 'var(--bg-card)',
-                    titleColor: 'var(--ink)',
-                    bodyColor: 'var(--ink-soft)',
-                    borderColor: 'var(--border)',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y.toLocaleString() + ' Tons';
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false },
-                    ticks: {
-                        color: 'var(--ink-faint)',
-                        font: { size: 10 },
-                        callback: function(value) {
-                            return value.toLocaleString();
-                        }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        color: 'var(--ink-faint)',
-                        font: { size: 11, weight: '500' }
-                    }
-                }
+    // Auto-submit on Enter key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const active = document.activeElement;
+            if (active && (active.id === 'regionSelect' || active.id === 'categorySelect')) {
+                if (applyBtn) applyBtn.click();
             }
         }
     });
+
+    // =========================================================
+    // 2. REGIONAL PRODUCTION CHART
+    // =========================================================
+    const ctx = document.getElementById('regionChart');
+    if (ctx) {
+        const chartRegions = {{ chart_regions|safe }};
+        const chartYears = {{ chart_years|safe }};
+        const chartDatasets = {{ chart_datasets|safe }};
+        
+        // Color palette
+        const colorPalette = [
+            '#2e7d32', '#4caf50', '#8bc34a', '#cddc39', 
+            '#ff9800', '#ff5722', '#1976d2', '#9c27b0', 
+            '#00bcd4', '#f44336', '#795548', '#607d8b'
+        ];
+        
+        const finalDatasets = chartDatasets.map((ds, index) => ({
+            ...ds,
+            backgroundColor: colorPalette[index % colorPalette.length] + '70',
+            borderColor: colorPalette[index % colorPalette.length],
+            borderWidth: 2,
+            borderRadius: 4,
+            hoverBackgroundColor: colorPalette[index % colorPalette.length] + '90',
+        }));
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartYears,
+                datasets: finalDatasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 14,
+                            padding: 12,
+                            font: { 
+                                size: 10, 
+                                weight: '500',
+                                family: "'Inter', sans-serif"
+                            },
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--ink-soft').trim() || '#6c757d',
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleFont: { size: 13, weight: '600' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' Tons';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { 
+                            color: 'rgba(0,0,0,0.05)', 
+                            drawBorder: false 
+                        },
+                        ticks: {
+                            font: { size: 10 },
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--ink-faint').trim() || '#6c757d',
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000).toFixed(1) + 'M';
+                                } else if (value >= 1000) {
+                                    return (value / 1000).toFixed(1) + 'K';
+                                }
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 10 },
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--ink-faint').trim() || '#6c757d'
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

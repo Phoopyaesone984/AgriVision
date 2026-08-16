@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'community',
     'stock',
     'marketPrice',
+    'stock',
 ]
 
 MIDDLEWARE = [

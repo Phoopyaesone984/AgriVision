@@ -469,4 +469,10 @@ def material_detail(request, pk):
         "usage_form": usage_form,
         "threshold_form": threshold_form,
         "active_tab": "materials",
+
     })
+
+
+
+
+

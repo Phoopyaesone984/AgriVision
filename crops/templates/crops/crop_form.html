@@ -37,6 +37,7 @@
                                 <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
                                     {% trans "Crop Name" %} *
                                 </label>
+                                <!-- ✅ THIS IS NOW A DROPDOWN FROM THE DATABASE -->
                                 {{ form.name }}
                                 {% if form.name.errors %}
                                 <div class="text-danger small">{{ form.name.errors }}</div>
@@ -130,10 +131,6 @@
 <script>
     // Auto-calculate harvest date based on crop type (optional)
     document.addEventListener('DOMContentLoaded', function() {
-        const cropTypeSelect = document.getElementById('{{ form.crop_type.id_for_label }}');
-        const plantingDateInput = document.getElementById('{{ form.planting_date.id_for_label }}');
-        const harvestDateInput = document.getElementById('{{ form.expected_harvest_date.id_for_label }}');
-        
         // You can add auto-calculations here if needed
     });
 </script>
