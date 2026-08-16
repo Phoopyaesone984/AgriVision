@@ -828,7 +828,8 @@ def crop_recommendation(request, crop_id=None):
     elif request.user.is_authenticated and user_crops:
         crops = list(user_crops)
     else:
-        crops = Crop.objects.filter(harvest_prices__isnull=False).distinct()
+        # FIXED: Use harvestprice_set instead of harvest_prices
+        crops = Crop.objects.filter(harvestprice__isnull=False).distinct()
         
     recommendations = []
     
@@ -837,13 +838,16 @@ def crop_recommendation(request, crop_id=None):
     monitor_count = 0
     
     for crop in crops:
-        latest_price = crop.harvest_prices.order_by('-year').first()
-        latest_profit = crop.profitability.order_by('-year').first()
+        # FIXED: Use harvestprice_set instead of harvest_prices
+        latest_price = crop.harvestprice_set.order_by('-year').first()
+        # FIXED: Use profitability_set instead of profitability
+        latest_profit = crop.profitability_set.order_by('-year').first()
         
         if not latest_price or not latest_profit:
             continue
         
-        price_history = crop.harvest_prices.all().order_by('year')
+        # FIXED: Use harvestprice_set instead of harvest_prices
+        price_history = crop.harvestprice_set.all().order_by('year')
         prices = [float(p.price) for p in price_history]
         
         trend = "stable"
@@ -962,6 +966,360 @@ def crop_recommendation(request, crop_id=None):
     }
     return render(request, 'marketPrice/recommendations.html', context)
 
+def crop_recommendation(request, crop_id=None):
+    """Get recommendations for specific crop or all crops in user's farms"""
+    from datetime import datetime
+    import math
+    
+    from marketPrice.models import Crop as MarketCrop, HarvestPrice, Profitability
+    from farms.models import Farm
+    
+    recommendations = []
+    sell_count = 0
+    hold_count = 0
+    monitor_count = 0
+    
+    crops_to_process = []
+    
+    if crop_id:
+        # Get the crop from marketPrice by ID
+        crops_to_process = [get_object_or_404(MarketCrop, id=crop_id)]
+    elif request.user.is_authenticated:
+        # Get user's farms
+        user_farms = Farm.objects.filter(owner=request.user)
+        
+        # Get crop names from farm activities
+        crop_names = []
+        for farm in user_farms:
+            farm_activities = farm.activities.all()
+            for activity in farm_activities:
+                if activity.crop:
+                    crop_names.append(activity.crop.name)
+        
+        # Remove duplicates
+        crop_names = list(set(crop_names))
+        
+        # Get marketPrice crops that match the names
+        if crop_names:
+            crops_to_process = MarketCrop.objects.filter(name__in=crop_names)
+        else:
+            # Fallback: get all crops that have harvest prices
+            crops_to_process = MarketCrop.objects.filter(harvest_prices__isnull=False).distinct()
+    else:
+        # For non-authenticated users: get all crops with harvest prices
+        crops_to_process = MarketCrop.objects.filter(harvest_prices__isnull=False).distinct()
+    
+    for crop in crops_to_process:
+        # Now crop is definitely a MarketCrop object
+        latest_price = crop.harvest_prices.order_by('-year').first()
+        latest_profit = crop.profitability.order_by('-year').first()
+        
+        if not latest_price or not latest_profit:
+            continue
+        
+        price_history = crop.harvest_prices.all().order_by('year')
+        prices = [float(p.price) for p in price_history]
+        
+        trend = "stable"
+        price_change = 0
+        if len(prices) >= 2:
+            prev_price = prices[-2]
+            curr_price = prices[-1]
+            if prev_price > 0:
+                price_change = ((curr_price - prev_price) / prev_price) * 100
+            else:
+                price_change = 0
+                
+            if price_change > 5:
+                trend = "up"
+            elif price_change < -5:
+                trend = "down"
+        
+        # Get REAL data from database
+        yield_tons = float(latest_profit.yield_tons_per_acre) if latest_profit.yield_tons_per_acre else 0
+        profit_per_acre = float(latest_profit.profit_per_acre) if latest_profit.profit_per_acre else 0
+        current_price = float(latest_price.price)
+        
+        # Calculate revenue
+        revenue_per_acre = current_price * yield_tons if yield_tons > 0 else 0
+        
+        # Get production cost from constants
+        production_cost = float(get_production_cost(crop.name))
+        
+        # If profit is 0 or negative, calculate it
+        if profit_per_acre <= 0:
+            profit_per_acre = revenue_per_acre - production_cost
+        
+        avg_price = sum(prices) / len(prices) if prices else 0
+        
+        current_price_viss = int(current_price / TON_TO_VISS)
+        avg_price_viss = int(avg_price / TON_TO_VISS)
+        
+        # Calculate REALISTIC ROI
+        roi = 0
+        if production_cost > 0:
+            roi = (profit_per_acre / production_cost) * 100
+            # Cap at realistic maximum
+            if roi > 300:
+                roi = 300
+        
+        # Make recommendations based on REAL data
+        if roi > 200 and price_change > 10:
+            recommendation = "SELL"
+            recommendation_reason = _lazy("Exceptional profitability with rising prices. Sell now!")
+            sell_count += 1
+        elif roi > 150 and price_change > 5:
+            recommendation = "SELL"
+            recommendation_reason = _lazy("High profitability with upward trend. Consider selling.")
+            sell_count += 1
+        elif roi > 100 and price_change > 0:
+            recommendation = "HOLD"
+            recommendation_reason = _lazy("Strong profitability with stable prices. Hold for better returns.")
+            hold_count += 1
+        elif roi > 60 and price_change > -5:
+            recommendation = "HOLD"
+            recommendation_reason = _lazy("Good profitability with stable market. Hold and monitor.")
+            hold_count += 1
+        elif roi < 30 and price_change < -10:
+            recommendation = "SELL"
+            recommendation_reason = _lazy("Low profitability with falling prices. Consider selling.")
+            sell_count += 1
+        else:
+            recommendation = "MONITOR"
+            recommendation_reason = _lazy("Monitor market conditions. Wait for better opportunities.")
+            monitor_count += 1
+        
+        export_cost_factor = get_export_cost_for_crop(crop.name, crop.category)
+        export_profit = profit_per_acre * (1 - export_cost_factor)
+        local_profit = profit_per_acre
+        
+        export_recommendation = "LOCAL"
+        if export_profit > local_profit * 1.1:
+            export_recommendation = "EXPORT"
+        elif export_profit > local_profit * 0.9:
+            export_recommendation = "CONSIDER_EXPORT"
+        
+        season_rec = "HOLD"
+        if avg_price > 0 and current_price > avg_price * 1.15:
+            season_rec = "SELL"
+        elif avg_price > 0 and current_price < avg_price * 0.85:
+            season_rec = "HOLD"
+        
+        recommendations.append({
+            'crop': crop,
+            'crop_name': _(crop.name),
+            'latest_price': latest_price,
+            'latest_profit': latest_profit,
+            'current_price_viss': current_price_viss,
+            'avg_price_viss': avg_price_viss,
+            'profit_acre': int(profit_per_acre),
+            'roi': int(roi),
+            'yield_tons_per_acre': yield_tons,
+            'production_cost': int(production_cost),
+            'revenue_per_acre': int(revenue_per_acre),
+            'price_change': price_change,
+            'trend': trend,
+            'recommendation': recommendation,
+            'recommendation_reason': recommendation_reason,
+            'export_recommendation': export_recommendation,
+            'season_recommendation': season_rec,
+        })
+    
+    recommendations.sort(key=lambda x: x['profit_acre'], reverse=True)
+    context = {
+        'recommendations': recommendations,
+        'current_date': datetime.now(),
+        'total_crops': len(recommendations),
+        'sell_count': sell_count,
+        'hold_count': hold_count,
+        'monitor_count': monitor_count,
+    }
+    return render(request, 'marketPrice/recommendations.html', context)
+
+def crop_recommendation(request, crop_id=None):
+    """Get recommendations for specific crop or all crops in user's farms"""
+    from datetime import datetime
+    import math
+    from types import SimpleNamespace
+    
+    from marketPrice.models import Crop as MarketCrop, HarvestPrice, Profitability
+    from farms.models import Farm
+    
+    recommendations = []
+    sell_count = 0
+    hold_count = 0
+    monitor_count = 0
+    
+    # Get crops to process
+    if crop_id:
+        crops_to_process = [get_object_or_404(MarketCrop, id=crop_id)]
+    else:
+        # Show all crops with prices
+        crops_to_process = MarketCrop.objects.filter(harvest_prices__isnull=False).distinct()
+    
+    for crop in crops_to_process:
+        latest_price = crop.harvest_prices.order_by('-year').first()
+        
+        if not latest_price:
+            continue
+        
+        # Try to get profitability, but don't fail if it doesn't exist
+        latest_profit = crop.profitability.order_by('-year').first()
+        
+        # If no profit data exists, create a mock one
+        if not latest_profit:
+            # Get price history
+            price_history = crop.harvest_prices.all().order_by('year')
+            prices = [float(p.price) for p in price_history]
+            
+            if not prices:
+                continue
+            
+            # Estimate profit (simplified)
+            avg_price = sum(prices) / len(prices)
+            yield_tons = 1.5  # Default yield estimate
+            production_cost = 4000000  # Default cost estimate
+            
+            # Adjust for specific crops
+            crop_name_lower = crop.name.lower()
+            if 'rice' in crop_name_lower or 'paddy' in crop_name_lower:
+                yield_tons = 3.5
+            elif 'sugarcane' in crop_name_lower:
+                yield_tons = 50.0
+            elif 'potato' in crop_name_lower or 'onion' in crop_name_lower:
+                yield_tons = 12.0
+            elif 'coffee' in crop_name_lower or 'tea' in crop_name_lower:
+                yield_tons = 0.8
+            elif 'betel' in crop_name_lower:
+                yield_tons = 1.2
+            
+            revenue = avg_price * yield_tons
+            estimated_profit = revenue - production_cost
+            
+            # Create mock profit object
+            latest_profit = SimpleNamespace(
+                year=latest_price.year,
+                profit_per_acre=estimated_profit,
+                yield_tons_per_acre=yield_tons,
+                price_per_ton=latest_price.price
+            )
+        
+        # Now continue with the rest of the function
+        price_history = crop.harvest_prices.all().order_by('year')
+        prices = [float(p.price) for p in price_history]
+        
+        trend = "stable"
+        price_change = 0
+        if len(prices) >= 2:
+            prev_price = prices[-2]
+            curr_price = prices[-1]
+            if prev_price > 0:
+                price_change = ((curr_price - prev_price) / prev_price) * 100
+            
+            if price_change > 5:
+                trend = "up"
+            elif price_change < -5:
+                trend = "down"
+        
+        # Get REAL data from database
+        yield_tons = float(latest_profit.yield_tons_per_acre) if latest_profit.yield_tons_per_acre else 1.5
+        profit_per_acre = float(latest_profit.profit_per_acre) if latest_profit.profit_per_acre else 0
+        current_price = float(latest_price.price)
+        
+        # Calculate revenue
+        revenue_per_acre = current_price * yield_tons if yield_tons > 0 else 0
+        
+        # Get production cost from constants
+        production_cost = float(get_production_cost(crop.name))
+        
+        # If profit is 0 or negative, calculate it
+        if profit_per_acre <= 0:
+            profit_per_acre = revenue_per_acre - production_cost
+        
+        avg_price = sum(prices) / len(prices) if prices else 0
+        
+        current_price_viss = int(current_price / TON_TO_VISS)
+        avg_price_viss = int(avg_price / TON_TO_VISS)
+        
+        # Calculate REALISTIC ROI
+        roi = 0
+        if production_cost > 0:
+            roi = (profit_per_acre / production_cost) * 100
+            if roi > 300:
+                roi = 300
+        
+        # Make recommendations based on REAL data
+        if roi > 200 and price_change > 10:
+            recommendation = "SELL"
+            recommendation_reason = _lazy("Exceptional profitability with rising prices. Sell now!")
+            sell_count += 1
+        elif roi > 150 and price_change > 5:
+            recommendation = "SELL"
+            recommendation_reason = _lazy("High profitability with upward trend. Consider selling.")
+            sell_count += 1
+        elif roi > 100 and price_change > 0:
+            recommendation = "HOLD"
+            recommendation_reason = _lazy("Strong profitability with stable prices. Hold for better returns.")
+            hold_count += 1
+        elif roi > 60 and price_change > -5:
+            recommendation = "HOLD"
+            recommendation_reason = _lazy("Good profitability with stable market. Hold and monitor.")
+            hold_count += 1
+        elif roi < 30 and price_change < -10:
+            recommendation = "SELL"
+            recommendation_reason = _lazy("Low profitability with falling prices. Consider selling.")
+            sell_count += 1
+        else:
+            recommendation = "MONITOR"
+            recommendation_reason = _lazy("Monitor market conditions. Wait for better opportunities.")
+            monitor_count += 1
+        
+        export_cost_factor = get_export_cost_for_crop(crop.name, crop.category)
+        export_profit = profit_per_acre * (1 - export_cost_factor)
+        local_profit = profit_per_acre
+        
+        export_recommendation = "LOCAL"
+        if export_profit > local_profit * 1.1:
+            export_recommendation = "EXPORT"
+        elif export_profit > local_profit * 0.9:
+            export_recommendation = "CONSIDER_EXPORT"
+        
+        season_rec = "HOLD"
+        if avg_price > 0 and current_price > avg_price * 1.15:
+            season_rec = "SELL"
+        elif avg_price > 0 and current_price < avg_price * 0.85:
+            season_rec = "HOLD"
+        
+        recommendations.append({
+            'crop': crop,
+            'crop_name': _(crop.name),
+            'latest_price': latest_price,
+            'latest_profit': latest_profit,
+            'current_price_viss': current_price_viss,
+            'avg_price_viss': avg_price_viss,
+            'profit_acre': int(profit_per_acre),
+            'roi': int(roi),
+            'yield_tons_per_acre': yield_tons,
+            'production_cost': int(production_cost),
+            'revenue_per_acre': int(revenue_per_acre),
+            'price_change': price_change,
+            'trend': trend,
+            'recommendation': recommendation,
+            'recommendation_reason': recommendation_reason,
+            'export_recommendation': export_recommendation,
+            'season_recommendation': season_rec,
+        })
+    
+    recommendations.sort(key=lambda x: x['profit_acre'], reverse=True)
+    context = {
+        'recommendations': recommendations,
+        'current_date': datetime.now(),
+        'total_crops': len(recommendations),
+        'sell_count': sell_count,
+        'hold_count': hold_count,
+        'monitor_count': monitor_count,
+    }
+    return render(request, 'marketPrice/recommendations.html', context)
 
 import json
 import logging
@@ -1269,41 +1627,31 @@ def regions_view(request):
 # marketPrice/views.py - Updated best_market_finder (Fixed Duplicates)
 
 @login_required
+@login_required
 def best_market_finder(request):
     """
     Find the best market/region to sell crops
     Compares prices across regions and recommends where to sell
     """
+    from marketPrice.models import Crop as MarketCrop, HarvestPrice, RegionalProduction
+    from farms.models import Farm
     
     # Get user's farms
     user_farms = Farm.objects.filter(owner=request.user)
     user_locations = list(user_farms.values_list('location', flat=True).distinct())
     
     # Get selected crop from request
-    selected_crop_param = request.GET.get('crop')
+    selected_crop_id = request.GET.get('crop')
     selected_crop = None
     
-    if selected_crop_param:
-        # Try to find by ID first (if it's a number)
-        if selected_crop_param.isdigit():
-            try:
-                selected_crop = Crop.objects.get(id=int(selected_crop_param))
-            except Crop.DoesNotExist:
-                selected_crop = None
-        else:
-            # Try to find by name (case-insensitive)
-            try:
-                selected_crop = Crop.objects.get(name__iexact=selected_crop_param.strip())
-            except Crop.DoesNotExist:
-                # Try partial match
-                crops = Crop.objects.filter(name__icontains=selected_crop_param.strip())
-                if crops.exists():
-                    selected_crop = crops.first()
-                else:
-                    selected_crop = None
-    
     # Get all crops for the dropdown
-    all_crops = Crop.objects.all().order_by('name')
+    all_crops = MarketCrop.objects.filter(harvest_prices__isnull=False).distinct().order_by('name')
+    
+    if selected_crop_id and selected_crop_id.isdigit():
+        try:
+            selected_crop = MarketCrop.objects.get(id=int(selected_crop_id))
+        except MarketCrop.DoesNotExist:
+            selected_crop = None
     
     # If no crop selected, show a message
     if not selected_crop:
@@ -1322,12 +1670,25 @@ def best_market_finder(request):
     # ANALYZE MARKET DATA FOR SELECTED CROP
     # =========================================================
     
-    # 1. Get price data from HarvestPrice (annual)
-    harvest_prices = HarvestPrice.objects.filter(
-        crop=selected_crop
-    ).order_by('-year')[:3]
+    # 1. Get the latest price for this crop (in Ks/Ton)
+    latest_price = selected_crop.harvest_prices.order_by('-year').first()
+    if not latest_price:
+        context = {
+            'all_crops': all_crops,
+            'selected_crop': selected_crop,
+            'market_data': [],
+            'recommendations': [],
+            'user_locations': user_locations,
+            'has_data': False,
+            'page_title': _('Best Market Finder'),
+            'error': _('No price data available for this crop'),
+        }
+        return render(request, 'marketPrice/best_market_finder.html', context)
     
-    # 2. Get regional production data - GROUP BY REGION (take latest year)
+    base_price_per_ton = float(latest_price.price)
+    base_price_per_viss = base_price_per_ton / 612.4
+    
+    # 2. Get regional production data for this crop
     regional_data = RegionalProduction.objects.filter(
         crop_category=selected_crop.name
     ).order_by('region', '-year')
@@ -1336,6 +1697,26 @@ def best_market_finder(request):
     market_data = []
     seen_regions = set()
     
+    # Define regional price multipliers (based on market conditions)
+    REGION_MULTIPLIERS = {
+        'Yangon': 1.10,      # Premium market
+        'Mandalay': 1.08,    # Good market
+        'Nay Pyi Taw': 1.05,
+        'Bago': 0.98,
+        'Ayeyawady': 0.95,
+        'Sagaing': 0.92,
+        'Magway': 0.95,
+        'Shan': 0.90,
+        'Kachin': 0.85,
+        'Kayah': 0.82,
+        'Kayin': 0.85,
+        'Mon': 0.92,
+        'Rakhine': 0.88,
+        'Tanintharyi': 0.85,
+        'Chin': 0.88,
+    }
+    
+    # Process regional data
     for item in regional_data:
         region = item.region
         
@@ -1344,93 +1725,98 @@ def best_market_finder(request):
             continue
         seen_regions.add(region)
         
-        # Get all data for this region
-        region_data = RegionalProduction.objects.filter(
+        # Get the latest year's data for this region
+        region_records = RegionalProduction.objects.filter(
             region=region,
             crop_category=selected_crop.name
         ).order_by('-year')
         
-        if not region_data.exists():
+        if not region_records.exists():
             continue
         
-        # Get the latest year's data
-        latest = region_data.first()
+        latest_record = region_records.first()
         
-        # Get total production across all years
-        total_production = region_data.aggregate(Sum('production_tons'))['production_tons__sum'] or 0
+        # Calculate production trend
+        production_trend = 'stable'
+        if region_records.count() >= 2:
+            records_list = list(region_records.order_by('year'))
+            first_prod = float(records_list[0].production_tons) if records_list[0].production_tons else 0
+            last_prod = float(records_list[-1].production_tons) if records_list[-1].production_tons else 0
+            if first_prod > 0:
+                growth = ((last_prod - first_prod) / first_prod) * 100
+                if growth > 15:
+                    production_trend = 'growing'
+                elif growth < -15:
+                    production_trend = 'declining'
         
-        # Estimate base price
-        base_price = 0
-        if harvest_prices.exists():
-            avg_harvest_price = harvest_prices.aggregate(Avg('price'))['price__avg'] or 0
-            base_price = float(avg_harvest_price) / 612.4  # Convert to Viss
+        # Get regional price multiplier
+        region_multiplier = REGION_MULTIPLIERS.get(region, 1.0)
         
-        # Adjust price based on production
-        price_factor = 1.0
-        region_count = region_data.count()
-        if total_production > 0 and region_count > 0:
-            avg_production = total_production / region_count
-            if avg_production > 50000:
-                price_factor = 0.85
-            elif avg_production > 20000:
-                price_factor = 0.95
-            elif avg_production > 5000:
-                price_factor = 1.0
+        # Adjust price based on production and demand
+        # Lower production = higher price (supply/demand)
+        prod_factor = 1.0
+        if latest_record.production_tons:
+            prod_tons = float(latest_record.production_tons)
+            if prod_tons < 100:
+                prod_factor = 1.25  # Very low production = high price
+            elif prod_tons < 500:
+                prod_factor = 1.15
+            elif prod_tons < 2000:
+                prod_factor = 1.05
+            elif prod_tons < 5000:
+                prod_factor = 0.95
             else:
-                price_factor = 1.15
+                prod_factor = 0.85  # High production = lower price
         
-        # Apply regional variation
-        region_variation = {
-            'Yangon': 1.12,
-            'Mandalay': 1.08,
-            'Shan': 0.95,
-            'Sagaing': 0.92,
-            'Bago': 0.98,
-            'Ayeyawady': 0.90,
-            'Magway': 0.95,
-            'Chin': 0.88,
-            'Kachin': 0.85,
-            'Kayah': 0.82,
-            'Kayin': 0.85,
-            'Mon': 0.92,
-            'Rakhine': 0.88,
-            'Tanintharyi': 0.85,
-        }
-        regional_factor = region_variation.get(region, 1.0)
+        # Calculate estimated price for this region
+        estimated_price_per_viss = base_price_per_viss * region_multiplier * prod_factor
         
-        estimated_price = base_price * price_factor * regional_factor
-        
-        # Calculate demand rating based on growth trend
+        # Determine demand rating
         demand_rating = 'medium'
-        if region_data.count() >= 2:
-            years_data = list(region_data.order_by('year'))
-            first_prod = years_data[0]
-            last_prod = years_data[-1]
-            if first_prod and last_prod:
-                first_val = float(first_prod.production_tons) if first_prod.production_tons else 0
-                last_val = float(last_prod.production_tons) if last_prod.production_tons else 0
-                if first_val > 0:
-                    growth = ((last_val - first_val) / first_val) * 100
-                    if growth > 15:
-                        demand_rating = 'high'
-                    elif growth > 5:
-                        demand_rating = 'medium'
-                    else:
-                        demand_rating = 'low'
+        if production_trend == 'declining' and prod_factor > 1.0:
+            demand_rating = 'high'  # Declining supply = high demand
+        elif production_trend == 'growing' and prod_factor < 1.0:
+            demand_rating = 'low'
+        elif prod_factor > 1.15:
+            demand_rating = 'high'
         
-        # Check if this region is the user's region
+        # Check if this is the user's region
         is_user_region = region in user_locations
         
         market_data.append({
             'region': region,
             'region_translated': _(region),
-            'estimated_price': round(estimated_price, 0),
-            'production_tons': float(latest.production_tons) if latest.production_tons else 0,
+            'estimated_price': round(estimated_price_per_viss, 0),
+            'production_tons': float(latest_record.production_tons) if latest_record.production_tons else 0,
             'demand_rating': demand_rating,
             'demand_rating_translated': _(demand_rating.title()),
             'demand_color': 'success' if demand_rating == 'high' else 'warning' if demand_rating == 'medium' else 'danger',
             'is_user_region': is_user_region,
+            'trend': production_trend,
+            'trend_translated': _(production_trend.title()),
         })
+    
+    # If no regional data found, use the base price for all regions
+    if not market_data:
+        # Create default market data for major regions
+        default_regions = ['Yangon', 'Mandalay', 'Nay Pyi Taw', 'Bago', 'Ayeyawady', 'Sagaing']
+        for region in default_regions:
+            if region not in seen_regions:
+                region_multiplier = REGION_MULTIPLIERS.get(region, 1.0)
+                estimated_price = base_price_per_viss * region_multiplier
+                is_user_region = region in user_locations
+                market_data.append({
+                    'region': region,
+                    'region_translated': _(region),
+                    'estimated_price': round(estimated_price, 0),
+                    'production_tons': 0,
+                    'demand_rating': 'medium',
+                    'demand_rating_translated': _('Medium'),
+                    'demand_color': 'warning',
+                    'is_user_region': is_user_region,
+                    'trend': 'stable',
+                    'trend_translated': _('Stable'),
+                })
     
     # Sort by estimated price (highest first)
     market_data.sort(key=lambda x: x['estimated_price'], reverse=True)
@@ -1446,7 +1832,7 @@ def best_market_finder(request):
         best = market_data[0]
         recommendations.append({
             'type': 'best_price',
-            'title': _('💰 Best Price'),
+            'title': _(' Best Price'),
             'description': _('Sell {crop} in {region} for the best price of {price:,} Ks/Viss').format(
                 crop=_(selected_crop.name),
                 region=best['region_translated'],
@@ -1464,7 +1850,7 @@ def best_market_finder(request):
                 user_best = user_region_data[0]
                 recommendations.append({
                     'type': 'local',
-                    'title': _('📍 Your Location'),
+                    'title': _(' Your Location'),
                     'description': _('In your region ({region}), price is {price:,} Ks/Viss').format(
                         region=user_best['region_translated'],
                         price=int(user_best['estimated_price'])
@@ -1480,7 +1866,7 @@ def best_market_finder(request):
             top_demand = high_demand[0]
             recommendations.append({
                 'type': 'high_demand',
-                'title': _('📈 High Demand'),
+                'title': _(' High Demand'),
                 'description': _('{region} has high demand for {crop} with price {price:,} Ks/Viss').format(
                     crop=_(selected_crop.name),
                     region=top_demand['region_translated'],
@@ -1492,7 +1878,7 @@ def best_market_finder(request):
             })
     
     # =========================================================
-    # CHART DATA - Use unique regions only
+    # CHART DATA
     # =========================================================
     
     chart_regions = [m['region'] for m in market_data[:10]]
