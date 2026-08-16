@@ -822,32 +822,30 @@ Keywords: {knowledge['keywords']}
         results = self.get_relevant_documents(query, k)
         return [r['content'] for r in results]
 
-  
-  
-def generate_response(self, query: str, k: int = 5) -> dict:
-    """Generate response using Groq API directly"""
-    load_dotenv()
-    
-    groq_api_key = os.getenv('GROQ_API_KEY')
-    if not groq_api_key:
-        return {
-            'response': "Error: GROQ_API_KEY not found. Please set it in your .env file.",
-            'context': [],
-            'sources': []
-        }
-    
-    results = self.get_relevant_documents(query, k=k)
-    
-    if not results:
-        return {
-            'response': "I don't have any information about that in my database yet.",
-            'context': [],
-            'sources': []
-        }
-    
-    context_text = "\n\n".join([r['content'] for r in results])
-    
-    prompt = f"""You are AgriVision AI, an agricultural market intelligence assistant for Myanmar.
+    def generate_response(self, query: str, k: int = 5) -> dict:
+        """Generate response using Groq API directly"""
+        load_dotenv()
+
+        groq_api_key = os.getenv('GROQ_API_KEY')
+        if not groq_api_key:
+            return {
+                'response': "Error: GROQ_API_KEY not found. Please set it in your .env file.",
+                'context': [],
+                'sources': []
+            }
+
+        results = self.get_relevant_documents(query, k=k)
+
+        if not results:
+            return {
+                'response': "I don't have any information about that in my database yet.",
+                'context': [],
+                'sources': []
+            }
+
+        context_text = "\n\n".join([r['content'] for r in results])
+
+        prompt = f"""You are AgriVision AI, an agricultural market intelligence assistant for Myanmar.
 
 You have access to the following information:
 1. Crop prices and profitability
@@ -859,33 +857,13 @@ You have access to the following information:
 7. General farming knowledge (soil, irrigation, pests, harvesting, crop rotation, organic farming)
 8. Plant growth stages and harvesting guides
 
-IMPORTANT FORMATTING INSTRUCTIONS:
-1. Use bullet points (• or -) for lists
-2. Use numbered lists (1., 2., 3.) for step-by-step instructions
-3. Use **bold** for important terms like crop names, prices, and key actions
-4. Use clear section headers with ALL CAPS or **bold**
-5. Keep paragraphs short and readable
-6. Add blank lines between sections for readability
-7. For prices, always use the format: "2,782,000 Ks/Viss"
-8. For regions, use this format: "**Yangon** - Major export hub"
-9. For recommendations, use: "💡 **Recommendation:** ..."
-10. For weather, use: "🌤️ **Weather Tip:** ..."
-11. For crops, use: "🌾 **Crop:** ..."
-12. For locations, use: "📍 **Location:** ..."
+IMPORTANT INSTRUCTIONS:
+1. If the user asks about a general topic (crop rotation, organic farming, harvesting, soil health, etc.), use the general knowledge documents
+2. If the user asks about a specific crop, use both crop-specific and general knowledge
+3. If the user asks about weather (rain, heat, cold, wind), use the weather guidance
+4. If you don't find relevant information, say "I don't have enough information about that in my database."
 
-EXAMPLE FORMAT:
-🌾 **Crop:** Rice
-💰 **Price:** 3,500,000 Ks/Ton
-📍 **Best Market:** Yangon
-
-**Farming Tips:**
-1. Plant during monsoon season (June-July)
-2. Use 50-60 kg seeds/acre
-3. Keep field flooded with 2-5cm water
-
-💡 **Recommendation:** Sell in Yangon for best prices.
-
-Answer the user's question based ONLY on the context below. If the context doesn't contain the answer, say "I don't have enough information about that in my database."
+Answer the user's question based ONLY on the context below.
 
 Context:
 {context_text}
@@ -893,76 +871,57 @@ Context:
 User Question: {query}
 
 Answer:"""
-    
-    try:
-        headers = {
-            "Authorization": f"Bearer {groq_api_key}",
-            "Content-Type": "application/json"
-        }
-        
-        data = {
-            "model": "llama-3.3-70b-versatile",
-            "messages": [
-                {"role": "system", "content": """You are a helpful agricultural market intelligence assistant for Myanmar farmers. 
-                
-FORMATTING RULES (MUST FOLLOW):
-- Use bullet points (•) for lists
-- Use numbered lists (1., 2., 3.) for steps
-- Use **bold** for important terms
-- Use clear section headers
-- Keep paragraphs short
-- Always show prices with commas: 2,782,000 Ks/Viss
-- Use 💡 for tips and recommendations
-- Use 📍 for locations and regions
-- Use 🌾 for crops
-- Use 🌤️ for weather
-- Use 🌱 for planting advice
-- Use 🪓 for harvesting advice
-- Use 🌿 for fertilizer advice
-- Use 📊 for market trends
-- Use 🏆 for top recommendations
 
-Always provide practical, actionable advice based on the context provided."""},
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.3,
-            "max_tokens": 800
-        }
-        
-        response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers=headers,
-            json=data,
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            response_data = response.json()
-            ai_response = response_data['choices'][0]['message']['content']
-        else:
-            ai_response = f"Error from Groq API: {response.status_code}"
-        
-        sources = []
-        seen = set()
-        for r in results:
-            crop_name = r['metadata'].get('crop_name', 'Unknown')
-            if crop_name not in seen:
-                seen.add(crop_name)
-                sources.append({
-                    'crop': crop_name,
-                    'category': r['metadata'].get('category', 'N/A')
-                })
-        
-        return {
-            'response': ai_response,
-            'context': [r['content'] for r in results],
-            'sources': sources[:5]
-        }
-        
-    except Exception as e:
-        logger.error(f"Error generating response: {e}")
-        return {
-            'response': f"Error: {str(e)}",
-            'context': [],
-            'sources': []
-        }
+        try:
+            headers = {
+                "Authorization": f"Bearer {groq_api_key}",
+                "Content-Type": "application/json"
+            }
+
+            data = {
+                "model": "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": "You are a helpful agricultural market intelligence assistant for Myanmar farmers. Provide practical, actionable advice based on the context provided."},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.3,
+                "max_tokens": 600
+            }
+
+            response = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json=data,
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                response_data = response.json()
+                ai_response = response_data['choices'][0]['message']['content']
+            else:
+                ai_response = f"Error from Groq API: {response.status_code}"
+
+            sources = []
+            seen = set()
+            for r in results:
+                crop_name = r['metadata'].get('crop_name', 'Unknown')
+                if crop_name not in seen:
+                    seen.add(crop_name)
+                    sources.append({
+                        'crop': crop_name,
+                        'category': r['metadata'].get('category', 'N/A')
+                    })
+
+            return {
+                'response': ai_response,
+                'context': [r['content'] for r in results],
+                'sources': sources[:5]
+            }
+
+        except Exception as e:
+            logger.error(f"Error generating response: {e}")
+            return {
+                'response': f"Error: {str(e)}",
+                'context': [],
+                'sources': []
+            }
