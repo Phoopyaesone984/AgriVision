@@ -2824,3 +2824,494 @@ msgstr "စိုက်ပျိုးပြီးစ"
 
 msgid "Active Growing"
 msgstr "ကြီးထွားနေဆဲ"
+
+
+# ============================================================
+# AI CHATBOT TRANSLATIONS - NEW FEATURES
+# ============================================================
+
+#: templates/base.html
+msgid "AgriVision AI"
+msgstr "AgriVision AI စက်ရုပ်"
+
+#: templates/base.html
+msgid "Agricultural market assistant"
+msgstr "စိုက်ပျိုးရေးစျေးကွက်အကူ"
+
+#: templates/base.html
+msgid "Ask about crop prices, market trends, or where to sell your crops."
+msgstr "သီးနှံစျေးနှုန်းများ၊ စျေးကွက်လမ်းကြောင်းများ သို့မဟုတ် သီးနှံများရောင်းချရန် နေရာများအကြောင်း မေးမြန်းပါ။"
+
+#: templates/base.html
+msgid "Ask AgriVision..."
+msgstr "AgriVision ကိုမေးမြန်းပါ..."
+
+#: templates/base.html
+msgid "Hello. I'm your AgriVision AI assistant."
+msgstr "မင်္ဂလာပါ။ ကျွန်ုပ်သည် သင်၏ AgriVision AI အကူဖြစ်ပါသည်။"
+
+#: templates/base.html
+msgid "Best crop price"
+msgstr "အကောင်းဆုံးသီးနှံစျေးနှုန်း"
+
+#: templates/base.html
+msgid "Market trends"
+msgstr "စျေးကွက်လမ်းကြောင်း"
+
+#: templates/base.html
+msgid "Best market"
+msgstr "အကောင်းဆုံးစျေးကွက်"
+
+#: templates/base.html
+msgid "What to plant?"
+msgstr "ဘာစိုက်ရမလဲ?"
+
+#: templates/base.html
+msgid "Thinking..."
+msgstr "စဉ်းစားနေသည်..."
+
+#: templates/base.html
+msgid "Sources"
+msgstr "ရင်းမြစ်များ"
+
+#: templates/base.html
+msgid "Error"
+msgstr "အမှားအယွင်း"
+
+#: templates/base.html
+msgid "AI service is not available"
+msgstr "AI ဝန်ဆောင်မှု မရရှိနိုင်ပါ"
+
+#: templates/base.html
+msgid "Please try again later"
+msgstr "ကျေးဇူးပြု၍ နောက်မှ ထပ်မံကြိုးစားပါ"
+
+
+# ============================================================
+# RAG & VECTOR SEARCH TRANSLATIONS
+# ============================================================
+
+msgid "Searching database..."
+msgstr "ဒေတာဘေ့စ်ကို ရှာဖွေနေသည်..."
+
+msgid "No results found"
+msgstr "ရလဒ်များ မတွေ့ပါ"
+
+msgid "Relevant documents found"
+msgstr "သက်ဆိုင်ရာစာရွက်စာတမ်းများ တွေ့ရှိခဲ့သည်"
+
+msgid "Retrieving context..."
+msgstr "အကြောင်းအရာကို ထုတ်ယူနေသည်..."
+
+
+# ============================================================
+# FARMING ADVICE TRANSLATIONS - NEW
+# ============================================================
+
+#: marketPrice/services/rag_service.py
+msgid "Farming Advice"
+msgstr "စိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+#: marketPrice/services/rag_service.py
+msgid "Planting Guide"
+msgstr "စိုက်ပျိုးနည်းလမ်းညွှန်"
+
+#: marketPrice/services/rag_service.py
+msgid "Soil Requirements"
+msgstr "မြေဆီလွှာလိုအပ်ချက်များ"
+
+#: marketPrice/services/rag_service.py
+msgid "Watering Guide"
+msgstr "ရေသွင်းနည်းလမ်းညွှန်"
+
+#: marketPrice/services/rag_service.py
+msgid "Fertilizer Recommendations"
+msgstr "မြေသြဇာအကြံပြုချက်များ"
+
+#: marketPrice/services/rag_service.py
+msgid "Harvesting Guide"
+msgstr "ရိတ်သိမ်းနည်းလမ်းညွှန်"
+
+#: marketPrice/services/rag_service.py
+msgid "Crop Rotation"
+msgstr "သီးနှံအလှည့်ကျစိုက်ပျိုးခြင်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Organic Farming"
+msgstr "အော်ဂဲနစ်စိုက်ပျိုးရေး"
+
+#: marketPrice/services/rag_service.py
+msgid "Pest Control"
+msgstr "ပိုးမွှားကာကွယ်ခြင်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Compost Application"
+msgstr "မြေဆွေးအသုံးပြုခြင်း"
+
+
+# ============================================================
+# SPECIFIC CROP ADVICE TRANSLATIONS
+# ============================================================
+
+msgid "Rice farming advice"
+msgstr "စပါးစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Bean farming advice"
+msgstr "ပဲစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Onion farming advice"
+msgstr "ကြက်သွန်နီစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Garlic farming advice"
+msgstr "ကြက်သွန်ဖြူစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Potato farming advice"
+msgstr "အာလူးစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Tomato farming advice"
+msgstr "ခရမ်းချဉ်သီးစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Chilli farming advice"
+msgstr "ငရုတ်သီးစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Maize farming advice"
+msgstr "ပြောင်းစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Groundnut farming advice"
+msgstr "မြေပဲစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Sugarcane farming advice"
+msgstr "ကြံစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Mango farming advice"
+msgstr "သရက်စိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Wheat farming advice"
+msgstr "ဂျုံစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Cotton farming advice"
+msgstr "ဝါစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Coffee farming advice"
+msgstr "ကော်ဖီစိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Tea farming advice"
+msgstr "လက်ဖက်စိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+
+# ============================================================
+# FERTILIZER ADVICE TRANSLATIONS
+# ============================================================
+
+msgid "Compost"
+msgstr "မြေဆွေး"
+
+msgid "Urea"
+msgstr "ယူရီးယား"
+
+msgid "DAP Fertilizer"
+msgstr "DAP မြေသြဇာ"
+
+msgid "NPK Fertilizer"
+msgstr "NPK မြေသြဇာ"
+
+msgid "Potassium Fertilizer"
+msgstr "ပိုတက်စီယမ်မြေသြဇာ"
+
+msgid "Organic Fertilizer"
+msgstr "အော်ဂဲနစ်မြေသြဇာ"
+
+msgid "What fertilizer should I use?"
+msgstr "ဘယ်မြေသြဇာသုံးရမလဲ?"
+
+msgid "Fertilizer recommendation for"
+msgstr "အတွက် မြေသြဇာအကြံပြုချက်"
+
+
+# ============================================================
+# MARKET LOCATIONS & REGIONAL DATA TRANSLATIONS
+# ============================================================
+
+#: marketPrice/services/rag_service.py
+msgid "Best Markets to Sell Crops"
+msgstr "သီးနှံများရောင်းချရန် အကောင်းဆုံးစျေးကွက်များ"
+
+#: marketPrice/services/rag_service.py
+msgid "Where to sell"
+msgstr "ဘယ်မှာရောင်းမလဲ"
+
+#: marketPrice/services/rag_service.py
+msgid "Regional Market Guide"
+msgstr "ဒေသဆိုင်ရာစျေးကွက်လမ်းညွှန်"
+
+#: marketPrice/services/rag_service.py
+msgid "Yangon Region - Major export hub"
+msgstr "ရန်ကုန်တိုင်းဒေသကြီး - အဓိကတင်ပို့ရေးစခန်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Mandalay Region - Regional trading center"
+msgstr "မန္တလေးတိုင်းဒေသကြီး - ဒေသဆိုင်ရာကုန်သွယ်ရေးစခန်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Bago Region - Industrial hub"
+msgstr "ပဲခူးတိုင်းဒေသကြီး - စက်မှုဇုန်"
+
+#: marketPrice/services/rag_service.py
+msgid "Ayeyawady Region - Major rice producer"
+msgstr "ဧရာဝတီတိုင်းဒေသကြီး - အဓိကဆန်စပါးထုတ်လုပ်သူ"
+
+#: marketPrice/services/rag_service.py
+msgid "Shan State - High-value crops"
+msgstr "ရှမ်းပြည်နယ် - တန်ဖိုးမြင့်သီးနှံများ"
+
+#: marketPrice/services/rag_service.py
+msgid "Magway Region - Oilseed hub"
+msgstr "မကွေးတိုင်းဒေသကြီး - ဆီထွက်သီးနှံဗဟို"
+
+#: marketPrice/services/rag_service.py
+msgid "Sagaing Region - Upper Myanmar market"
+msgstr "စစ်ကိုင်းတိုင်းဒေသကြီး - အထက်မြန်မာပြည်စျေးကွက်"
+
+
+# ============================================================
+# PROFITABILITY & PLANTING RECOMMENDATIONS TRANSLATIONS
+# ============================================================
+
+#: marketPrice/services/rag_service.py
+msgid "Top Profitable Crops to Plant"
+msgstr "စိုက်ပျိုးရန် အမြတ်အစွန်းအများဆုံးသီးနှံများ"
+
+#: marketPrice/services/rag_service.py
+msgid "Profit per Acre"
+msgstr "တစ်ဧကအမြတ်အစွန်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Yield per Acre"
+msgstr "တစ်ဧကအထွက်နှုန်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Recommended Crops"
+msgstr "အကြံပြုထားသောသီးနှံများ"
+
+#: marketPrice/services/rag_service.py
+msgid "Most Profitable Crops"
+msgstr "အမြတ်အစွန်းအများဆုံးသီးနှံများ"
+
+
+# ============================================================
+# MARKET TRENDS TRANSLATIONS
+# ============================================================
+
+#: marketPrice/services/rag_service.py
+msgid "Current Market Trends"
+msgstr "လက်ရှိစျေးကွက်လမ်းကြောင်းများ"
+
+#: marketPrice/services/rag_service.py
+msgid "Price Trend"
+msgstr "စျေးနှုန်းလမ်းကြောင်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Uptrend"
+msgstr "မြင့်တက်လမ်းကြောင်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Downtrend"
+msgstr "ကျဆင်းလမ်းကြောင်း"
+
+#: marketPrice/services/rag_service.py
+msgid "Stable"
+msgstr "တည်ငြိမ်"
+
+
+# ============================================================
+# AI RESPONSE TRANSLATIONS
+# ============================================================
+
+msgid "I don't have enough information about that in my database."
+msgstr "ကျွန်ုပ်၏ဒေတာဘေ့စ်တွင် ထိုအကြောင်းအရာအတွက် လုံလောက်သောအချက်အလက်မရှိပါ။"
+
+msgid "Based on the data available"
+msgstr "ရရှိနိုင်သောအချက်အလက်များအပေါ် အခြေခံ၍"
+
+msgid "Here is what I found"
+msgstr "ကျွန်ုပ်တွေ့ရှိခဲ့သောအချက်အလက်များမှာ"
+
+msgid "Recommendation"
+msgstr "အကြံပြုချက်"
+
+msgid "Summary"
+msgstr "အနှစ်ချုပ်"
+
+msgid "Details"
+msgstr "အသေးစိတ်"
+
+msgid "Loading AI response..."
+msgstr "AI တုံ့ပြန်ချက်ကို ဆွဲယူနေသည်..."
+
+
+# ============================================================
+# CROP NAMES FOR AI - ADD THESE
+# ============================================================
+
+msgid "Sugarcane"
+msgstr "ကြံ"
+
+msgid "Watermelon"
+msgstr "ဖရုံသီး"
+
+msgid "Rice"
+msgstr "စပါး"
+
+msgid "Bean"
+msgstr "ပဲ"
+
+msgid "Mango"
+msgstr "သရက်သီး"
+
+msgid "Tomato"
+msgstr "ခရမ်းချဉ်သီး"
+
+msgid "Potato"
+msgstr "အာလူး"
+
+msgid "Onion"
+msgstr "ကြက်သွန်နီ"
+
+msgid "Garlic"
+msgstr "ကြက်သွန်ဖြူ"
+
+msgid "Chilli"
+msgstr "ငရုတ်သီး"
+
+msgid "Maize"
+msgstr "ပြောင်း"
+
+msgid "Wheat"
+msgstr "ဂျုံ"
+
+msgid "Cotton"
+msgstr "ဝါ"
+
+msgid "Coffee"
+msgstr "ကော်ဖီ"
+
+msgid "Tea"
+msgstr "လက်ဖက်"
+
+msgid "Groundnut"
+msgstr "မြေပဲ"
+
+msgid "Sesame"
+msgstr "နှမ်း"
+
+msgid "Tapioca"
+msgstr "ပဲပြောင်း"
+
+msgid "Betel Leaves"
+msgstr "ကွမ်းရွက်"
+
+msgid "Betel Nut"
+msgstr "ကွမ်းသီး"
+
+
+# ============================================================
+# REGION NAMES FOR AI
+# ============================================================
+
+msgid "Yangon"
+msgstr "ရန်ကုန်"
+
+msgid "Mandalay"
+msgstr "မန္တလေး"
+
+msgid "Bago"
+msgstr "ပဲခူး"
+
+msgid "Ayeyawady"
+msgstr "ဧရာဝတီ"
+
+msgid "Sagaing"
+msgstr "စစ်ကိုင်း"
+
+msgid "Magway"
+msgstr "မကွေး"
+
+msgid "Shan State"
+msgstr "ရှမ်းပြည်နယ်"
+
+msgid "Kachin State"
+msgstr "ကချင်ပြည်နယ်"
+
+msgid "Kayah State"
+msgstr "ကယားပြည်နယ်"
+
+msgid "Kayin State"
+msgstr "ကရင်ပြည်နယ်"
+
+msgid "Mon State"
+msgstr "မွန်ပြည်နယ်"
+
+msgid "Rakhine State"
+msgstr "ရခိုင်ပြည်နယ်"
+
+msgid "Tanintharyi Region"
+msgstr "တနင်္သာရီတိုင်းဒေသကြီး"
+
+msgid "Chin State"
+msgstr "ချင်းပြည်နယ်"
+
+msgid "Nay Pyi Taw"
+msgstr "နေပြည်တော်"
+
+
+# ============================================================
+# COMMON AI PHRASES
+# ============================================================
+
+msgid "Based on current market data"
+msgstr "လက်ရှိစျေးကွက်အချက်အလက်များအရ"
+
+msgid "The price is"
+msgstr "စျေးနှုန်းမှာ"
+
+msgid "Kyat per Viss"
+msgstr "ကျပ်/ပိဿာ"
+
+msgid "Best time to sell"
+msgstr "ရောင်းချရန် အကောင်းဆုံးအချိန်"
+
+msgid "Consider selling at"
+msgstr "တွင် ရောင်းချရန် စဉ်းစားပါ"
+
+msgid "Market demand is"
+msgstr "စျေးကွက်လိုအပ်ချက်မှာ"
+
+msgid "High demand"
+msgstr "လိုအပ်ချက်မြင့်မား"
+
+msgid "Medium demand"
+msgstr "လိုအပ်ချက်အသင့်အတင့်"
+
+msgid "Low demand"
+msgstr "လိုအပ်ချက်နည်းပါး"
+
+msgid "For more information"
+msgstr "နောက်ထပ်အချက်အလက်များအတွက်"
+
+msgid "Ask me about"
+msgstr "အကြောင်း မေးမြန်းပါ"
+
+msgid "I can help you with"
+msgstr "အတွက် ကျွန်ုပ် ကူညီနိုင်ပါသည်"
+
+msgid "Crop prices"
+msgstr "သီးနှံစျေးနှုန်းများ"
+
+msgid "Farming advice"
+msgstr "စိုက်ပျိုးရေးအကြံပြုချက်များ"
+
+msgid "Market analysis"
+msgstr "စျေးကွက်ခွဲခြမ်းစိတ်ဖြာခြင်း"
+
+msgid "Planting recommendations"
+msgstr "စိုက်ပျိုးရန် အကြံပြုချက်များ"

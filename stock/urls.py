@@ -17,8 +17,7 @@ urlpatterns = [
     path("materials/<int:pk>/delete/", views.delete_material, name="delete_material"),
     path("materials/purchase/<int:pk>/delete/", views.delete_purchase, name="delete_purchase"),
     path("materials/usage/<int:pk>/delete/", views.delete_usage, name="delete_usage"),
-
-
+   
     path("crop/<int:pk>/plan/", views.crop_material_plan, name="crop_material_plan"),
     path("plan-item/<int:pk>/toggle-purchased/", views.toggle_item_purchased, name="toggle_item_purchased"),
     path("plan-item/<int:pk>/toggle-applied/", views.toggle_item_applied, name="toggle_item_applied"),

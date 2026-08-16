@@ -23,7 +23,7 @@
 .summary-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1.5rem; /* Loose gap between stat pills */
+    gap: 1.5rem;
 }
 
 .stat-pill {
@@ -61,16 +61,15 @@
    ========================================================= */
 .crop-grid {
     display: grid;
-    /* Automatically fits 1, 2, or 3 cards per row with no tightness */
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1.5rem; /* Defines the breathing gap between cards */
+    gap: 1.5rem;
 }
 
 .advisor-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 1.5rem; /* Inner breathing space */
+    padding: 1.5rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-card);
     display: flex;
@@ -98,11 +97,7 @@
     color: var(--ink);
     line-height: 1.2;
 }
-/* Style the highlighted text in the advice */
-.advice-body strong {
-    font-weight: 600;
-    color: var(--accent-green);
-}
+
 .farm-name {
     font-size: 0.8rem;
     color: var(--ink-faint);
@@ -267,7 +262,7 @@
         </div>
     </div>
 
-    <!-- Summary Stats (Added mb-5 to push it away from the Grid) -->
+    <!-- Summary Stats -->
     <div class="row g-5 mb-5">
         <div class="col-md-4">
             <div class="stat-pill">
@@ -306,11 +301,11 @@
                         </span>
                     </div>
 
-                    <!-- Price Stats (Displayed in Viss) -->
+                    <!-- Price Stats -->
                     <div class="price-box">
                         <div class="price-item">
                             <span class="label">{% trans "Current Market Price" %}</span>
-                            <span class="value {% if item.recommendation == 'SELL' %}text-danger{% else %}text-success{% endif %}">
+                            <span class="value {% if item.recommendation == 'SELL' %}text-danger{% elif item.recommendation == 'HOLD' %}text-success{% else %}text-warning{% endif %}">
                                 {{ item.current_price_viss|intcomma }}
                                 <span class="unit">Ks / Viss</span>
                             </span>
@@ -338,7 +333,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Actionable Advice -->
+                    <!-- Actionable Advice - FIXED: Removed blocktrans wrapper -->
                     {% if item.recommendation != 'N/A' %}
                     <div class="advice-box advice-{{ item.recommendation|lower }}">
                         <div class="advice-title">
@@ -352,16 +347,12 @@
                             {% endif %}
                         </div>
                         
-                                           <div class="advice-body">
+                        <div class="advice-body">
                             {% if item.recommendation == 'HOLD' %}
-                                {# Safely translated - HTML tags are OUTSIDE the translation #}
-                                {% blocktrans trimmed with month=item.best_sell_month %}
-                                    Historical prices peak around {{ month }}.
-                                {% endblocktrans %}
+                                {# FIXED: Removed blocktrans - month is already translated in view #}
+                                Historical prices peak around <strong>{{ item.best_sell_month }}</strong>.
                                 <br>
-                                {% blocktrans trimmed with price=item.target_price_viss|intcomma %}
-                                    Aim to sell when price reaches {{ price }} Ks / Viss.
-                                {% endblocktrans %}
+                                Aim to sell when price reaches <strong>{{ item.target_price_viss|intcomma }}</strong> Ks / Viss.
                             {% elif item.recommendation == 'SELL' %}
                                 {% trans "Price is trending downward below average. Sell now to secure current market rate before it drops further." %}
                             {% else %}

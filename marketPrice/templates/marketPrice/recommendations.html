@@ -7,29 +7,160 @@
 {% block nav_recommendations %}active{% endblock %}
 {% block page_title %}{% trans "Crop Decision Support" %}{% endblock %}
 
+
 {% block extra_css %}
 <style>
+
 /* =========================================================
-   LAYOUT & BREATHING
+   AGRIVISION — CROP DECISION SUPPORT
+   Spacious decision-focused redesign
+   Existing colors / theme preserved
    ========================================================= */
+
+
+/* =========================================================
+   PAGE LAYOUT
+   ========================================================= */
+
 .recommendation-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 2.75rem;
+    padding-bottom: 2.5rem;
 }
 
+
 /* =========================================================
-   SUMMARY STAT CARDS
+   PAGE INTRO
    ========================================================= */
+
+.recommendation-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 0.5rem 0;
+}
+
+.intro-content {
+    max-width: 780px;
+}
+
+.intro-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: var(--ink-soft);
+    margin-bottom: 0.7rem;
+}
+
+.intro-title {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 0.65rem;
+    line-height: 1.25;
+}
+
+.intro-description {
+    color: var(--ink-faint);
+    margin: 0;
+    line-height: 1.75;
+    font-size: 0.92rem;
+}
+
+.date-badge {
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   THEME BADGES
+   ========================================================= */
+
+.badge-theme {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    padding: 0.55rem 0.9rem;
+
+    border-radius: 50px;
+
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    background: var(--bg-glass);
+    color: var(--ink);
+
+    border: 1px solid var(--border);
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   SUMMARY SECTION
+   ========================================================= */
+
+.summary-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.section-heading h6 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.section-heading p {
+    margin: 0;
+    color: var(--ink-faint);
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
 .summary-stat {
+    position: relative;
+
     background: var(--bg-card);
     border: 1px solid var(--border);
+
     border-radius: var(--radius-md);
+
     padding: 1.5rem;
-    text-align: center;
-    transition: all 0.2s ease;
+
+    min-height: 145px;
+
     box-shadow: var(--shadow-card);
-    height: 100%;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .summary-stat:hover {
@@ -37,405 +168,1894 @@
     box-shadow: var(--shadow-soft);
 }
 
-.summary-stat .stat-icon {
-    font-size: 1.8rem;
-    display: block;
-    margin-bottom: 0.5rem;
+.summary-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.summary-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.05rem;
+
+    background: var(--bg-glass);
     color: var(--ink-soft);
 }
 
-.summary-stat .stat-number {
-    font-size: 2.2rem;
-    font-weight: 700;
+.summary-number {
+    margin-top: 1.15rem;
+
+    font-size: 2rem;
+    font-weight: 750;
+
+    line-height: 1;
+
     color: var(--ink);
-    line-height: 1.1;
 }
 
-.summary-stat .stat-label {
-    font-size: 0.75rem;
+.summary-label {
+    margin-top: 0.55rem;
+
     color: var(--ink-faint);
+
+    font-size: 0.72rem;
+    font-weight: 600;
+
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 0.35rem;
+    letter-spacing: 0.06em;
 }
+
 
 /* =========================================================
-   RECOMMENDATION CARDS
+   RECOMMENDATION SECTION
    ========================================================= */
+
+.recommendations-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.recommendations-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 1rem;
+}
+
+.recommendations-title {
+    margin: 0;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+
+    color: var(--ink);
+}
+
+.recommendations-subtitle {
+    margin: 0.35rem 0 0;
+
+    color: var(--ink-faint);
+
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   RECOMMENDATION GRID
+   ========================================================= */
+
+.recommendation-grid {
+    row-gap: 2rem !important;
+}
+
+
+/* =========================================================
+   MAIN RECOMMENDATION CARD
+   ========================================================= */
+
 .recommendation-card {
-    transition: all 0.3s ease;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
     height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+
+    min-height: 510px;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.recommendation-header {
+    padding: 1.55rem 1.65rem;
+
+    background: var(--bg-glass);
+
+    border-bottom: 1px solid var(--border);
+}
+
+.crop-heading {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 1.25rem;
+}
+
+.crop-information {
+    min-width: 0;
+}
+
+.crop-label {
+    display: block;
+
+    margin-bottom: 0.35rem;
+
+    color: var(--ink-faint);
+
+    font-size: 0.68rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.crop-name {
+    margin: 0;
+
+    font-size: 1.25rem;
+    font-weight: 750;
+
+    line-height: 1.25;
+}
+
+.crop-name a {
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.crop-name a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   RECOMMENDATION BADGE
+   ========================================================= */
+
+.badge-recommend {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    padding: 0.55rem 0.9rem;
+
+    border-radius: 50px;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+.badge-recommend.sell {
+    background: #dc3545;
+    color: #fff;
+}
+
+.badge-recommend.hold {
+    background: #ffc107;
+    color: #212529;
+}
+
+.badge-recommend.monitor {
+    background: #17a2b8;
+    color: #fff;
+}
+
+[data-theme="dark"] .badge-recommend.hold {
+    background: #e6a800;
+    color: #fff;
+}
+
+
+/* =========================================================
+   CARD BODY
+   ========================================================= */
+
+.recommendation-body {
+    flex: 1;
+
+    padding: 1.7rem 1.65rem 1.5rem;
+
     display: flex;
     flex-direction: column;
 }
 
-.recommendation-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-soft);
+
+/* =========================================================
+   METRIC AREA
+   ========================================================= */
+
+.metrics-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 1rem;
 }
 
-.card-header-clean {
+.metric-box {
+    padding: 1rem;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-md);
+
     background: var(--bg-glass);
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 1.5rem;
-}
 
-.card-body-breathable {
-    padding: 1.5rem;
-    flex-grow: 1;
-}
+    min-height: 115px;
 
-/* =========================================================
-   BADGES & STATUSES
-   ========================================================= */
-.badge-recommend {
-    padding: 6px 18px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-.badge-recommend.sell { background: #dc3545; color: #fff; }
-.badge-recommend.hold { background: #ffc107; color: #212529; }
-.badge-recommend.monitor { background: #17a2b8; color: #fff; }
-
-[data-theme="dark"] .badge-recommend.hold { background: #e6a800; color: #fff; }
-
-.trend-up { color: #28a745; }
-.trend-down { color: #dc3545; }
-.trend-stable { color: #6c757d; }
-
-[data-theme="dark"] .trend-up { color: #4caf50; }
-[data-theme="dark"] .trend-down { color: #ef5350; }
-
-.profit-positive { color: #28a745; font-weight: 700; }
-.profit-negative { color: #dc3545; font-weight: 700; }
-
-[data-theme="dark"] .profit-positive { color: #4caf50; }
-[data-theme="dark"] .profit-negative { color: #ef5350; }
-
-/* =========================================================
-   ALERT REASONS
-   ========================================================= */
-.alert-recommendation {
-    border-radius: var(--radius-sm);
-    padding: 1rem 1.25rem;
-    margin-top: 1.25rem;
-    border: none;
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.alert-recommendation i { font-size: 1.2rem; margin-top: 2px; }
+.metric-label {
+    color: var(--ink-faint);
 
-.alert-recommendation.sell {
+    font-size: 0.68rem;
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.05em;
+}
+
+.metric-value {
+    margin-top: 0.75rem;
+
+    color: var(--ink);
+
+    font-size: 1.05rem;
+    font-weight: 750;
+
+    line-height: 1.2;
+}
+
+.metric-value.profit-positive {
+    color: #28a745;
+}
+
+.metric-value.profit-negative {
+    color: #dc3545;
+}
+
+[data-theme="dark"] .metric-value.profit-positive {
+    color: #4caf50;
+}
+
+[data-theme="dark"] .metric-value.profit-negative {
+    color: #ef5350;
+}
+
+.metric-unit {
+    color: var(--ink-faint);
+
+    font-size: 0.65rem;
+    font-weight: 400;
+}
+
+.metric-secondary {
+    margin-top: 0.45rem;
+
+    color: var(--ink-faint);
+
+    font-size: 0.68rem;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   PRICE POSITION
+   ========================================================= */
+
+.price-position {
+    margin-top: 1.4rem;
+
+    padding: 1rem 1.1rem;
+
+    border-radius: var(--radius-md);
+
+    border: 1px solid var(--border);
+
+    background: var(--bg-card);
+}
+
+.price-position-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 1rem;
+
+    margin-bottom: 0.7rem;
+}
+
+.price-position-title {
+    color: var(--ink);
+
+    font-size: 0.72rem;
+    font-weight: 650;
+}
+
+.price-position-value {
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.price-position-bar {
+    height: 6px;
+
+    width: 100%;
+
+    background: var(--bg-glass);
+
+    border-radius: 50px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+}
+
+.price-position-fill {
+    height: 100%;
+
+    width: 50%;
+
+    border-radius: 50px;
+
+    background: var(--ink-soft);
+
+    opacity: 0.55;
+}
+
+
+/* =========================================================
+   WHY RECOMMENDATION
+   ========================================================= */
+
+.recommendation-reason {
+    margin-top: 1.5rem;
+
+    padding: 1.15rem 1.2rem;
+
+    border-radius: var(--radius-md);
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 0.85rem;
+
+    line-height: 1.65;
+
+    font-size: 0.82rem;
+}
+
+.reason-icon {
+    flex-shrink: 0;
+
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    font-size: 0.9rem;
+}
+
+.reason-content {
+    flex: 1;
+}
+
+.reason-title {
+    display: block;
+
+    margin-bottom: 0.2rem;
+
+    font-size: 0.72rem;
+
+    font-weight: 750;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.05em;
+}
+
+
+/* SELL */
+
+.recommendation-reason.sell {
     background: rgba(220, 53, 69, 0.08);
     color: #dc3545;
+
     border-left: 4px solid #dc3545;
 }
-.alert-recommendation.hold {
+
+.recommendation-reason.sell .reason-icon {
+    background: rgba(220, 53, 69, 0.12);
+}
+
+
+/* HOLD */
+
+.recommendation-reason.hold {
     background: rgba(255, 193, 7, 0.08);
     color: #856404;
+
     border-left: 4px solid #ffc107;
 }
-.alert-recommendation.monitor {
+
+.recommendation-reason.hold .reason-icon {
+    background: rgba(255, 193, 7, 0.15);
+}
+
+
+/* MONITOR */
+
+.recommendation-reason.monitor {
     background: rgba(23, 162, 184, 0.08);
     color: #0c5460;
+
     border-left: 4px solid #17a2b8;
 }
 
-[data-theme="dark"] .alert-recommendation.sell { background: rgba(220, 53, 69, 0.2); color: #ef5350; }
-[data-theme="dark"] .alert-recommendation.hold { background: rgba(255, 193, 7, 0.15); color: #ffd60a; }
-[data-theme="dark"] .alert-recommendation.monitor { background: rgba(23, 162, 184, 0.2); color: #4dd0e1; }
+.recommendation-reason.monitor .reason-icon {
+    background: rgba(23, 162, 184, 0.12);
+}
+
+
+/* DARK MODE */
+
+[data-theme="dark"] .recommendation-reason.sell {
+    background: rgba(220, 53, 69, 0.2);
+    color: #ef5350;
+}
+
+[data-theme="dark"] .recommendation-reason.hold {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffd60a;
+}
+
+[data-theme="dark"] .recommendation-reason.monitor {
+    background: rgba(23, 162, 184, 0.2);
+    color: #4dd0e1;
+}
+
 
 /* =========================================================
-   ACTION BUTTONS
+   SECONDARY INFORMATION
    ========================================================= */
-.card-footer-clean {
-    border-top: 1px solid var(--border) !important;
-    padding: 1rem 1.5rem;
+
+.secondary-info {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 0.65rem;
+
+    margin-top: auto;
+
+    padding-top: 1.5rem;
+}
+
+.info-chip {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.4rem;
+
+    padding: 0.45rem 0.75rem;
+
+    border-radius: 50px;
+
+    border: 1px solid var(--border);
+
+    background: var(--bg-glass);
+
+    color: var(--ink);
+
+    font-size: 0.7rem;
+
+    line-height: 1.3;
+}
+
+.info-chip i {
+    font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   FOOTER / ACTIONS
+   ========================================================= */
+
+.recommendation-footer {
+    padding: 1.15rem 1.65rem;
+
+    border-top: 1px solid var(--border);
+
     background: transparent;
+}
+
+.action-group {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.7rem;
 }
 
 .btn-action {
     border-radius: var(--radius-sm);
-    padding: 0.5rem 1.25rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+
+    padding: 0.65rem 1rem;
+
+    font-size: 0.78rem;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.btn-action:hover { transform: translateY(-2px); }
-
-.badge-theme {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 1rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    background: var(--bg-glass);
-    color: var(--ink);
-    border: 1px solid var(--border);
+.btn-action:hover {
+    transform: translateY(-2px);
 }
+
+.btn-main-action {
+    flex: 1;
+}
+
+.btn-compare {
+    white-space: nowrap;
+}
+
 
 /* =========================================================
    EMPTY STATE
    ========================================================= */
-.empty-state {
-    padding: 3.5rem 1.5rem;
+
+.empty-state-card {
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-card);
+
+    padding: 5rem 2rem;
+
     text-align: center;
-    color: var(--ink-faint);
 }
 
-.empty-state i {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 1.25rem;
-    opacity: 0.3;
+.empty-icon {
+    width: 72px;
+    height: 72px;
+
+    margin: 0 auto 1.5rem;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bg-glass);
+
+    color: var(--ink-faint);
+
+    font-size: 2rem;
 }
+
+.empty-state-card h4 {
+    color: var(--ink);
+
+    margin-bottom: 0.7rem;
+}
+
+.empty-state-card p {
+    max-width: 520px;
+
+    margin: 0 auto;
+
+    color: var(--ink-faint);
+
+    line-height: 1.7;
+}
+
+.command-box {
+    display: inline-block;
+
+    margin-top: 1.5rem;
+
+    padding: 0.75rem 1.15rem;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+
+    color: var(--ink);
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   HELP SECTION
+   ========================================================= */
+
+.help-card {
+    background: var(--bg-glass);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    padding: 1.7rem;
+}
+
+.help-content {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 1rem;
+}
+
+.help-icon {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: var(--bg-card);
+
+    color: var(--ink-soft);
+
+    border: 1px solid var(--border);
+}
+
+.help-title {
+    margin: 0 0 0.45rem;
+
+    color: var(--ink);
+
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.help-description {
+    margin: 0;
+
+    color: var(--ink-faint);
+
+    font-size: 0.78rem;
+
+    line-height: 1.7;
+}
+
+.trend-guide {
+    display: flex;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+
+    gap: 0.5rem;
+}
+
 
 /* =========================================================
    RESPONSIVE
    ========================================================= */
-@media (max-width: 768px) {
-    .summary-stat .stat-number { font-size: 1.8rem; }
-    .badge-recommend { font-size: 0.65rem; padding: 4px 12px; }
-    .card-body-breathable { padding: 1.25rem; }
+
+@media (max-width: 992px) {
+
+    .recommendation-wrapper {
+        gap: 2.3rem;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .recommendation-card {
+        min-height: 500px;
+    }
+
+    .recommendation-header,
+    .recommendation-body,
+    .recommendation-footer {
+        padding-left: 1.4rem;
+        padding-right: 1.4rem;
+    }
+
+    .help-content {
+        margin-bottom: 1rem;
+    }
+
+    .trend-guide {
+        justify-content: flex-start;
+    }
 }
+
+
+@media (max-width: 768px) {
+
+    .recommendation-wrapper {
+        gap: 2rem;
+    }
+
+    .recommendation-intro {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .date-badge {
+        align-self: flex-start;
+    }
+
+    .intro-title {
+        font-size: 1.4rem;
+    }
+
+    .summary-stat {
+        min-height: 130px;
+        padding: 1.3rem;
+    }
+
+    .summary-number {
+        font-size: 1.8rem;
+    }
+
+    .recommendations-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .recommendation-card {
+        min-height: auto;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .metric-box {
+        min-height: 95px;
+    }
+
+    .metric-value {
+        margin-top: 0.55rem;
+    }
+
+    .crop-heading {
+        align-items: center;
+    }
+
+    .recommendation-header {
+        padding: 1.3rem;
+    }
+
+    .recommendation-body {
+        padding: 1.4rem 1.3rem;
+    }
+
+    .recommendation-footer {
+        padding: 1rem 1.3rem;
+    }
+
+    .help-card {
+        padding: 1.4rem;
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    .recommendation-wrapper {
+        gap: 1.75rem;
+    }
+
+    .intro-title {
+        font-size: 1.25rem;
+    }
+
+    .intro-description {
+        font-size: 0.85rem;
+    }
+
+    .summary-stat {
+        min-height: 120px;
+        padding: 1.1rem;
+    }
+
+    .summary-number {
+        font-size: 1.55rem;
+    }
+
+    .summary-label {
+        font-size: 0.64rem;
+    }
+
+    .summary-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .crop-name {
+        font-size: 1.1rem;
+    }
+
+    .badge-recommend {
+        font-size: 0.62rem;
+        padding: 0.45rem 0.7rem;
+    }
+
+    .recommendation-reason {
+        padding: 1rem;
+    }
+
+    .secondary-info {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .info-chip {
+        justify-content: flex-start;
+    }
+
+    .action-group {
+        flex-direction: column;
+    }
+
+    .btn-main-action,
+    .btn-compare {
+        width: 100%;
+    }
+
+    .empty-state-card {
+        padding: 4rem 1.25rem;
+    }
+
+    .help-content {
+        gap: 0.75rem;
+    }
+}
+
 </style>
 {% endblock %}
 
+
+
 {% block app_content %}
+
 <div class="recommendation-wrapper">
-    
-    <!-- Page Header -->
-    <div class="row align-items-center mb-2">
-        <div class="col-md-8">
-            <p class="text-muted mb-0">
-                <i class="bi bi-lightbulb me-2 text-success"></i>
+
+
+    <!-- =====================================================
+         PAGE INTRO
+         ===================================================== -->
+
+    <section class="recommendation-intro">
+
+        <div class="intro-content">
+
+            <div class="intro-eyebrow">
+                <i class="bi bi-lightbulb"></i>
+                {% trans "Farmer Decision Support" %}
+            </div>
+
+            <h2 class="intro-title">
+                {% trans "Make a better decision for your crops." %}
+            </h2>
+
+            <p class="intro-description">
+
                 {% if user.is_authenticated and recommendations %}
-                    {% trans "Showing recommendations for crops currently growing in your farms." %}
+
+                    {% trans "These recommendations help you decide when to sell, hold, or monitor your crops using current prices, historical market trends, and profitability." %}
+
                 {% else %}
-                    {% trans "Get data-driven recommendations on whether to sell, hold, or export your crops based on market trends." %}
+
+                    {% trans "Get data-driven guidance on whether to sell, hold, or export your crops based on market trends and profitability." %}
+
                 {% endif %}
+
             </p>
+
         </div>
-        <div class="col-md-4 text-md-end mt-2 mt-md-0">
-            <span class="badge badge-theme">
-                <i class="bi bi-calendar3 me-1"></i>
+
+
+        <div class="date-badge">
+
+            <span class="badge-theme">
+
+                <i class="bi bi-calendar3"></i>
+
                 {{ current_date|date:"F d, Y" }}
+
             </span>
-        </div>
-    </div>
 
-    <!-- Summary Cards Row -->
-    <div class="row g-3">
-        <div class="col-6 col-md-3">
-            <div class="summary-stat">
-                <i class="bi bi-grid-3x3-gap-fill stat-icon"></i>
-                <div class="stat-number" id="totalAnalyzed">0</div>
-                <div class="stat-label">{% trans "Crops Analyzed" %}</div>
-            </div>
         </div>
-        
-        <div class="col-6 col-md-3">
-            <div class="summary-stat">
-                <i class="bi bi-graph-up-arrow stat-icon" style="color: #28a745;"></i>
-                <div class="stat-number text-success" id="totalSell">0</div>
-                <div class="stat-label">{% trans "Recommend SELL" %}</div>
-            </div>
-        </div>
-        
-        <div class="col-6 col-md-3">
-            <div class="summary-stat">
-                <i class="bi bi-clock-history stat-icon" style="color: #ffc107;"></i>
-                <div class="stat-number text-warning" id="totalHold">0</div>
-                <div class="stat-label">{% trans "Recommend HOLD" %}</div>
-            </div>
-        </div>
-        
-        <div class="col-6 col-md-3">
-            <div class="summary-stat">
-                <i class="bi bi-eye stat-icon" style="color: #17a2b8;"></i>
-                <div class="stat-number text-info" id="totalMonitor">0</div>
-                <div class="stat-label">{% trans "Recommend MONITOR" %}</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Recommendations Grid -->
-    <div class="row g-4">
-        {% for rec in recommendations %}
-        <div class="col-lg-6 col-md-6">
-            <div class="recommendation-card">
-                <!-- Header -->
-                <div class="card-header-clean d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <a href="{% url 'marketPrice:crop_detail' rec.crop.id %}" class="text-decoration-none" style="color: var(--ink);">
-                            {{ rec.crop_name }}
-                        </a>
-                    </h5>
-                    <span class="badge-recommend {{ rec.recommendation|lower }}">
-                        {{ rec.recommendation }}
-                    </span>
-                </div>
-                
-                <!-- Body -->
-                <div class="card-body-breathable">
-                    <!-- Price & Profit Row -->
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <small class="text-muted d-block mb-1">{% trans "Current Price" %}</small>
-                            <h5 class="mb-1">{{ rec.current_price_viss|floatformat:0|intcomma }} <small class="text-muted fw-normal" style="font-size:0.7rem;">Ks/Viss</small></h5>
-                            <small class="text-muted">{% trans "3-Yr Avg" %}: {{ rec.avg_price_viss|floatformat:0|intcomma }} Ks/Viss</small>
+    </section>
+
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    <section class="summary-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h6>
+                    {% trans "Market Overview" %}
+                </h6>
+
+                <p>
+                    {% trans "Your current crop recommendation summary" %}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-3">
+
+
+            <!-- TOTAL -->
+
+            <div class="col-6 col-lg-3">
+
+                <div class="summary-stat">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon">
+
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+
                         </div>
-                        <div class="col-6">
-                            <small class="text-muted d-block mb-1">{% trans "Profit per Acre" %}</small>
-                            <h5 class="mb-1 {% if rec.profit_acre > 0 %}profit-positive{% else %}profit-negative{% endif %}">
-                                {{ rec.profit_acre|floatformat:0|intcomma }} 
-                                <small class="text-muted fw-normal" style="font-size:0.7rem;">Ks</small>
-                            </h5>
-                            <small class="text-muted">
-                                {% trans "ROI" %}: 
-                                <span class="trend-{{ rec.trend }}">
-                                    {{ rec.roi|floatformat:1 }}%
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            class="summary-number"
+                            id="totalAnalyzed">
+                            0
+                        </div>
+
+                        <div class="summary-label">
+                            {% trans "Crops Analyzed" %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SELL -->
+
+            <div class="col-6 col-lg-3">
+
+                <div class="summary-stat">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon">
+
+                            <i
+                                class="bi bi-graph-up-arrow"
+                                style="color:#28a745;">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            class="summary-number text-success"
+                            id="totalSell">
+                            0
+                        </div>
+
+                        <div class="summary-label">
+                            {% trans "Recommend SELL" %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- HOLD -->
+
+            <div class="col-6 col-lg-3">
+
+                <div class="summary-stat">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon">
+
+                            <i
+                                class="bi bi-clock-history"
+                                style="color:#ffc107;">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            class="summary-number text-warning"
+                            id="totalHold">
+                            0
+                        </div>
+
+                        <div class="summary-label">
+                            {% trans "Recommend HOLD" %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MONITOR -->
+
+            <div class="col-6 col-lg-3">
+
+                <div class="summary-stat">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon">
+
+                            <i
+                                class="bi bi-eye"
+                                style="color:#17a2b8;">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            class="summary-number text-info"
+                            id="totalMonitor">
+                            0
+                        </div>
+
+                        <div class="summary-label">
+                            {% trans "Recommend MONITOR" %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RECOMMENDATIONS
+         ===================================================== -->
+
+    <section class="recommendations-section">
+
+
+        <div class="recommendations-header">
+
+            <div>
+
+                <h3 class="recommendations-title">
+
+                    {% trans "Crop Recommendations" %}
+
+                </h3>
+
+                <p class="recommendations-subtitle">
+
+                    {% trans "Review the recommendation and market information before making your next selling decision." %}
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        {% if recommendations %}
+
+
+        <div class="row g-4 recommendation-grid">
+
+
+            {% for rec in recommendations %}
+
+
+            <div class="col-lg-6">
+
+
+                <article class="recommendation-card">
+
+
+                    <!-- =====================================
+                         CARD HEADER
+                         ===================================== -->
+
+                    <header class="recommendation-header">
+
+                        <div class="crop-heading">
+
+
+                            <div class="crop-information">
+
+                                <span class="crop-label">
+
+                                    {% trans "Crop" %}
+
                                 </span>
-                            </small>
-                        </div>
-                    </div>
-                    
-                    <!-- Recommendation Reason Alert -->
-                    <div class="alert-recommendation {{ rec.recommendation|lower }}">
-                        <i class="bi bi-lightbulb"></i>
-                        <div>
-                            <strong>{% trans "Why" %}:</strong> {{ rec.recommendation_reason }}
-                        </div>
-                    </div>
-                    
-                    <!-- Export & Action Badges -->
-                    <div class="mt-3 d-flex flex-wrap gap-2">
-                        <span class="badge badge-theme">
-                            <i class="bi bi-box-arrow-up-right me-1"></i>
-                            {% trans "Export" %}: 
-                            {% if rec.export_recommendation == 'EXPORT' %}
-                                <i class="bi bi-check-circle-fill text-success"></i> {% trans "Recommended" %}
-                            {% elif rec.export_recommendation == 'CONSIDER_EXPORT' %}
-                                <i class="bi bi-question-circle-fill text-warning"></i> {% trans "Consider" %}
-                            {% else %}
-                                <i class="bi bi-geo-alt-fill text-info"></i> {% trans "Local Better" %}
-                            {% endif %}
-                        </span>
-                        
-                        <span class="badge badge-theme">
-                            <i class="bi bi-megaphone me-1"></i>
-                            {% trans "Action" %}: 
-                            {% if rec.recommendation == 'SELL' %}
-                                <i class="bi bi-tag-fill text-danger"></i> {% trans "Sell Now" %}
-                            {% elif rec.recommendation == 'HOLD' %}
-                                <i class="bi bi-clock-fill text-warning"></i> {% trans "Hold" %}
-                            {% else %}
-                                <i class="bi bi-eye-fill text-info"></i> {% trans "Monitor" %}
-                            {% endif %}
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Footer -->
-                <div class="card-footer-clean">
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'marketPrice:crop_detail' rec.crop.id %}" class="btn btn-sm btn-outline-success flex-grow-1 btn-action">
-                            <i class="bi bi-eye me-1"></i> {% trans "View Details" %}
-                        </a>
-                        <a href="{% url 'marketPrice:compare' %}?crops={{ rec.crop.id }}" class="btn btn-sm btn-outline-primary btn-action">
-                            <i class="bi bi-arrow-left-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="card">
-                <div class="empty-state">
-                    <i class="bi bi-inbox"></i>
-                    <h4>{% trans "No Recommendations Available" %}</h4>
-                    <p class="text-muted">
-                        {% if user.is_authenticated %}
-                            {% trans "You haven't added any crops to your farms yet, or they don't have price data." %}
-                        {% else %}
-                            {% trans "Please ensure you have imported price and profitability data first." %}
-                        {% endif %}
-                    </p>
-                    <div class="mt-3">
-                        <code style="background: var(--bg-glass); padding: 8px 16px; border-radius: 8px; display: inline-block;">
-                            python manage.py import_data
-                        </code>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
 
-    <!-- Help Section -->
-    <div class="card mt-2" style="background: var(--bg-glass); border: 1px solid var(--border); border-radius: var(--radius-md);">
-        <div class="card-body p-4">
-            <div class="row align-items-center g-3">
-                <div class="col-md-8">
-                    <h6 class="mb-1">
-                        <i class="bi bi-question-circle me-2 text-success"></i>
-                        {% trans "How are recommendations calculated?" %}
-                    </h6>
-                    <p class="text-muted small mb-0">
-                        {% trans "Recommendations are based on price trends (3-year average), current market prices, and profitability data. SELL = falling prices or high profit, HOLD = rising prices, MONITOR = stable market." %}
-                    </p>
-                </div>
-                <div class="col-md-4 text-md-end mt-2 mt-md-0">
-                    <span class="badge badge-theme">
-                        <i class="bi bi-arrow-up-circle text-success me-1"></i> {% trans "Uptrend" %}
-                    </span>
-                    <span class="badge badge-theme">
-                        <i class="bi bi-arrow-down-circle text-danger me-1"></i> {% trans "Downtrend" %}
-                    </span>
-                    <span class="badge badge-theme">
-                        <i class="bi bi-dash-circle text-secondary me-1"></i> {% trans "Stable" %}
-                    </span>
-                </div>
+
+                                <h4 class="crop-name">
+
+                                    <a
+                                        href="{% url 'marketPrice:crop_detail' rec.crop.id %}">
+
+                                        {{ rec.crop_name }}
+
+                                    </a>
+
+                                </h4>
+
+                            </div>
+
+
+
+                            <span
+                                class="badge-recommend {{ rec.recommendation|lower }}">
+
+                                {% if rec.recommendation == 'SELL' %}
+
+                                    <i class="bi bi-arrow-up-right"></i>
+
+                                {% elif rec.recommendation == 'HOLD' %}
+
+                                    <i class="bi bi-clock"></i>
+
+                                {% else %}
+
+                                    <i class="bi bi-eye"></i>
+
+                                {% endif %}
+
+                                {{ rec.recommendation }}
+
+                            </span>
+
+
+                        </div>
+
+                    </header>
+
+
+
+                    <!-- =====================================
+                         CARD BODY
+                         ===================================== -->
+
+                    <div class="recommendation-body">
+
+
+                        <!-- KEY METRICS -->
+
+                        <div class="metrics-grid">
+
+
+                            <!-- PRICE -->
+
+                            <div class="metric-box">
+
+                                <span class="metric-label">
+
+                                    {% trans "Current Price" %}
+
+                                </span>
+
+
+                                <div>
+
+                                    <div class="metric-value">
+
+                                        {{ rec.current_price_viss|floatformat:0|intcomma }}
+
+                                        <span class="metric-unit">
+                                            Ks/Viss
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="metric-secondary">
+
+                                        {% trans "3-Yr Avg" %}:
+
+                                        {{ rec.avg_price_viss|floatformat:0|intcomma }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- PROFIT -->
+
+                            <div class="metric-box">
+
+                                <span class="metric-label">
+
+                                    {% trans "Profit / Acre" %}
+
+                                </span>
+
+
+                                <div>
+
+                                    <div class="metric-value
+                                        {% if rec.profit_acre > 0 %}
+                                            profit-positive
+                                        {% else %}
+                                            profit-negative
+                                        {% endif %}">
+
+                                        {{ rec.profit_acre|floatformat:0|intcomma }}
+
+                                        <span class="metric-unit">
+                                            Ks
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="metric-secondary">
+
+                                        {% trans "Estimated return" %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- ROI -->
+
+                            <div class="metric-box">
+
+                                <span class="metric-label">
+
+                                    {% trans "ROI" %}
+
+                                </span>
+
+
+                                <div>
+
+                                    <div class="metric-value">
+
+                                        {{ rec.roi|floatformat:1 }}%
+
+                                    </div>
+
+
+                                    <div class="metric-secondary">
+
+                                        <span
+                                            class="trend-{{ rec.trend }}">
+
+                                            {% if rec.trend == 'up' %}
+
+                                                {% trans "Uptrend" %}
+
+                                            {% elif rec.trend == 'down' %}
+
+                                                {% trans "Downtrend" %}
+
+                                            {% else %}
+
+                                                {% trans "Stable" %}
+
+                                            {% endif %}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             PRICE POSITION
+                             ================================= -->
+
+                        <div class="price-position">
+
+                            <div class="price-position-header">
+
+                                <span class="price-position-title">
+
+                                    {% trans "Current price vs. 3-year average" %}
+
+                                </span>
+
+
+                                <span class="price-position-value">
+
+                                    {% if rec.current_price_viss > rec.avg_price_viss %}
+
+                                        <span class="trend-up">
+
+                                            <i class="bi bi-arrow-up"></i>
+                                            {% trans "Above average" %}
+
+                                        </span>
+
+                                    {% elif rec.current_price_viss < rec.avg_price_viss %}
+
+                                        <span class="trend-down">
+
+                                            <i class="bi bi-arrow-down"></i>
+                                            {% trans "Below average" %}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="trend-stable">
+
+                                            <i class="bi bi-dash"></i>
+                                            {% trans "Near average" %}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="price-position-bar">
+
+                                <div
+                                    class="price-position-fill"
+                                    style="
+                                    {% if rec.current_price_viss > rec.avg_price_viss %}
+                                        width: 75%;
+                                    {% elif rec.current_price_viss < rec.avg_price_viss %}
+                                        width: 35%;
+                                    {% else %}
+                                        width: 50%;
+                                    {% endif %}
+                                    ">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             REASON
+                             ================================= -->
+
+                        <div
+                            class="recommendation-reason {{ rec.recommendation|lower }}">
+
+                            <div class="reason-icon">
+
+                                <i class="bi bi-lightbulb"></i>
+
+                            </div>
+
+
+                            <div class="reason-content">
+
+                                <span class="reason-title">
+
+                                    {% trans "Why this recommendation?" %}
+
+                                </span>
+
+
+                                {{ rec.recommendation_reason }}
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             SECONDARY INFORMATION
+                             ================================= -->
+
+                        <div class="secondary-info">
+
+
+                            <span class="info-chip">
+
+                                <i class="bi bi-box-arrow-up-right"></i>
+
+                                {% trans "Export" %}:
+
+                                {% if rec.export_recommendation == 'EXPORT' %}
+
+                                    <strong class="text-success">
+
+                                        {% trans "Recommended" %}
+
+                                    </strong>
+
+                                {% elif rec.export_recommendation == 'CONSIDER_EXPORT' %}
+
+                                    <strong class="text-warning">
+
+                                        {% trans "Consider" %}
+
+                                    </strong>
+
+                                {% else %}
+
+                                    <strong class="text-info">
+
+                                        {% trans "Local Better" %}
+
+                                    </strong>
+
+                                {% endif %}
+
+                            </span>
+
+
+
+                            <span class="info-chip">
+
+                                <i class="bi bi-megaphone"></i>
+
+                                {% trans "Suggested action" %}:
+
+                                {% if rec.recommendation == 'SELL' %}
+
+                                    <strong class="text-danger">
+
+                                        {% trans "Sell Now" %}
+
+                                    </strong>
+
+                                {% elif rec.recommendation == 'HOLD' %}
+
+                                    <strong class="text-warning">
+
+                                        {% trans "Hold" %}
+
+                                    </strong>
+
+                                {% else %}
+
+                                    <strong class="text-info">
+
+                                        {% trans "Monitor" %}
+
+                                    </strong>
+
+                                {% endif %}
+
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- =====================================
+                         CARD FOOTER
+                         ===================================== -->
+
+                    <footer class="recommendation-footer">
+
+                        <div class="action-group">
+
+
+                            <a
+                                href="{% url 'marketPrice:crop_detail' rec.crop.id %}"
+                                class="btn btn-sm btn-outline-success btn-action btn-main-action">
+
+                                <i class="bi bi-bar-chart-line me-1"></i>
+
+                                {% trans "View Market Details" %}
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'marketPrice:compare' %}?crops={{ rec.crop.id }}"
+                                class="btn btn-sm btn-outline-primary btn-action btn-compare">
+
+                                <i class="bi bi-arrow-left-right me-1"></i>
+
+                                {% trans "Compare" %}
+
+                            </a>
+
+
+                        </div>
+
+                    </footer>
+
+
+                </article>
+
+
             </div>
+
+
+            {% endfor %}
+
+
         </div>
-    </div>
+
+
+        {% else %}
+
+
+        <!-- =============================================
+             EMPTY STATE
+             ============================================= -->
+
+        <div class="empty-state-card">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-inbox"></i>
+
+            </div>
+
+
+            <h4>
+
+                {% trans "No Recommendations Available" %}
+
+            </h4>
+
+
+            <p>
+
+                {% if user.is_authenticated %}
+
+                    {% trans "You haven't added any crops to your farms yet, or there isn't enough market price data to generate recommendations." %}
+
+                {% else %}
+
+                    {% trans "Please ensure that your price and profitability data has been imported before using crop recommendations." %}
+
+                {% endif %}
+
+            </p>
+
+
+            <code class="command-box">
+
+                python manage.py import_data
+
+            </code>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         HELP / EXPLANATION
+         ===================================================== -->
+
+    <section class="help-card">
+
+
+        <div class="row align-items-center g-4">
+
+
+            <div class="col-lg-7">
+
+                <div class="help-content">
+
+
+                    <div class="help-icon">
+
+                        <i class="bi bi-question-circle"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h6 class="help-title">
+
+                            {% trans "How are recommendations calculated?" %}
+
+                        </h6>
+
+
+                        <p class="help-description">
+
+                            {% trans "Recommendations consider the current market price, three-year average price, price trend, and estimated profitability. SELL indicates a stronger opportunity to sell, HOLD suggests waiting for a potentially better market, and MONITOR means the market is relatively stable." %}
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-lg-5">
+
+                <div class="trend-guide">
+
+
+                    <span class="badge-theme">
+
+                        <i class="bi bi-arrow-up-circle text-success"></i>
+
+                        {% trans "Uptrend" %}
+
+                    </span>
+
+
+                    <span class="badge-theme">
+
+                        <i class="bi bi-arrow-down-circle text-danger"></i>
+
+                        {% trans "Downtrend" %}
+
+                    </span>
+
+
+                    <span class="badge-theme">
+
+                        <i class="bi bi-dash-circle text-secondary"></i>
+
+                        {% trans "Stable" %}
+
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
 </div>
+
 {% endblock %}
 
+
+
 {% block extra_js %}
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function () {
+
     let totalSell = 0;
     let totalHold = 0;
     let totalMonitor = 0;
 
-    document.querySelectorAll('.badge-recommend').forEach(function(badge) {
-        const text = badge.innerText.trim();
-        if (text === 'SELL') totalSell++;
-        else if (text === 'HOLD') totalHold++;
-        else if (text === 'MONITOR') totalMonitor++;
-    });
 
-    const totalAnalyzed = totalSell + totalHold + totalMonitor;
-    document.getElementById('totalAnalyzed').innerText = totalAnalyzed;
-    document.getElementById('totalSell').innerText = totalSell;
-    document.getElementById('totalHold').innerText = totalHold;
-    document.getElementById('totalMonitor').innerText = totalMonitor;
+    document
+        .querySelectorAll('.badge-recommend')
+        .forEach(function (badge) {
+
+            const text = badge.innerText
+                .trim()
+                .toUpperCase();
+
+
+            if (text.includes('SELL')) {
+
+                totalSell++;
+
+            } else if (text.includes('HOLD')) {
+
+                totalHold++;
+
+            } else if (text.includes('MONITOR')) {
+
+                totalMonitor++;
+
+            }
+
+        });
+
+
+    const totalAnalyzed =
+        totalSell +
+        totalHold +
+        totalMonitor;
+
+
+    const totalAnalyzedElement =
+        document.getElementById('totalAnalyzed');
+
+    const totalSellElement =
+        document.getElementById('totalSell');
+
+    const totalHoldElement =
+        document.getElementById('totalHold');
+
+    const totalMonitorElement =
+        document.getElementById('totalMonitor');
+
+
+    if (totalAnalyzedElement) {
+        totalAnalyzedElement.innerText =
+            totalAnalyzed;
+    }
+
+
+    if (totalSellElement) {
+        totalSellElement.innerText =
+            totalSell;
+    }
+
+
+    if (totalHoldElement) {
+        totalHoldElement.innerText =
+            totalHold;
+    }
+
+
+    if (totalMonitorElement) {
+        totalMonitorElement.innerText =
+            totalMonitor;
+    }
+
 });
+
 </script>
+
 {% endblock %}
