@@ -897,11 +897,53 @@
                     </div>
                 </div>
 
-                <div class="user-chip">
-                    <div class="avatar">{{ user.username|slice:":2"|upper }}</div>
-                    <div>
-                        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
-                        <div class="user-plan">{% trans "Premium Plan" %}</div>
+                <div class="user-chip-wrap" style="position:relative;">
+                    <button type="button" class="user-chip" id="userChipBtn" onclick="toggleUserDropdown()" style="background:none;border:none;cursor:pointer;">
+                        <div class="avatar">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                            {% else %}
+                                {{ user.username|slice:":2"|upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="user-name">{{ user.profile.full_name|default:user.get_full_name|default:user.username }}</div>
+                            <div class="user-plan">{{ user.profile.role_title|default:"Premium Plan" }}</div>
+                        </div>
+                    </button>
+
+                    <div class="notif-dropdown" id="userDropdown" style="width:240px;">
+                        <div class="notif-dropdown-header" style="display:flex;align-items:center;gap:10px;">
+                            <div class="notif-avatar" style="width:38px;height:38px;">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}">
+                                {% else %}
+                                    {{ user.username|slice:":2"|upper }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div style="font-weight:700;font-size:13.5px;">{{ user.profile.full_name|default:user.username }}</div>
+                                <div style="font-size:11.5px;color:var(--ink-faint);">{{ user.email|default:user.username }}</div>
+                            </div>
+                        </div>
+                        <a href="{% url 'profile' %}" class="notif-item">
+                            <span class="material-symbols-outlined">account_circle</span>
+                            <div class="notif-text">{% trans "View Profile" %}</div>
+                        </a>
+                        <a href="{% url 'profile_edit' %}" class="notif-item">
+                            <span class="material-symbols-outlined">edit</span>
+                            <div class="notif-text">{% trans "Edit Profile" %}</div>
+                        </a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'adminpanel:dashboard' %}" class="notif-item">
+                            <span class="material-symbols-outlined">admin_panel_settings</span>
+                            <div class="notif-text">{% trans "Admin Dashboard" %}</div>
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'landing:logout' %}" class="notif-item">
+                            <span class="material-symbols-outlined">logout</span>
+                            <div class="notif-text">{% trans "Logout" %}</div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -947,6 +989,12 @@
         const isOpening = !dropdown.classList.contains('open');
         dropdown.classList.toggle('open');
         if (isOpening) loadNotifications();
+    }
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        if (!dropdown) return;
+        document.getElementById('notifDropdown')?.classList.remove('open'); // notif ပိတ်ပေးမယ်
+        dropdown.classList.toggle('open');
     }
 
     function loadNotifications() {
@@ -1024,12 +1072,15 @@
                 setTheme(next);
             });
         }
-
-        // ===== Close notifications dropdown on outside click =====
+// ===== Close notifications/user dropdown on outside click =====
         document.addEventListener('click', function(e) {
-            const wrap = document.querySelector('.notif-dropdown-wrap');
-            if (wrap && !wrap.contains(e.target)) {
+            const notifWrap = document.querySelector('.notif-dropdown-wrap');
+            if (notifWrap && !notifWrap.contains(e.target)) {
                 document.getElementById('notifDropdown')?.classList.remove('open');
+            }
+            const userWrap = document.querySelector('.user-chip-wrap');
+            if (userWrap && !userWrap.contains(e.target)) {
+                document.getElementById('userDropdown')?.classList.remove('open');
             }
         });
 

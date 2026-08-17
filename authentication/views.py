@@ -3,6 +3,28 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, ProfileForm
+from .models import Profile
+
+@login_required
+def profile_view(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    return render(request, "profile.html", {"profile": profile})
+
+
+@login_required
+def profile_edit(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile")
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, "profile_edit.html", {"form": form})
+
 
 def register_view(request):
     if request.method == "POST":

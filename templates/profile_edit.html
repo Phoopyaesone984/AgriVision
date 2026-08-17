@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% trans "Edit Profile" %}{% endblock %}
+
+{% block extra_css %}
+.edit-form-card { max-width: 680px; padding: 32px 36px; }
+.form-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink-faint);
+    margin: 26px 0 14px;
+}
+.form-section-title:first-child { margin-top: 0; }
+.field-group { margin-bottom: 18px; }
+.field-group label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 7px;
+}
+.field-group .form-control,
+.field-group textarea {
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--ink);
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.15s ease;
+}
+.field-group .form-control:focus,
+.field-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 3px var(--accent-green-glow);
+}
+.field-help { font-size: 12px; color: var(--ink-faint); margin-top: 6px; }
+.field-error { font-size: 12px; color: var(--rose-ink); margin-top: 6px; }
+
+.avatar-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.avatar-preview {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 3px solid var(--bg-card);
+    box-shadow: var(--shadow-card);
+}
+.avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 9px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.avatar-upload-btn:hover { background: var(--border); }
+.avatar-file-name { font-size: 12px; color: var(--ink-faint); margin-top: 6px; }
+
+#id_avatar {
+    display: none;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+}
+.btn-save {
+    background: var(--accent-green);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 11px 26px;
+    font-weight: 600;
+    font-size: 14px;
+}
+.btn-save:hover { opacity: 0.88; color: #fff; }
+.btn-cancel {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 11px 26px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+}
+.btn-cancel:hover { background: var(--bg-glass); color: var(--ink); }
+{% endblock %}
+
+{% block app_content %}
+<div class="dashboard-card edit-form-card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-section-title">{% trans "Profile Photo" %}</div>
+        <div class="avatar-upload-row">
+            <div class="avatar-preview" id="avatarPreview">
+                {% if form.instance.avatar %}
+                    <img src="{{ form.instance.avatar.url }}" id="avatarPreviewImg">
+                {% else %}
+                    <span id="avatarPreviewInitials">{{ user.username|slice:":2"|upper }}</span>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_avatar" class="avatar-upload-btn">
+                    <span class="material-symbols-outlined" style="font-size:18px;">upload</span>
+                    {% trans "Change Photo" %}
+                </label>
+                {{ form.avatar }}
+                <div class="avatar-file-name" id="avatarFileName">{% trans "No file chosen" %}</div>
+                {% if form.avatar.errors %}<div class="field-error">{{ form.avatar.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="form-section-title">{% trans "Basic Information" %}</div>
+        <div class="field-group">
+            <label for="{{ form.full_name.id_for_label }}">{% trans "Full Name" %}</label>
+            {{ form.full_name }}
+            {% for error in form.full_name.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="field-group">
+            <label for="{{ form.role_title.id_for_label }}">{% trans "Role Title" %}</label>
+            {{ form.role_title }}
+            <div class="field-help">{% trans "e.g. 'Senior Agronomist' or 'Farmer, Bago Region'" %}</div>
+            {% for error in form.role_title.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-section-title">{% trans "Contact Details" %}</div>
+        <div class="field-group">
+            <label for="{{ form.phone.id_for_label }}">{% trans "Phone" %}</label>
+            {{ form.phone }}
+            {% for error in form.phone.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="field-group">
+            <label for="{{ form.address.id_for_label }}">{% trans "Address" %}</label>
+            {{ form.address }}
+            {% for error in form.address.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">{% trans "Save Changes" %}</button>
+            <a href="{% url 'profile' %}" class="btn-cancel">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('id_avatar');
+    const fileName = document.getElementById('avatarFileName');
+    const previewImg = document.getElementById('avatarPreviewImg');
+    const previewInitials = document.getElementById('avatarPreviewInitials');
+    const previewWrap = document.getElementById('avatarPreview');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                fileName.textContent = this.files[0].name;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (previewImg) {
+                        previewImg.src = e.target.result;
+                    } else {
+                        previewWrap.innerHTML = `<img src="${e.target.result}" id="avatarPreviewImg">`;
+                    }
+                };
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                fileName.textContent = "{% trans 'No file chosen' %}";
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

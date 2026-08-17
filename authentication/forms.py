@@ -1,8 +1,19 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from .models import Profile
 
-
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["full_name", "role_title", "phone", "address", "avatar"]
+        widgets = {
+            "full_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Your full name"}),
+            "role_title": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. Farmer, Bago Region"}),
+            "phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "Phone number"}),
+            "address": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Your address"}),
+            "avatar": forms.FileInput(attrs={"class": "d-none", "id": "id_avatar"}),  # ← ပြောင်းလိုက်ပါ
+        }
 class RegisterForm(UserCreationForm):
 
     username = forms.CharField(
@@ -65,3 +76,4 @@ class LoginForm(AuthenticationForm):
             "placeholder": "Enter your password"
         })
     )
+

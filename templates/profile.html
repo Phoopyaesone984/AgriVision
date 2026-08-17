@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% trans "My Profile" %}{% endblock %}
+
+{% block extra_css %}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 18px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.back-link:hover { color: var(--ink); }
+.back-link .material-symbols-outlined { font-size: 18px; }
+
+.profile-banner {
+    height: 140px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
+    position: relative;
+}
+.profile-avatar-wrap {
+    position: absolute;
+    left: 36px;
+    bottom: -46px;
+}
+.profile-avatar-wrap .avatar-lg {
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    border: 4px solid var(--bg-card);
+    background: var(--forest);
+    color: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 700;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+.profile-avatar-wrap .avatar-lg img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+.profile-card-body {
+    padding: 62px 36px 32px;
+}
+.profile-name {
+    font-size: 24px;
+    font-weight: 600;
+}
+.profile-role {
+    color: var(--accent-green);
+    font-size: 13.5px;
+    font-weight: 600;
+    background: var(--accent-green-glow);
+    display: inline-block;
+    padding: 3px 14px;
+    border-radius: 50px;
+    margin-top: 6px;
+}
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 28px;
+}
+@media (max-width: 640px) {
+    .profile-info-grid { grid-template-columns: 1fr; }
+}
+.profile-info-item {
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.profile-info-item .material-symbols-outlined {
+    color: var(--accent-green);
+    background: var(--bg-card);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.profile-info-item .label {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.profile-info-item .value {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-top: 2px;
+    word-break: break-word;
+}
+.profile-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-green);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 11px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 26px;
+    transition: opacity 0.15s ease;
+}
+.profile-edit-btn:hover { opacity: 0.88; color: #fff; }
+{% endblock %}
+
+{% block app_content %}
+<a href="{% url 'farms:dashboard' %}" class="back-link">
+    <span class="material-symbols-outlined">arrow_back</span>
+    {% trans "Back to Dashboard" %}
+</a>
+
+<div class="dashboard-card" style="max-width:680px; overflow:hidden;">
+    <div class="profile-banner">
+        <div class="profile-avatar-wrap">
+            <div class="avatar-lg">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}">
+                {% else %}
+                    {{ user.username|slice:":2"|upper }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-card-body">
+        <div class="profile-name">{{ profile.full_name|default:user.username }}</div>
+        {% if profile.role_title %}
+            <span class="profile-role">{{ profile.role_title }}</span>
+        {% endif %}
+
+        <div class="profile-info-grid">
+            <div class="profile-info-item">
+                <span class="material-symbols-outlined">badge</span>
+                <div>
+                    <div class="label">{% trans "Username" %}</div>
+                    <div class="value">{{ user.username }}</div>
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <span class="material-symbols-outlined">mail</span>
+                <div>
+                    <div class="label">{% trans "Email" %}</div>
+                    <div class="value">{{ user.email|default:"—" }}</div>
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <span class="material-symbols-outlined">call</span>
+                <div>
+                    <div class="label">{% trans "Phone" %}</div>
+                    <div class="value">{{ profile.phone|default:"—" }}</div>
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <span class="material-symbols-outlined">location_on</span>
+                <div>
+                    <div class="label">{% trans "Address" %}</div>
+                    <div class="value">{{ profile.address|default:"—" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'profile_edit' %}" class="profile-edit-btn">
+            <span class="material-symbols-outlined" style="font-size:18px;">edit</span>
+            {% trans "Edit Profile" %}
+        </a>
+    </div>
+</div>
+{% endblock %}
