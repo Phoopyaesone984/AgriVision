@@ -973,43 +973,30 @@
 
                 <!-- YEARLY PRICE -->
 
-                <div class="price-primary">
-
-                    <div>
-
-                        <div class="price-label">
-
-                            <i class="bi bi-calendar3 me-1"></i>
-
-                            {% trans "Yearly Price" %}
-
-                            {% if item.latest_harvest %}
-                                ({{ item.latest_harvest.year }})
-                            {% endif %}
-
-                        </div>
-
-                        <div class="price-main">
-
-                            <span class="value">
-
-                                {% if item.latest_harvest %}
-                                    {{ item.latest_harvest.price|floatformat:0 }}
-                                {% else %}
-                                    —
-                                {% endif %}
-
-                            </span>
-
-                            <span class="unit">
-                                Ks / {{ item.crop_unit }}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
+             <!-- YEARLY PRICE - FIXED to always show Viss -->
+<div class="price-primary">
+    <div>
+        <div class="price-label">
+            <i class="bi bi-calendar3 me-1"></i>
+            {% trans "Yearly Price" %}
+            {% if item.latest_harvest %}
+                ({{ item.latest_harvest.year }})
+            {% endif %}
+        </div>
+        <div class="price-main">
+            <span class="value">
+                {% if item.yearly_price_per_viss %}
+                    {{ item.yearly_price_per_viss|floatformat:0 }}
+                {% else %}
+                    —
+                {% endif %}
+            </span>
+            <span class="unit">
+                Ks / Viss
+            </span>
+        </div>
+    </div>
+</div>
 
 
                 <!-- NORMALIZED PRICE -->
