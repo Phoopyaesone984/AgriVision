@@ -40,13 +40,31 @@ class Tag(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-
 class Post(models.Model):
+    STATUS_PENDING = "pending"
+    STATUS_APPROVED = "approved"
+    STATUS_REJECTED = "rejected"
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending Review"),
+        (STATUS_APPROVED, "Approved"),
+        (STATUS_REJECTED, "Rejected"),
+    ]
+
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     title = models.CharField(max_length=200, blank=True)
-    content = models.TextField()
+    content = models.TextField(blank=True)   # ← shared post တွေမှာ content ဟင်းလင်းနိုင်လို့ blank=True လုပ်ပါ
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    moderated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="moderated_posts")
+    moderated_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.CharField(max_length=255, blank=True)
+
+    # ✅ SHARE / REPOST feature
+    shared_post = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="reposts"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -54,6 +72,8 @@ class Post(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
+        if self.shared_post_id:
+            return f"{self.author} shared post #{self.shared_post_id}"
         return self.title or f"Post by {self.author} at {self.created_at:%Y-%m-%d}"
 
     def get_absolute_url(self):
@@ -67,6 +87,13 @@ class Post(models.Model):
     def comment_count(self):
         return self.comments.count()
 
+    @property
+    def share_count(self):
+        return self.reposts.count()
+
+    @property
+    def is_share(self):
+        return self.shared_post_id is not None
 
 class PostImage(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
@@ -117,11 +144,14 @@ class Notification(models.Model):
     COMMENT_POST = "comment_post"
     LIKE_COMMENT = "like_comment"
     REPLY_COMMENT = "reply_comment"
+    SHARE_POST = "share_post"
     VERB_CHOICES = [
         (LIKE_POST, "liked your post"),
         (COMMENT_POST, "commented on your post"),
         (LIKE_COMMENT, "liked your comment"),
         (REPLY_COMMENT, "replied to your comment"),
+        (SHARE_POST, "shared your post"),
+
     ]
 
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications")
@@ -139,3 +169,4 @@ class Notification(models.Model):
         if self.post_id:
             return reverse("community:notification_redirect", args=[self.pk])
         return reverse("community:feed")
+

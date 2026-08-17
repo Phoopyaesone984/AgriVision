@@ -8,7 +8,6 @@ from django.views.decorators.http import require_POST
 from .forms import PostForm, CommentForm
 from .models import Post, PostImage, Comment, Like, Category,Notification
 
-
 def feed(request):
     if request.method == "POST" and request.user.is_authenticated:
         form = PostForm(request.POST)
@@ -57,7 +56,6 @@ def feed(request):
         "active_sort": sort,
         "hide_app_sidebar": True,
     })
-
 
 def post_detail(request, pk):
     post = get_object_or_404(
@@ -208,3 +206,34 @@ def notification_redirect(request, pk):
     if notification.post_id:
         return redirect("community:post_detail", pk=notification.post_id)
     return redirect("community:feed")
+
+
+@login_required
+@require_POST
+def toggle_share(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # shared post ကို ထပ်share လို့မရအောင် original ကို ရှာပါ
+    original = post.shared_post if post.is_share else post
+
+    existing_share = Post.objects.filter(author=request.user, shared_post=original).first()
+
+    if existing_share:
+        existing_share.delete()
+        shared = False
+    else:
+        Post.objects.create(
+            author=request.user,
+            shared_post=original,
+            status=Post.STATUS_APPROVED,   # own content မထည့်လို့ auto-approve
+        )
+        shared = True
+        if original.author != request.user:
+            Notification.objects.create(
+                recipient=original.author,
+                actor=request.user,
+                verb=Notification.SHARE_POST,
+                post=original,
+            )
+
+    return JsonResponse({"shared": shared, "count": original.share_count})

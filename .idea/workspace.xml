@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="35f69835-16ee-4033-81bb-661499d8c588" name="Changes" comment="ok">
-      <change afterPath="$PROJECT_DIR$/templates/profile.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/profile_edit.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/authentication/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/authentication/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/authentication/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/authentication/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/authentication/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/authentication/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/community/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/community/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/community/templates/feed.html" beforeDir="false" afterPath="$PROJECT_DIR$/community/templates/feed.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/community/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/community/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +58,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feature/user-profile"
+    "git-widget-placeholder": "feature/community-share-update"
   }
 }]]></component>
   <component name="RecentsManager">

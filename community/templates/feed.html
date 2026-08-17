@@ -342,9 +342,6 @@
                         <span class="material-symbols-outlined">chat_bubble</span>
                         {{ post.comment_count }} {% trans "Comments" %}
                     </a>
-                    <a href="{% url 'community:post_detail' post.id %}" class="post-action-btn">
-                        <span class="material-symbols-outlined">share</span> {% trans "Share" %}
-                    </a>
                 </div>
             </div>
         {% empty %}
