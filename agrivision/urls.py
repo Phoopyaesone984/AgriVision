@@ -7,6 +7,7 @@ from marketPrice import views  # Add this import
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('adminpanel/', include('adminpanel.urls')),
     path('', include('landing.urls')),
     path('community/', include('community.urls')),
     path('stock/', include('stock.urls')),

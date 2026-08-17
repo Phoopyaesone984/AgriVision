@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends base_template|default:'base.html' %}
 {% load i18n %}
 
 {% block title %}{% trans "Community" %} | AgriVision{% endblock %}
@@ -6,8 +6,17 @@
 {% block page_title %}{% trans "Community" %}{% endblock %}
 
 {% block extra_css %}
-    .community-grid { display: grid; grid-template-columns: 240px 1fr; gap: 20px; align-items: start; }
-    @media (max-width: 900px) { .community-grid { grid-template-columns: 1fr; } }
+<style>
+    /* 2-Column Grid Layout */
+    .community-grid {
+        display: grid !important;
+        grid-template-columns: 260px 1fr !important;
+        gap: 24px !important;
+        align-items: start !important;
+    }
+    @media (max-width: 900px) {
+        .community-grid { grid-template-columns: 1fr !important; }
+    }
 
     /* ---- mini sidebar ---- */
     .comm-sidebar {
@@ -155,13 +164,28 @@
     .post-card {
         background: var(--bg-card); border: 1px solid var(--border);
         border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
-        padding: 22px; margin-bottom: 18px;
+        padding: 22px; margin-bottom: 18px; position: relative;
+    }
+    .post-card.pinned {
+        border: 1.5px solid var(--mint-deep);
+        background: linear-gradient(180deg, rgba(221, 243, 234, 0.25) 0%, var(--bg-card) 100px);
     }
     .post-head { display: flex; gap: 12px; align-items: flex-start; }
+    .post-author-name-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .post-author-name { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+    .admin-badge {
+        background: var(--forest-deep); color: #fff; font-size: 10.5px;
+        font-weight: 700; padding: 2px 8px; border-radius: 50px;
+        display: inline-flex; align-items: center; gap: 3px;
+    }
+    .pinned-badge {
+        color: #ea580c; font-size: 12px; font-weight: 700;
+        display: inline-flex; align-items: center; gap: 2px;
+    }
     .post-meta { font-size: 12px; color: var(--ink-faint); margin-top: 1px; }
-    .post-delete-btn { margin-left: auto; background: none; border: none; color: var(--ink-faint); cursor: pointer; padding: 4px; }
+    .post-delete-btn { background: none; border: none; color: var(--ink-faint); cursor: pointer; padding: 4px; }
     .post-delete-btn:hover { color: var(--rose-ink); }
+    .post-head-actions { margin-left: auto; display: flex; gap: 4px; align-items: flex-start; }
 
     .post-title { font-size: 18px; font-weight: 700; margin: 14px 0 8px; color: var(--ink); }
     .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -197,6 +221,27 @@
     .post-action-btn.liked { color: var(--rose-ink); }
     .post-action-btn .material-symbols-outlined { font-size: 19px; }
 
+    /* ---- report modal ---- */
+    .report-modal-overlay {
+        display: none; position: fixed; inset: 0; z-index: 1100;
+        background: rgba(10,20,15,0.55);
+        align-items: center; justify-content: center;
+    }
+    .report-modal-overlay.open { display: flex; }
+    .report-modal-box {
+        background: var(--bg-card); border-radius: var(--radius-md);
+        padding: 22px; max-width: 380px; width: 90%;
+        box-shadow: var(--shadow-soft);
+    }
+    .report-modal-box h4 { font-size: 15px; margin-bottom: 14px; color: var(--ink); }
+    .report-modal-box select,
+    .report-modal-box textarea {
+        width: 100%; border: 1px solid var(--border); border-radius: 8px;
+        padding: 9px 12px; font-size: 13.5px; color: var(--ink);
+        background: var(--bg-glass); margin-bottom: 10px; font-family: inherit;
+    }
+    .report-modal-box textarea { resize: none; }
+
     .empty-state { text-align: center; padding: 60px 20px; color: var(--ink-faint); }
     .empty-state .material-symbols-outlined { font-size: 40px; margin-bottom: 10px; display: block; }
 
@@ -210,26 +255,29 @@
         border: 1px solid var(--border); color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none;
     }
     .page-btn:hover { background: var(--mint); color: var(--mint-deep); }
+
     .back-to-dashboard {
-            display: flex; align-items: center; gap: 8px;
-            color: var(--ink-soft); text-decoration: none;
-            font-size: 13px; font-weight: 600;
-            margin-bottom: 14px; padding-bottom: 14px;
-            border-bottom: 1px solid var(--border);
-        }
+        display: flex; align-items: center; gap: 8px;
+        color: var(--ink-soft); text-decoration: none;
+        font-size: 13px; font-weight: 600;
+        margin-bottom: 14px; padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+    }
     .back-to-dashboard:hover { color: var(--ink); }
     .back-to-dashboard .material-symbols-outlined { font-size: 18px; }
-
+</style>
 {% endblock %}
 
 {% block app_content %}
 <div class="community-grid">
 
     <div class="comm-sidebar">
-    <a href="{% url 'farms:dashboard' %}" class="back-to-dashboard">
-        <span class="material-symbols-outlined">arrow_back</span> {% trans "Back to Dashboard" %}
-    </a>
-    <div class="comm-sidebar-brand">
+        <!-- 👑 Back to Dashboard: Admin -> Admin Dashboard, User -> Farm Dashboard -->
+        <a href="{% if user.is_staff or user.is_superuser %}{% url 'adminpanel:dashboard' %}{% else %}{% url 'farms:dashboard' %}{% endif %}" class="back-to-dashboard">
+            <span class="material-symbols-outlined">arrow_back</span> {% trans "Back to Dashboard" %}
+        </a>
+
+        <div class="comm-sidebar-brand">
             <div class="icon-badge"><span class="material-symbols-outlined">groups</span></div>
             <div>
                 <h4>{% trans "AgriVision Farmers" %}</h4>
@@ -275,7 +323,7 @@
         </div>
 
         {% for post in page_obj %}
-            <div class="post-card">
+            <div class="post-card {% if post.is_pinned %}pinned{% endif %}">
                 <div class="post-head">
                     <div class="avatar-circle">
                         {% if post.author.profile.avatar %}
@@ -285,18 +333,42 @@
                         {% endif %}
                     </div>
                     <div>
-                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                        <div class="post-author-name-wrap">
+                            <span class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+
+                            {% if post.author.is_staff or post.author.is_superuser %}
+                                <span class="admin-badge">
+                                    <span class="material-symbols-outlined" style="font-size:12px;">verified</span>
+                                    {% trans "Official Admin" %}
+                                </span>
+                            {% endif %}
+
+                            {% if post.is_pinned %}
+                                <span class="pinned-badge">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">push_pin</span>
+                                    {% trans "Pinned" %}
+                                </span>
+                            {% endif %}
+                        </div>
+
                         <div class="post-meta">
                             {% if post.author.profile.role_title %}{{ post.author.profile.role_title }} · {% endif %}
                             {{ post.created_at|timesince }} {% trans "ago" %}
                         </div>
                     </div>
-                    {% if post.author == user %}
-                    <form method="post" action="{% url 'community:delete_post' post.id %}" onsubmit="return confirm('{% trans "Delete this post?" %}');" style="margin-left:auto;">
-                        {% csrf_token %}
-                        <button type="submit" class="post-delete-btn"><span class="material-symbols-outlined">delete</span></button>
-                    </form>
-                    {% endif %}
+
+                    <div class="post-head-actions">
+                        {% if post.author == user or user.is_staff %}
+                        <form method="post" action="{% url 'community:delete_post' post.id %}" onsubmit="return confirm('{% trans "Delete this post?" %}');">
+                            {% csrf_token %}
+                            <button type="submit" class="post-delete-btn" title="{% trans 'Delete' %}"><span class="material-symbols-outlined">delete</span></button>
+                        </form>
+                        {% elif user.is_authenticated %}
+                        <button type="button" class="post-delete-btn" title="{% trans 'Report' %}" onclick="openReportModal({{ post.id }})">
+                            <span class="material-symbols-outlined">flag</span>
+                        </button>
+                        {% endif %}
+                    </div>
                 </div>
 
                 {% if post.title %}<div class="post-title">{{ post.title }}</div>{% endif %}
@@ -391,7 +463,6 @@
                 {{ post_form.title }}
                 {{ post_form.content }}
 
-
                 <div id="imagePreviewGrid" class="image-preview-grid"></div>
             </div>
 
@@ -401,6 +472,28 @@
                     <input type="file" name="images" id="imageInput" multiple accept="image/*" onchange="previewImages(this)">
                 </label>
                 <button type="submit" class="btn-mint">{% trans "Post" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== REPORT MODAL ===== -->
+<div class="report-modal-overlay" id="reportOverlay" onclick="if(event.target === this) closeReportModal()">
+    <div class="report-modal-box">
+        <h4>{% trans "Report this post" %}</h4>
+        <form method="post" id="reportForm" action="">
+            {% csrf_token %}
+            <select name="reason" required>
+                <option value="spam">{% trans "Spam" %}</option>
+                <option value="inappropriate">{% trans "Inappropriate Content" %}</option>
+                <option value="misinformation">{% trans "Misinformation" %}</option>
+                <option value="harassment">{% trans "Harassment" %}</option>
+                <option value="other">{% trans "Other" %}</option>
+            </select>
+            <textarea name="details" rows="3" placeholder="{% trans 'Additional details (optional)' %}"></textarea>
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;">
+                <button type="button" class="page-btn" onclick="closeReportModal()" style="border:none; cursor:pointer;">{% trans "Cancel" %}</button>
+                <button type="submit" class="btn-mint" style="background:#fee2e2; color:#dc2626; padding:8px 16px;">{% trans "Submit Report" %}</button>
             </div>
         </form>
     </div>
@@ -467,8 +560,23 @@ function previewImages(input) {
     });
 }
 
+function openReportModal(postId) {
+    const overlay = document.getElementById('reportOverlay');
+    const form = document.getElementById('reportForm');
+    if (!overlay || !form) return;
+    form.action = `/community/post/${postId}/report/`;
+    overlay.classList.add('open');
+}
+
+function closeReportModal() {
+    document.getElementById('reportOverlay')?.classList.remove('open');
+}
+
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeComposer();
+    if (e.key === 'Escape') {
+        closeComposer();
+        closeReportModal();
+    }
 });
 </script>
 {% endblock %}

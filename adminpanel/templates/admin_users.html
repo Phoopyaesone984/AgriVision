@@ -1,0 +1,73 @@
+{% extends 'base_admin.html' %}
+{% load i18n %}
+{% block page_title %}{% trans "Manage Users" %}{% endblock %}
+
+{% block extra_css %}
+.admin-back {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--ink-soft); text-decoration: none;
+    font-size: 13px; font-weight: 600; margin-bottom: 18px;
+}
+.admin-back:hover { color: var(--ink); }
+{% endblock %}
+
+{% block app_content %}
+<a href="{% url 'adminpanel:dashboard' %}" class="admin-back">
+    <span class="material-symbols-outlined">arrow_back</span> {% trans "Back to Admin Dashboard" %}
+</a>
+
+<div class="dashboard-card p-4 mb-4">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="{% trans 'Search username, email...' %}" style="max-width:280px;">
+        <a href="?status=active{% if q %}&q={{ q }}{% endif %}" class="btn btn-filter {% if active_status == 'active' %}active{% endif %}">{% trans "Active" %}</a>
+        <a href="?status=inactive{% if q %}&q={{ q }}{% endif %}" class="btn btn-filter {% if active_status == 'inactive' %}active{% endif %}">{% trans "Inactive" %}</a>
+        <a href="?{% if q %}q={{ q }}{% endif %}" class="btn btn-filter {% if not active_status %}active{% endif %}">{% trans "All" %}</a>
+        <button type="submit" class="btn btn-filter"><span class="material-symbols-outlined">search</span></button>
+    </form>
+</div>
+
+<div class="dashboard-card p-4">
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>{% trans "User" %}</th>
+                    <th>{% trans "Email" %}</th>
+                    <th>{% trans "Phone" %}</th>
+                    <th>{% trans "Joined" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in page_obj %}
+                <tr>
+                    <td>{{ u.profile.full_name|default:u.username }}</td>
+                    <td>{{ u.email|default:"-" }}</td>
+                    <td>{{ u.profile.phone|default:"-" }}</td>
+                    <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td><span class="badge-theme">{% if u.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</span></td>
+                    <td><a href="{% url 'adminpanel:user_detail' u.pk %}" class="btn btn-sm btn-filter">{% trans "View" %}</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center py-4" style="color:var(--ink-faint);">{% trans "No users found." %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-3">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if active_status %}&status={{ active_status }}{% endif %}">‹</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if active_status %}&status={{ active_status }}{% endif %}">›</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,552 @@
+{% extends 'base_admin.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Admin Dashboard" %} | AgriVision{% endblock %}
+{% block nav_admin_dash %}active{% endblock %}
+{% block page_title %}{% trans "Admin Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* 📊 Top Metrics Row */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: 1fr; gap: 14px; margin-bottom: 24px; }
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px 28px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .stat-card h4 {
+        font-size: 12px;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin: 0 0 6px;
+    }
+    .stat-number {
+        font-size: 30px;
+        font-weight: 800;
+        color: var(--forest-deep);
+        line-height: 1.1;
+    }
+
+    /* 👥 User Activity Table Card */
+    .panel-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        box-shadow: var(--shadow-card);
+    }
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .panel-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink);
+    }
+    .panel-header p {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--ink-faint);
+    }
+
+    .search-filter-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .search-input-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-page);
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        padding: 7px 16px;
+    }
+    .search-input-pill input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 13.5px;
+        color: var(--ink);
+        width: 170px;
+    }
+
+    .status-tab-btn {
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        transition: all 0.15s ease;
+    }
+    .status-tab-btn:hover { background: rgba(20,32,24,0.04); color: var(--ink); }
+    .status-tab-btn.active { background: var(--forest-deep); color: #fff; }
+
+    /* ---- Table ---- */
+    .table-responsive { width: 100%; overflow-x: auto; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .custom-table th {
+        background: rgba(20,32,24,0.02);
+        padding: 14px 18px;
+        text-align: left;
+        font-weight: 700;
+        color: var(--ink-soft);
+        border-bottom: 1px solid var(--border);
+    }
+    .custom-table td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+        color: var(--ink);
+        vertical-align: middle;
+    }
+    .custom-table tr:last-child td { border-bottom: none; }
+
+    /* User Profile Click Trigger */
+    .user-cell-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        text-align: left;
+        font-family: inherit;
+    }
+    .user-cell-btn:hover strong {
+        color: var(--accent-green);
+        text-decoration: underline;
+    }
+
+    .avatar-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--forest-deep);
+        color: var(--mint);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+    .badge-status {
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 11.5px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .badge-status.active { background: #ddf3ea; color: var(--mint-deep); }
+    .badge-status.inactive { background: #fee2e2; color: #dc2626; }
+
+    .action-btn-group { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .btn-action-pill {
+        background: var(--bg-page);
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.15s ease;
+    }
+    .btn-action-pill:hover { background: var(--border); }
+    .btn-action-pill.view-posts { color: var(--mint-deep); }
+    .btn-action-pill.view-posts:hover { background: var(--mint); }
+
+    .btn-suspend {
+        background: none;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        color: var(--ink-faint);
+        margin-left: 6px;
+    }
+    .btn-suspend:hover { color: var(--rose-ink); }
+
+    /* ---- Modals ---- */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(10, 20, 15, 0.55);
+        align-items: flex-start;
+        justify-content: center;
+        padding: 60px 16px;
+        overflow-y: auto;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 540px;
+        box-shadow: var(--shadow-soft);
+        animation: pop 0.18s ease;
+    }
+    @keyframes pop { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border);
+    }
+    .modal-body { padding: 24px; max-height: 500px; overflow-y: auto; }
+
+    /* Profile Modal Details Layout */
+    .profile-header-view { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .avatar-view-lg {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: var(--forest-deep); color: var(--mint);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; font-weight: 700; overflow: hidden; flex-shrink: 0;
+    }
+    .avatar-view-lg img { width: 100%; height: 100%; object-fit: cover; }
+
+    .profile-info-grid { display: grid; gap: 10px; font-size: 13.5px; }
+    .info-item { display: flex; justify-content: space-between; padding: 8px 12px; background: var(--bg-page); border-radius: 8px; }
+    .info-label { color: var(--ink-soft); }
+    .info-value { font-weight: 600; color: var(--ink); }
+
+    .post-modal-item {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px;
+        margin-bottom: 12px;
+        background: var(--bg-page);
+    }
+    .post-modal-item img { height: 65px; border-radius: 6px; margin-top: 6px; border: 1px solid var(--border); }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="admin-container">
+
+    <!-- 📊 Metrics Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <h4>{% trans "Total Farmers / Users" %}</h4>
+            <div class="stat-number">{{ total_users }}</div>
+        </div>
+        <div class="stat-card">
+            <h4>{% trans "Active Accounts" %}</h4>
+            <div class="stat-number">{{ active_users }}</div>
+        </div>
+        <div class="stat-card">
+            <h4>{% trans "Live Community Posts" %}</h4>
+            <div class="stat-number">{{ total_posts }}</div>
+        </div>
+    </div>
+
+    <!-- 👥 User Accounts & Activity Card -->
+    <div class="panel-card">
+        <div class="panel-header">
+            <div>
+                <h3>{% trans "User Accounts & Activity" %}</h3>
+                <p>{% trans "Click on any user to inspect profile and published community posts" %}</p>
+            </div>
+
+            <div class="search-filter-box">
+                <form method="get" class="search-input-pill">
+                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--ink-faint);">search</span>
+                    <input type="text" name="q" value="{{ q }}" placeholder="{% trans 'Search user...' %}">
+                    {% if active_status %}<input type="hidden" name="status" value="{{ active_status }}">{% endif %}
+                </form>
+
+                <div style="display: flex; gap: 4px;">
+                    <a href="?{% if q %}q={{ q }}&{% endif %}" class="status-tab-btn {% if not active_status %}active{% endif %}">{% trans "All" %}</a>
+                    <a href="?status=active{% if q %}&q={{ q }}{% endif %}" class="status-tab-btn {% if active_status == 'active' %}active{% endif %}">{% trans "Active" %}</a>
+                    <a href="?status=inactive{% if q %}&q={{ q }}{% endif %}" class="status-tab-btn {% if active_status == 'inactive' %}active{% endif %}">{% trans "Suspended" %}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "User (Click to view profile)" %}</th>
+                        <th>{% trans "Email" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Posts Count" %}</th>
+                        <th style="text-align: right;">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in page_obj %}
+                    <tr>
+                        <td>
+                            <!-- 🔍 Clickable User info to open Profile -->
+                            <button type="button" class="user-cell-btn" onclick="openUserProfileModal({{ u.id }})">
+                                <div class="avatar-circle">
+                                    {% if u.profile.avatar %}
+                                        <img src="{{ u.profile.avatar.url }}">
+                                    {% else %}
+                                        {{ u.username|slice:":2"|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <strong>{{ u.get_full_name|default:u.username }}</strong>
+                                    {% if u.is_staff %}
+                                        <span style="color: var(--mint-deep); font-size: 11px; font-weight: 600; margin-left: 4px;">(Admin)</span>
+                                    {% endif %}
+                                    <div style="font-size: 11.5px; color: var(--ink-faint);">@{{ u.username }}</div>
+                                </div>
+                            </button>
+                        </td>
+                        <td>{{ u.email|default:"—" }}</td>
+                        <td>
+                            <span class="badge-status {% if u.is_active %}active{% else %}inactive{% endif %}">
+                                {% if u.is_active %}{% trans "Active" %}{% else %}{% trans "Suspended" %}{% endif %}
+                            </span>
+                        </td>
+                        <td><strong>{{ u.total_posts }}</strong> {% trans "posts" %}</td>
+                        <td style="text-align: right;">
+                            <div class="action-btn-group">
+                                <!-- Profile Button -->
+                                <button type="button" class="btn-action-pill" onclick="openUserProfileModal({{ u.id }})">
+                                    <span class="material-symbols-outlined" style="font-size: 15px;">person</span>
+                                    {% trans "Profile" %}
+                                </button>
+
+                                <!-- View Posts Button -->
+                                <button type="button" class="btn-action-pill view-posts" onclick="openUserPostsModal({{ u.id }})">
+                                    <span class="material-symbols-outlined" style="font-size: 15px;">forum</span>
+                                    {% trans "Posts" %}
+                                </button>
+
+                                {% if u != request.user %}
+                                <form method="post" action="{% url 'adminpanel:toggle_user_active' u.pk %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-suspend" title="{% if u.is_active %}Suspend Account{% else %}Activate Account{% endif %}">
+                                        {% if u.is_active %}{% trans "Suspend" %}{% else %}{% trans "Activate" %}{% endif %}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 36px 20px; color: var(--ink-faint);">
+                            {% trans "No users found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page_obj.has_other_pages %}
+            <div style="display: flex; justify-content: center; gap: 8px; margin-top: 20px;">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if active_status %}&status={{ active_status }}{% endif %}" class="status-tab-btn">&larr; {% trans "Prev" %}</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if active_status %}&status={{ active_status }}{% endif %}" class="status-tab-btn">{% trans "Next" %} &rarr;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- ===== MODAL 1: USER PROFILE VIEWER ===== -->
+<div class="modal-overlay" id="userProfileOverlay" onclick="if(event.target === this) closeUserProfileModal()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 style="margin:0; font-size:16px; font-weight:700;">{% trans "Farmer Profile Information" %}</h3>
+            <button type="button" onclick="closeUserProfileModal()" style="border:none; background:none; font-size:20px; cursor:pointer; color:var(--ink-soft);">&times;</button>
+        </div>
+        <div class="modal-body" id="modalUserProfileBody">
+            <p style="text-align:center; color:var(--ink-faint);">{% trans "Loading profile..." %}</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL 2: USER'S POSTS VIEWER ===== -->
+<div class="modal-overlay" id="userPostsOverlay" onclick="if(event.target === this) closeUserPostsModal()">
+    <div class="modal-box" style="max-width: 580px;">
+        <div class="modal-header">
+            <h3 style="margin:0; font-size:16px; font-weight:700;" id="modalUserTitle">{% trans "User Posts" %}</h3>
+            <button type="button" onclick="closeUserPostsModal()" style="border:none; background:none; font-size:20px; cursor:pointer; color:var(--ink-soft);">&times;</button>
+        </div>
+        <div class="modal-body" id="modalUserPostsBody">
+            <p style="text-align:center; color:var(--ink-faint);">{% trans "Loading posts..." %}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const csrftoken = '{{ csrf_token }}';
+
+/* 1. Profile Modal */
+function openUserProfileModal(userId) {
+    const overlay = document.getElementById('userProfileOverlay');
+    const body = document.getElementById('modalUserProfileBody');
+    overlay.classList.add('open');
+    body.innerHTML = '<p style="text-align:center; padding: 20px; color:var(--ink-faint);">Loading profile...</p>';
+
+    fetch(`/adminpanel/users/${userId}/posts-api/`)
+        .then(res => res.json())
+        .then(data => {
+            const avatarHtml = data.avatar
+                ? `<img src="${data.avatar}">`
+                : `${data.username.slice(0,2).toUpperCase()}`;
+
+            body.innerHTML = `
+                <div class="profile-header-view">
+                    <div class="avatar-view-lg">${avatarHtml}</div>
+                    <div>
+                        <h4 style="margin:0 0 2px 0; font-size:17px; font-weight:700;">${data.full_name}</h4>
+                        <div style="font-size:12.5px; color:var(--ink-faint);">@${data.username} · ${data.role_title}</div>
+                    </div>
+                </div>
+
+                <div class="profile-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">${data.email}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">${data.phone}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">${data.location}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value" style="color: ${data.is_active ? '#0d5f3a' : '#dc2626'}">${data.is_active ? 'Active' : 'Suspended'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Community Posts:</span>
+                        <span class="info-value">${data.total} posts</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Joined Date:</span>
+                        <span class="info-value">${data.date_joined}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 14px; padding: 12px; background: var(--bg-page); border-radius: 8px;">
+                    <div style="font-size: 12px; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px;">About / Bio:</div>
+                    <div style="font-size: 13px; color: var(--ink); line-height: 1.5;">${data.bio}</div>
+                </div>
+            `;
+        });
+}
+
+function closeUserProfileModal() { document.getElementById('userProfileOverlay').classList.remove('open'); }
+
+/* 2. Posts Modal */
+function openUserPostsModal(userId) {
+    const overlay = document.getElementById('userPostsOverlay');
+    const body = document.getElementById('modalUserPostsBody');
+    const title = document.getElementById('modalUserTitle');
+
+    overlay.classList.add('open');
+    body.innerHTML = '<p style="text-align:center; padding: 20px; color:var(--ink-faint);">Loading posts...</p>';
+
+    fetch(`/adminpanel/users/${userId}/posts-api/`)
+        .then(res => res.json())
+        .then(data => {
+            title.textContent = `Posts by ${data.full_name} (${data.total})`;
+            if (data.posts.length === 0) {
+                body.innerHTML = '<p style="text-align:center; padding: 30px; color:var(--ink-faint);">This user hasn\'t posted anything yet.</p>';
+                return;
+            }
+
+            body.innerHTML = data.posts.map(p => `
+                <div class="post-modal-item" id="post-row-${p.id}">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--ink-faint); margin-bottom:4px;">
+                        <span>${p.created_at}</span>
+                        <span>${p.likes} Likes · ${p.comments} Comments</span>
+                    </div>
+                    ${p.title ? `<div style="font-weight:700; font-size:14px; margin-bottom:4px;">${p.title}</div>` : ''}
+                    <div style="font-size:13.5px; line-height:1.5; color:var(--ink);">${p.content}</div>
+                    ${p.images.length > 0 ? `
+                        <div style="display:flex; gap:6px; margin-top:6px;">
+                            ${p.images.map(img => `<img src="${img}">`).join('')}
+                        </div>
+                    ` : ''}
+                    <div style="text-align:right; margin-top:8px; border-top:1px solid var(--border); padding-top:6px;">
+                        <button onclick="deletePostApi(${p.id})" style="background:none; border:none; color:#dc2626; font-size:12px; font-weight:600; cursor:pointer;">
+                            Delete this post
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
+
+function closeUserPostsModal() { document.getElementById('userPostsOverlay').classList.remove('open'); }
+
+function deletePostApi(postId) {
+    if (!confirm('Are you sure you want to delete this post from the community?')) return;
+    fetch(`/adminpanel/posts/${postId}/delete-api/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`post-row-${postId}`)?.remove();
+        }
+    });
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeUserProfileModal();
+        closeUserPostsModal();
+    }
+});
+</script>
+{% endblock %}

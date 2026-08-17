@@ -8,6 +8,7 @@ urlpatterns = [
     path("post/<int:pk>/", views.post_detail, name="post_detail"),
     path("post/<int:pk>/comment/", views.add_comment, name="add_comment"),
     path("post/<int:pk>/delete/", views.delete_post, name="delete_post"),
+    path("post/<int:pk>/report/", views.report_post, name="report_post"),
     path("like/<str:model_name>/<int:pk>/", views.toggle_like, name="toggle_like"),
 
     path("notifications/", views.notifications_dropdown, name="notifications_dropdown"),

@@ -55,11 +55,11 @@ class Post(models.Model):
     content = models.TextField(blank=True)   # ← shared post တွေမှာ content ဟင်းလင်းနိုင်လို့ blank=True လုပ်ပါ
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_APPROVED)
     moderated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="moderated_posts")
     moderated_at = models.DateTimeField(null=True, blank=True)
     rejection_reason = models.CharField(max_length=255, blank=True)
-
+    is_pinned = models.BooleanField(default=False)
     # ✅ SHARE / REPOST feature
     shared_post = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="reposts"
@@ -69,7 +69,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering = ["-is_pinned", "-created_at"]
 
     def __str__(self):
         if self.shared_post_id:
@@ -170,3 +170,33 @@ class Notification(models.Model):
             return reverse("community:notification_redirect", args=[self.pk])
         return reverse("community:feed")
 
+
+class Report(models.Model):
+    REASON_SPAM = "spam"
+    REASON_INAPPROPRIATE = "inappropriate"
+    REASON_MISINFO = "misinformation"
+    REASON_HARASSMENT = "harassment"
+    REASON_OTHER = "other"
+    REASON_CHOICES = [
+        (REASON_SPAM, "Spam"),
+        (REASON_INAPPROPRIATE, "Inappropriate Content"),
+        (REASON_MISINFO, "Misinformation"),
+        (REASON_HARASSMENT, "Harassment"),
+        (REASON_OTHER, "Other"),
+    ]
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reports")
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="filed_reports")
+    reason = models.CharField(max_length=20, choices=REASON_CHOICES)
+    details = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["post", "reporter"], name="unique_post_report")
+        ]
+
+    def __str__(self):
+        return f"Report on post #{self.post_id} by {self.reporter}"

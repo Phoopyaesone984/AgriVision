@@ -6,14 +6,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from .forms import PostForm, CommentForm
-from .models import Post, PostImage, Comment, Like, Category,Notification
-
+from .models import Post, PostImage, Comment, Like, Category, Notification, Report
 def feed(request):
     if request.method == "POST" and request.user.is_authenticated:
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            post.status = Post.STATUS_APPROVED  # 👈 တင်သမျှ Feed ပေါ် တန်းရောက်မည်
             post.save()
             form.save_m2m()
             for i, f in enumerate(request.FILES.getlist("images")):
@@ -34,9 +34,9 @@ def feed(request):
 
     sort = request.GET.get("sort", "new")
     if sort == "top":
-        posts = posts.order_by("-n_likes", "-created_at")
+        posts = posts.order_by("-is_pinned", "-n_likes", "-created_at")
     else:
-        posts = posts.order_by("-created_at")
+        posts = posts.order_by("-is_pinned", "-created_at")
 
     paginator = Paginator(posts, 10)
     page_obj = paginator.get_page(request.GET.get("page"))
@@ -46,6 +46,11 @@ def feed(request):
         liked_post_ids = set(
             Like.objects.filter(user=request.user, post__in=page_obj).values_list("post_id", flat=True)
         )
+        base_template = (
+            "base_admin.html"
+            if (request.user.is_authenticated and request.user.is_staff)
+            else "base.html"
+        )
 
     return render(request, "feed.html", {
         "page_obj": page_obj,
@@ -54,7 +59,9 @@ def feed(request):
         "liked_post_ids": liked_post_ids,
         "active_category": category_slug,
         "active_sort": sort,
+        "base_template": base_template,
         "hide_app_sidebar": True,
+
     })
 
 def post_detail(request, pk):
@@ -237,3 +244,21 @@ def toggle_share(request, pk):
             )
 
     return JsonResponse({"shared": shared, "count": original.share_count})
+
+
+@login_required
+@require_POST
+def report_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    reason = request.POST.get("reason", Report.REASON_OTHER)
+    details = request.POST.get("details", "")
+
+    report, created = Report.objects.get_or_create(
+        post=post, reporter=request.user,
+        defaults={"reason": reason, "details": details},
+    )
+    if created:
+        messages.success(request, "Thanks — this post has been reported for review.")
+    else:
+        messages.info(request, "You've already reported this post.")
+    return redirect("community:feed")
