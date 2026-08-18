@@ -8,52 +8,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% trans 'AgriVision - Smart Farming for Myanmar Farmers' %}">
     <title>{% block title %}{% trans "AgriVision" %}{% endblock %}</title>
-
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- Bootstrap & Icons -->
+    <!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Fonts -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ===== CSS Variables with Dark/Light Support ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         :root {
+            /* Light mode (default) */
             --bg-page: #f7f6f2;
             --bg-sidebar: #eeede8;
             --bg-card: #ffffff;
             --bg-nav: rgba(255, 255, 255, 0.75);
             --bg-glass: rgba(255, 255, 255, 0.5);
+
             --ink: #16201b;
             --ink-soft: #5b6b60;
             --ink-faint: #8a978e;
             --border: rgba(20, 32, 24, 0.08);
+            --border-light: rgba(32, 77, 62, 0.15);
+
             --mint: #7ee8c4;
             --mint-deep: #1f4e3d;
             --forest: #16281f;
             --forest-deep: #0c1a13;
+
             --accent-green: #0ea76a;
             --accent-green-glow: rgba(14, 167, 106, 0.25);
             --accent-cyan: #2fc7b0;
+
+            --amber-bg: #fbe8ae;
+            --amber-ink: #a9790f;
+            --rose-bg: #fbd9d6;
+            --rose-ink: #c0392b;
+
             --radius-lg: 20px;
             --radius-md: 14px;
             --shadow-card: 0 10px 30px rgba(20, 32, 24, 0.05);
             --shadow-soft: 0 12px 40px rgba(20, 40, 30, 0.08);
+            --shadow-glow: 0 8px 32px rgba(0, 180, 120, 0.12);
+
             --footer-bg: #0f261e;
             --footer-text: #bcd9ce;
             --mode-toggle-bg: #d4e3dd;
+
+            --nav-link: #1f3d31;
+            --text-primary: #16201b;
+            --text-secondary: #2b4a3a;
+            --text-muted: #4d6a5a;
         }
 
         [data-theme="dark"] {
@@ -62,59 +87,125 @@
             --bg-card: #14241d;
             --bg-nav: rgba(12, 28, 22, 0.85);
             --bg-glass: rgba(18, 38, 30, 0.5);
+
             --ink: #dff3eb;
             --ink-soft: #b6d9cb;
             --ink-faint: #8bb4a3;
             --border: rgba(80, 140, 120, 0.15);
+            --border-light: rgba(80, 140, 120, 0.2);
+
             --mint: #2edb92;
             --mint-deep: #1f4e3d;
+            --forest: #16281f;
+            --forest-deep: #0c1a13;
+
             --accent-green: #2edb92;
+            --accent-green-glow: rgba(46, 219, 146, 0.25);
             --accent-cyan: #4fe0cc;
+
+            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.4);
+            --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 8px 32px rgba(0, 220, 150, 0.15);
+
             --footer-bg: #05100b;
             --footer-text: #8db8a8;
             --mode-toggle-bg: #1f3d31;
+
+            --nav-link: #ccede2;
+            --text-primary: #dff3eb;
+            --text-secondary: #b6d9cb;
+            --text-muted: #8bb4a3;
         }
 
         body {
+            margin: 0;
             font-family: 'Inter', 'Noto Sans Myanmar', -apple-system, sans-serif;
             background: var(--bg-page);
             color: var(--ink);
             transition: background 0.3s ease, color 0.2s ease;
         }
 
-        .material-symbols-outlined { font-size: 20px; line-height: 1; vertical-align: middle; }
-        a { color: var(--accent-green); text-decoration: none; }
-        a:hover { color: var(--accent-cyan); }
+        h1, h2, .font-display {
+            font-family: 'Newsreader', Georgia, serif;
+        }
 
+        .material-symbols-outlined {
+            font-variation-settings: 'opsz' 24, 'wght' 400, 'FILL' 0, 'GRAD' 0;
+            font-size: 20px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+
+        a {
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+        a:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* ===== Layout ===== */
         .app-layout {
             display: grid;
             grid-template-columns: 260px 1fr;
             min-height: 100vh;
         }
+
         @media (max-width: 900px) {
             .app-layout { grid-template-columns: 1fr; }
             .app-sidebar { display: none; }
         }
-        .app-layout.no-sidebar { grid-template-columns: 1fr; }
 
-        /* Sidebar */
+        /* Weather specific colors - Using CSS variables */
+        .weather-temp {
+            color: var(--ink);
+            font-weight: 300;
+        }
+
+        .weather-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .weather-stat {
+            background: var(--bg-glass);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--ink);
+        }
+
+        .weather-stat-label {
+            color: var(--ink-faint);
+            font-size: 0.75rem;
+        }
+
+        .weather-stat-value {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        /* ===== Sidebar ===== */
         .app-sidebar {
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             padding: 24px 16px;
+            transition: background 0.3s ease;
             position: sticky;
             top: 0;
             height: 100vh;
             overflow-y: auto;
         }
+
         .sidebar-brand {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 4px 8px 24px;
         }
+
         .sidebar-brand .logo-mark {
             width: 38px;
             height: 38px;
@@ -125,11 +216,31 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            transition: color 0.3s ease;
         }
-        .sidebar-brand h1 { font-size: 16px; font-weight: 700; margin: 0; color: var(--ink); }
-        .sidebar-brand p { font-size: 12px; color: var(--ink-soft); margin: 0; }
 
-        .sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .sidebar-brand h1 {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            line-height: 1.2;
+            color: var(--ink);
+        }
+
+        .sidebar-brand p {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin: 0;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
         .nav-item {
             display: flex;
             align-items: center;
@@ -140,10 +251,23 @@
             text-decoration: none;
             font-size: 14.5px;
             font-weight: 500;
-            transition: all 0.15s ease;
+            transition: background 0.15s ease, color 0.15s ease;
         }
-        .nav-item:hover { background: rgba(20, 32, 24, 0.04); color: var(--ink); }
-        .nav-item.active { background: var(--mint); color: var(--mint-deep); font-weight: 600; }
+
+        .nav-item:hover {
+            background: rgba(20, 32, 24, 0.04);
+            color: var(--ink);
+        }
+
+        .nav-item.active {
+            background: var(--mint);
+            color: var(--mint-deep);
+            font-weight: 600;
+        }
+
+        .nav-item .material-symbols-outlined {
+            font-size: 20px;
+        }
 
         .sidebar-bottom {
             display: flex;
@@ -153,8 +277,34 @@
             border-top: 1px solid var(--border);
         }
 
-        /* Topbar & Main */
-        .app-main { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+        .new-analysis-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--forest-deep);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 11px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: opacity 0.15s ease;
+        }
+
+        .new-analysis-btn:hover { opacity: 0.88; }
+
+        /* ===== Topbar ===== */
+        .app-main {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex: 1;
+        }
+
         .app-topbar {
             display: flex;
             align-items: center;
@@ -163,9 +313,24 @@
             padding: 20px 32px;
             background: var(--bg-page);
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            transition: background 0.3s ease;
         }
-        .app-topbar h1 { font-size: 20px; font-weight: 600; margin: 0; color: var(--ink); }
-        .topbar-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+        .app-topbar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+            flex-shrink: 0;
+            color: var(--ink);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
 
         .search-pill {
             display: flex;
@@ -173,12 +338,169 @@
             gap: 8px;
             background: var(--bg-glass);
             border-radius: 50px;
-            padding: 8px 16px;
+            padding: 9px 16px;
+            color: var(--ink-faint);
+            min-width: 220px;
             border: 1px solid var(--border);
+            transition: background 0.3s ease;
         }
-        .search-pill input { border: none; background: transparent; outline: none; font-size: 13.5px; color: var(--ink); }
 
-        /* Language Switcher Styling */
+        .search-pill input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 13.5px;
+            font-family: inherit;
+            color: var(--ink);
+            width: 100%;
+        }
+
+        .search-pill input::placeholder { color: var(--ink-faint); }
+
+        .icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--ink-soft);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .icon-btn:hover { color: var(--ink); }
+
+        .icon-btn .notif-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 7px;
+            height: 7px;
+            background: var(--rose-ink);
+            border-radius: 50%;
+            border: 1.5px solid var(--bg-page);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-chip .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--forest);
+            color: var(--mint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .user-chip .user-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--ink);
+        }
+
+        .user-chip .user-plan {
+            font-size: 11.5px;
+            color: var(--ink-faint);
+        }
+
+        .app-content {
+            padding: 28px 32px 48px;
+            flex: 1;
+        }
+
+        /* ===== Theme Toggle ===== */
+        .theme-toggle-topbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-track-small {
+            width: 42px;
+            height: 24px;
+            background: var(--mode-toggle-bg);
+            border-radius: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.25s ease;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .toggle-track-small .thumb {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #0d2b1e;
+        }
+
+        [data-theme="dark"] .toggle-track-small .thumb {
+            left: 20px;
+            background: #d0f0e0;
+        }
+
+        .toggle-track-small .thumb i {
+            font-size: 10px;
+        }
+
+        /* ===== Notifications Dropdown ===== */
+        .notif-dropdown-wrap { position: relative; }
+        .notif-dropdown {
+            display: none;
+            position: absolute; top: 40px; right: 0;
+            width: 320px; max-height: 400px; overflow-y: auto;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-md); box-shadow: var(--shadow-soft);
+            z-index: 1200;
+        }
+        .notif-dropdown.open { display: block; }
+        .notif-dropdown-header {
+            padding: 12px 16px; font-size: 13.5px; font-weight: 700; color: var(--ink);
+            border-bottom: 1px solid var(--border);
+        }
+        .notif-item {
+            display: flex; gap: 10px; align-items: flex-start;
+            padding: 10px 16px; text-decoration: none; color: var(--ink);
+            border-bottom: 1px solid var(--border);
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: rgba(20,32,24,0.04); }
+        .notif-item.unread { background: rgba(46,219,146,0.06); }
+        .notif-avatar {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--forest); color: var(--mint);
+            display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+            flex-shrink: 0; overflow: hidden;
+        }
+        .notif-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .notif-text { font-size: 13px; color: var(--ink); line-height: 1.5; }
+        .notif-text strong { font-weight: 700; }
+        .notif-time { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+        .notif-empty { padding: 24px 16px; text-align: center; color: var(--ink-faint); font-size: 13px; }
+
+        /* ===== Language Selector ===== */
         .lang-dropdown .dropdown-toggle {
             background: var(--bg-glass);
             border: 1px solid var(--border);
@@ -186,72 +508,223 @@
             color: var(--ink-soft);
             font-size: 13px;
             padding: 6px 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
+            transition: background 0.2s ease;
         }
-        .lang-dropdown .dropdown-toggle:hover { background: var(--bg-card); color: var(--ink); }
+
+        .lang-dropdown .dropdown-toggle:hover {
+            background: var(--bg-card);
+            color: var(--ink);
+        }
+
         .lang-dropdown .dropdown-menu {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-card);
-            min-width: 130px;
         }
+
         .lang-dropdown .dropdown-item {
             color: var(--ink);
-            font-size: 13.5px;
-            padding: 8px 16px;
-            cursor: pointer;
-        }
-        .lang-dropdown .dropdown-item:hover { background: var(--accent-green-glow); color: var(--accent-green); }
-        .lang-dropdown .dropdown-item.active { background: var(--mint); color: var(--mint-deep); font-weight: 600; }
-
-        .user-chip { display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; }
-        .user-chip .avatar {
-            width: 38px; height: 38px; border-radius: 50%; background: var(--forest);
-            color: var(--mint); display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 13px; overflow: hidden;
+            font-size: 14px;
+            padding: 8px 20px;
+            transition: background 0.15s ease;
         }
 
-        .app-content { padding: 28px 32px 48px; flex: 1; }
-
-        .notif-dropdown {
-            display: none; position: absolute; top: 40px; right: 0; width: 320px;
-            max-height: 400px; overflow-y: auto; background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: var(--radius-md);
-            box-shadow: var(--shadow-soft); z-index: 1200;
+        .lang-dropdown .dropdown-item:hover {
+            background: var(--accent-green-glow);
+            color: var(--accent-green);
         }
-        .notif-dropdown.open { display: block; }
-        .notif-dropdown-header { padding: 12px 16px; font-size: 13.5px; font-weight: 700; border-bottom: 1px solid var(--border); }
-        .notif-item { display: flex; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--ink); }
 
+        .lang-dropdown .dropdown-item.active {
+            background: var(--mint);
+            color: var(--mint-deep);
+        }
+
+        /* ===== Footer ===== */
         .app-footer {
-            background: var(--footer-bg); color: var(--footer-text);
-            border-top: 1px solid var(--border); padding: 16px 32px;
-            text-align: center; font-size: 14px; margin-top: auto;
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            border-top: 1px solid var(--border);
+            padding: 16px 32px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            transition: background 0.3s ease;
+            margin-top: auto;
         }
 
-        /* Toggle Button */
-        .toggle-track-small {
-            width: 42px; height: 24px; background: var(--mode-toggle-bg);
-            border-radius: 40px; position: relative; cursor: pointer; border: 1px solid var(--border);
+        .app-footer i {
+            color: var(--accent-green);
         }
-        .toggle-track-small .thumb {
-            width: 18px; height: 18px; background: white; border-radius: 50%;
-            position: absolute; top: 2px; left: 2px; transition: 0.25s ease;
-            display: flex; align-items: center; justify-content: center; font-size: 10px;
+
+        /* ===== Table Styling for Dark/Light Theme ===== */
+        .table {
+            background: var(--bg-card) !important;
+            color: var(--ink) !important;
+            border-collapse: collapse !important;
         }
-        [data-theme="dark"] .toggle-track-small .thumb { left: 20px; background: #d0f0e0; }
+
+        .table thead th {
+            background: var(--bg-glass) !important;
+            color: var(--ink) !important;
+            border-bottom: 1px solid var(--border) !important;
+            font-weight: 600 !important;
+        }
+
+        .table tbody td {
+            background: var(--bg-card) !important;
+            color: var(--ink) !important;
+            border-bottom: 1px solid var(--border) !important;
+        }
+
+        .table tbody tr {
+            background: var(--bg-card) !important;
+            transition: background 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg-glass) !important;
+        }
+
+        /* ===== Filter Buttons ===== */
+        .btn-filter {
+            background: var(--bg-glass) !important;
+            color: var(--ink) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 20px !important;
+            padding: 6px 16px !important;
+            transition: all 0.2s ease;
+        }
+
+        .btn-filter:hover {
+            background: var(--border) !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-filter.active {
+            background: var(--accent-green) !important;
+            color: #fff !important;
+            border-color: var(--accent-green) !important;
+        }
+
+        /* ===== Badges in Table ===== */
+        .badge-theme {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--bg-glass);
+            color: var(--ink);
+            border: 1px solid var(--border);
+        }
+
+        /* ===== Cards ===== */
+        .dashboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .icon-circle.bg-success { background: var(--accent-green); }
+        .icon-circle.bg-info { background: #0dcaf0; }
+        .icon-circle.bg-warning { background: #ffc107; }
+        .icon-circle.bg-primary { background: #0d6efd; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .app-topbar {
+                padding: 16px;
+            }
+            .app-content {
+                padding: 16px;
+            }
+            .search-pill {
+                min-width: 140px;
+                padding: 7px 12px;
+            }
+            .app-topbar h1 {
+                font-size: 17px;
+            }
+            .user-chip .user-name {
+                font-size: 12px;
+            }
+            .user-chip .user-plan {
+                font-size: 10px;
+            }
+            .topbar-actions {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .topbar-actions {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .search-pill {
+                min-width: 100%;
+            }
+            .user-chip .user-name {
+                display: none;
+            }
+            .user-chip .user-plan {
+                display: none;
+            }
+        }
+
+        /* ===== Utility ===== */
+        .text-accent { color: var(--accent-green); }
+        .bg-surface { background: var(--bg-card); }
+        .border-subtle { border-color: var(--border) !important; }
+
+        .app-layout.no-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        /* Scrollbar styling */
+        .app-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .app-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .app-sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        {% block extra_css %}{% endblock %}
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
+
 <div class="app-layout {% if hide_app_sidebar %}no-sidebar{% endif %}">
 
-    <!-- ===== SIDEBAR ===== -->
+    <!-- ===== SIDEBAR - ONLY SHOW IF LOGGED IN ===== -->
     {% if user.is_authenticated and not hide_app_sidebar %}
     <aside class="app-sidebar">
         <div class="sidebar-brand">
@@ -260,85 +733,102 @@
             </div>
             <div>
                 <h1>{% trans "AgriVision" %}</h1>
-                <p>{% if user.is_staff %}{% trans "Admin Control Center" %}{% else %}{% trans "Smart Farming Suite" %}{% endif %}</p>
+                <p>{% trans "Smart Farming Suite" %}</p>
             </div>
         </div>
 
         <nav class="sidebar-nav">
-            {% if user.is_staff or user.is_superuser %}
-                <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase;">
-                    {% trans "Admin Control" %}
-                </div>
+            <!-- ===== 1. DASHBOARD ===== -->
+            <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+                <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
+            </a>
 
-                <a href="{% url 'adminpanel:dashboard' %}" class="nav-item {% block nav_admin_dash %}{% endblock %}">
-                    <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
-                </a>
+            <!-- ===== 2. FARM OPERATIONS ===== -->
+            <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
+                {% trans "Farm Operations" %}
+            </div>
 
-                <div style="padding: 12px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase;">
-                    {% trans "Social" %}
-                </div>
-                <a href="{% url 'community:feed' %}" class="nav-item {% block nav_community %}{% endblock %}">
-                    <span class="material-symbols-outlined">forum</span> {% trans "Community Feed" %}
-                </a>
+            <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
+                <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
+            </a>
 
-            {% else %}
-                <a href="{% url 'farms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
-                    <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
-                </a>
-                <a href="{% url 'farms:farm_list' %}" class="nav-item {% block nav_agriculture %}{% endblock %}">
-                    <span class="material-symbols-outlined">agriculture</span> {% trans "Farm Management" %}
-                </a>
-                <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
-                    <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
-                </a>
+            <a href="{% url 'crops:crop_list' %}" class="nav-item {% block nav_crops %}{% endblock %}">
+                <span class="material-symbols-outlined">grass</span> {% trans "Crops" %}
+            </a>
 
-                <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; margin-top: 4px;">
-                    {% trans "Market Intelligence" %}
-                </div>
-                <a href="{% url 'crops:harvest_recommendations' %}" class="nav-item {% block nav_harvest_advisor %}{% endblock %}">
-                    <span class="material-symbols-outlined">timeline</span> {% trans "Harvest Advisor" %}
-                </a>
-                <a href="{% url 'marketPrice:index' %}" class="nav-item {% block nav_market_dashboard %}{% endblock %}">
-                    <span class="material-symbols-outlined">analytics</span> {% trans "Market Dashboard" %}
-                </a>
-                <a href="{% url 'marketPrice:crop_list' %}" class="nav-item {% block nav_market_crops %}{% endblock %}">
-                    <span class="material-symbols-outlined">inventory_2</span> {% trans "Crop Prices" %}
-                </a>
-                <a href="{% url 'marketPrice:daily_prices' %}" class="nav-item {% block nav_market_prices %}{% endblock %}">
-                    <span class="material-symbols-outlined">trending_up</span> {% trans "Daily Market" %}
-                </a>
-                <a href="{% url 'marketPrice:profitability' %}" class="nav-item {% block nav_profitability %}{% endblock %}">
-                    <span class="material-symbols-outlined">payments</span> {% trans "Profitability" %}
-                </a>
-                <a href="{% url 'marketPrice:compare' %}" class="nav-item {% block nav_compare %}{% endblock %}">
-                    <span class="material-symbols-outlined">compare_arrows</span> {% trans "Compare" %}
-                </a>
-                <a href="{% url 'marketPrice:recommendations' %}" class="nav-item {% block nav_recommendations %}{% endblock %}">
-                    <span class="material-symbols-outlined">lightbulb</span> {% trans "Recommendations" %}
-                </a>
-                <a href="{% url 'marketPrice:regions' %}" class="nav-item {% block nav_regions %}{% endblock %}">
-                    <span class="material-symbols-outlined">map</span> {% trans "Regional Data" %}
-                </a>
+            <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
+                <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
+            </a>
 
-                <a href="{% url 'farms:activity_list' %}" class="nav-item {% block nav_tasks %}{% endblock %}">
-                    <span class="material-symbols-outlined">task</span> {% trans "Tasks" %}
-                </a>
-                <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
-                    <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
-                </a>
-                <a href="{% url 'stock:material_list' %}" class="nav-item {% block nav_stock %}{% endblock %}">
-                    <span class="material-symbols-outlined">inventory_2</span> {% trans "Stock & Sales" %}
-                </a>
-                <a href="{% url 'community:feed' %}" class="nav-item {% block nav_user_community %}{% endblock %}">
-                    <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
-                </a>
-                <a href="#" class="nav-item {% block nav_settings %}{% endblock %}">
-                    <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
-                </a>
-            {% endif %}
+            <!-- ===== 3. MARKET INTELLIGENCE ===== -->
+            <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
+                {% trans "Market Intelligence" %}
+            </div>
+
+            <a href="{% url 'marketPrice:index' %}" class="nav-item {% block nav_market_dashboard %}{% endblock %}">
+                <span class="material-symbols-outlined">analytics</span> {% trans "Market Dashboard" %}
+            </a>
+
+            <a href="{% url 'marketPrice:crop_list' %}" class="nav-item {% block nav_market_crops %}{% endblock %}">
+                <span class="material-symbols-outlined">inventory_2</span> {% trans "Crop Prices" %}
+            </a>
+
+            <a href="{% url 'marketPrice:daily_prices' %}" class="nav-item {% block nav_market_prices %}{% endblock %}">
+                <span class="material-symbols-outlined">trending_up</span> {% trans "Daily Market" %}
+            </a>
+
+            <a href="{% url 'marketPrice:profitability' %}" class="nav-item {% block nav_profitability %}{% endblock %}">
+                <span class="material-symbols-outlined">payments</span> {% trans "Profitability" %}
+            </a>
+
+            <a href="{% url 'crops:harvest_recommendations' %}" class="nav-item {% block nav_harvest_advisor %}{% endblock %}">
+                <span class="material-symbols-outlined">timeline</span> {% trans "Harvest Advisor" %}
+            </a>
+
+            <a href="{% url 'marketPrice:compare' %}" class="nav-item {% block nav_compare %}{% endblock %}">
+                <span class="material-symbols-outlined">compare_arrows</span> {% trans "Compare" %}
+            </a>
+
+            <a href="{% url 'marketPrice:recommendations' %}" class="nav-item {% block nav_recommendations %}{% endblock %}">
+                <span class="material-symbols-outlined">lightbulb</span> {% trans "Recommendations" %}
+            </a>
+
+            <a href="{% url 'marketPrice:regions' %}" class="nav-item {% block nav_regions %}{% endblock %}">
+                <span class="material-symbols-outlined">map</span> {% trans "Regional Data" %}
+            </a>
+
+            <!-- ===== 4. TOOLS & SUPPORT ===== -->
+            <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
+                {% trans "Tools & Support" %}
+            </div>
+
+            <a href="{% url 'weather:dashboard' %}" class="nav-item {% block nav_weather %}{% endblock %}">
+                <span class="material-symbols-outlined">wb_sunny</span> {% trans "Weather" %}
+            </a>
+
+            <a href="{% url 'stock:material_list' %}" class="nav-item {% block nav_stock %}{% endblock %}">
+                <span class="material-symbols-outlined">inventory_2</span> {% trans "Stock & Sales" %}
+            </a>
+
+            <!-- ===== 5. COMMUNITY ===== -->
+            <div style="padding: 8px 12px 4px; font-size: 11px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
+                {% trans "Community" %}
+            </div>
+
+            <a href="{% url 'community:feed' %}" class="nav-item {% block nav_community %}{% endblock %}">
+                <span class="material-symbols-outlined">forum</span> {% trans "Community" %}
+            </a>
+
+            <!-- ===== 6. SETTINGS ===== -->
+            <a href="#" class="nav-item {% block nav_settings %}{% endblock %}" style="margin-top: 4px;">
+                <span class="material-symbols-outlined">settings</span> {% trans "Settings" %}
+            </a>
         </nav>
 
         <div class="sidebar-bottom">
+            <button class="new-analysis-btn">
+                <span class="material-symbols-outlined">add</span> {% trans "New Analysis" %}
+            </button>
             <a href="#" class="nav-item">
                 <span class="material-symbols-outlined">help</span> {% trans "Help" %}
             </a>
@@ -352,7 +842,7 @@
     <!-- ===== MAIN CONTENT ===== -->
     <div class="app-main">
 
-        <!-- ===== TOPBAR ===== -->
+        <!-- ===== TOPBAR - ONLY SHOW IF LOGGED IN ===== -->
         {% if user.is_authenticated %}
         <header class="app-topbar">
             <h1>{% block page_title %}{% trans "Dashboard" %}{% endblock %}</h1>
@@ -363,7 +853,6 @@
                     <input type="text" placeholder="{% trans 'Search analytics...' %}">
                 </div>
 
-                <!-- 🌐 Language Selector -->
                 <div class="lang-dropdown dropdown">
                     <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-globe2"></i>
@@ -398,8 +887,25 @@
                     </div>
                 </div>
 
+                <div class="notif-dropdown-wrap">
+                    <button class="icon-btn" id="notifBellBtn" onclick="toggleNotifDropdown()">
+                        <span class="material-symbols-outlined">notifications</span>
+                        {% if unread_notifications_count > 0 %}
+                            <span class="notif-dot" id="notifDot"></span>
+                        {% endif %}
+                    </button>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-dropdown-header">
+                            <span>{% trans "Notifications" %}</span>
+                        </div>
+                        <div class="notif-dropdown-list" id="notifList">
+                            <div class="notif-empty">{% trans "Loading..." %}</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="user-chip-wrap" style="position:relative;">
-                    <button type="button" class="user-chip" id="userChipBtn" onclick="toggleUserDropdown()">
+                    <button type="button" class="user-chip" id="userChipBtn" onclick="toggleUserDropdown()" style="background:none;border:none;cursor:pointer;">
                         <div class="avatar">
                             {% if user.profile.avatar %}
                                 <img src="{{ user.profile.avatar.url }}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
@@ -407,30 +913,43 @@
                                 {{ user.username|slice:":2"|upper }}
                             {% endif %}
                         </div>
-                        <div style="text-align:left;">
-                            <div style="font-size:13.5px; font-weight:600; color:var(--ink);">{{ user.profile.full_name|default:user.get_full_name|default:user.username }}</div>
-                            <div style="font-size:11.5px; color:var(--ink-faint);">{% if user.is_staff %}{% trans "Admin Account" %}{% else %}{{ user.profile.role_title|default:"Premium Plan" }}{% endif %}</div>
+                        <div>
+                            <div class="user-name">{{ user.profile.full_name|default:user.get_full_name|default:user.username }}</div>
+                            <div class="user-plan">{{ user.profile.role_title|default:"Premium Plan" }}</div>
                         </div>
                     </button>
 
                     <div class="notif-dropdown" id="userDropdown" style="width:240px;">
-                        <div class="notif-dropdown-header">
-                            <div><strong>{{ user.profile.full_name|default:user.username }}</strong></div>
-                            <div style="font-size:11.5px; color:var(--ink-faint);">{{ user.email|default:user.username }}</div>
+                        <div class="notif-dropdown-header" style="display:flex;align-items:center;gap:10px;">
+                            <div class="notif-avatar" style="width:38px;height:38px;">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}">
+                                {% else %}
+                                    {{ user.username|slice:":2"|upper }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div style="font-weight:700;font-size:13.5px;">{{ user.profile.full_name|default:user.username }}</div>
+                                <div style="font-size:11.5px;color:var(--ink-faint);">{{ user.email|default:user.username }}</div>
+                            </div>
                         </div>
                         <a href="{% url 'profile' %}" class="notif-item">
-                            <span class="material-symbols-outlined">account_circle</span> {% trans "View Profile" %}
+                            <span class="material-symbols-outlined">account_circle</span>
+                            <div class="notif-text">{% trans "View Profile" %}</div>
                         </a>
                         <a href="{% url 'profile_edit' %}" class="notif-item">
-                            <span class="material-symbols-outlined">edit</span> {% trans "Edit Profile" %}
+                            <span class="material-symbols-outlined">edit</span>
+                            <div class="notif-text">{% trans "Edit Profile" %}</div>
                         </a>
                         {% if user.is_staff %}
                         <a href="{% url 'adminpanel:dashboard' %}" class="notif-item">
-                            <span class="material-symbols-outlined">admin_panel_settings</span> {% trans "Admin Dashboard" %}
+                            <span class="material-symbols-outlined">admin_panel_settings</span>
+                            <div class="notif-text">{% trans "Admin Dashboard" %}</div>
                         </a>
                         {% endif %}
                         <a href="{% url 'landing:logout' %}" class="notif-item">
-                            <span class="material-symbols-outlined">logout</span> {% trans "Logout" %}
+                            <span class="material-symbols-outlined">logout</span>
+                            <div class="notif-text">{% trans "Logout" %}</div>
                         </a>
                     </div>
                 </div>
@@ -438,7 +957,7 @@
         </header>
         {% endif %}
 
-        <!-- ===== MESSAGES ===== -->
+        <!-- ===== MESSAGES (Always show) ===== -->
         {% if messages %}
             <div class="container-fluid px-4 pt-3">
                 {% for message in messages %}
@@ -450,13 +969,14 @@
             </div>
         {% endif %}
 
-        <!-- ===== CONTENT ===== -->
+        <!-- ===== CONTENT (Always show) ===== -->
         <main class="app-content">
             {% block app_content %}
+            <!-- Content from child templates -->
             {% endblock %}
         </main>
 
-        <!-- ===== FOOTER ===== -->
+        <!-- ===== FOOTER (Always show) ===== -->
         <footer class="app-footer">
             <i class="bi bi-seedling me-1"></i>
             &copy; 2026 {% trans "AgriVision | Smart Agriculture Management System" %}
@@ -464,15 +984,68 @@
     </div>
 </div>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
 <script>
+    /* ===== Notification dropdown (top-level so inline onclick can reach them) ===== */
+    function toggleNotifDropdown() {
+        const dropdown = document.getElementById('notifDropdown');
+        if (!dropdown) return;
+        const isOpening = !dropdown.classList.contains('open');
+        dropdown.classList.toggle('open');
+        if (isOpening) loadNotifications();
+    }
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         if (!dropdown) return;
+        document.getElementById('notifDropdown')?.classList.remove('open'); // notif ပိတ်ပေးမယ်
         dropdown.classList.toggle('open');
     }
 
+    function loadNotifications() {
+        fetch('/community/notifications/')
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('notifList');
+                if (!list) return;
+                if (data.notifications.length === 0) {
+                    list.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
+                    return;
+                }
+                list.innerHTML = data.notifications.map(n => `
+                    <a href="${n.url}" class="notif-item ${n.is_read ? '' : 'unread'}">
+                        <div class="notif-avatar">
+                            ${n.actor_avatar ? `<img src="${n.actor_avatar}" alt="">` : n.actor_initials}
+                        </div>
+                        <div>
+                            <div class="notif-text"><strong>${n.actor_name}</strong> ${n.verb}</div>
+                            <div class="notif-time">${n.time}</div>
+                        </div>
+                    </a>
+                `).join('');
+
+                if (data.unread_count > 0) {
+                    fetch('/community/notifications/read-all/', {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                    }).then(() => {
+                        const dot = document.getElementById('notifDot');
+                        if (dot) dot.remove();
+                    });
+                }
+            });
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        // ===== Theme Toggle =====
         const toggleTrack = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         const root = document.documentElement;
@@ -489,23 +1062,36 @@
         }
 
         const saved = localStorage.getItem('agri-theme');
-        if (saved) setTheme(saved);
+        if (saved) {
+            setTheme(saved);
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        }
 
         if (toggleTrack) {
             toggleTrack.addEventListener('click', function() {
                 const current = root.getAttribute('data-theme');
-                setTheme(current === 'dark' ? 'light' : 'dark');
+                const next = (current === 'dark') ? 'light' : 'dark';
+                setTheme(next);
             });
         }
-
+// ===== Close notifications/user dropdown on outside click =====
         document.addEventListener('click', function(e) {
+            const notifWrap = document.querySelector('.notif-dropdown-wrap');
+            if (notifWrap && !notifWrap.contains(e.target)) {
+                document.getElementById('notifDropdown')?.classList.remove('open');
+            }
             const userWrap = document.querySelector('.user-chip-wrap');
             if (userWrap && !userWrap.contains(e.target)) {
                 document.getElementById('userDropdown')?.classList.remove('open');
             }
         });
 
-        // 🌐 Language Switcher Event Handler
+        // ===== Language Switching =====
         const langSwitches = document.querySelectorAll('.lang-switch');
         langSwitches.forEach(link => {
             link.addEventListener('click', function(e) {
@@ -526,10 +1112,541 @@
                     });
             });
         });
+
+        // ===== Close dropdowns on mobile =====
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const dropdown = this.closest('.dropdown');
+                if (dropdown) {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    if (toggle) {
+                        const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
+                        if (bsDropdown) bsDropdown.hide();
+                    }
+                }
+            });
+        });
     });
 </script>
 
 {% block extra_js %}{% endblock %}
+
+<!-- =========================================================
+     AGRIVISION AI CHAT
+     ========================================================= -->
+
+<style>
+/* ================================
+   FLOATING AI BUTTON
+   ================================ */
+
+.agrivision-ai {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 9999;
+}
+
+.agrivision-ai-button {
+    position: relative;
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent-green);
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.agrivision-ai-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.20);
+}
+
+.agrivision-ai-button i {
+    font-size: 1.35rem;
+}
+
+.agrivision-ai-status {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 11px;
+    height: 11px;
+    background: #2e7d32;
+    border: 2px solid var(--bg-card);
+    border-radius: 50%;
+}
+
+/* ================================
+   CHAT WINDOW
+   ================================ */
+
+.agrivision-ai-window {
+    position: absolute;
+    right: 0;
+    bottom: 72px;
+    width: 360px;
+    max-width: calc(100vw - 30px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px) scale(0.97);
+    transform-origin: bottom right;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.agrivision-ai.open .agrivision-ai-window {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* ================================
+   CHAT HEADER
+   ================================ */
+
+.agrivision-ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.agrivision-ai-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.agrivision-ai-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(46, 125, 50, 0.09);
+    border-radius: 10px;
+    color: var(--accent-green);
+}
+
+.agrivision-ai-title {
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.agrivision-ai-subtitle {
+    margin-top: 2px;
+    color: var(--ink-faint);
+    font-size: 0.62rem;
+}
+
+.agrivision-ai-close {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+}
+
+.agrivision-ai-close:hover {
+    background: var(--bg-glass);
+    color: var(--ink);
+}
+
+/* ================================
+   CHAT BODY
+   ================================ */
+
+.agrivision-ai-body {
+    height: 300px;
+    padding: 1rem;
+    overflow-y: auto;
+    background: var(--bg-glass);
+}
+
+.agrivision-message {
+    max-width: 85%;
+    margin-bottom: 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 12px;
+    font-size: 0.74rem;
+    line-height: 1.6;
+}
+
+.agrivision-message.bot {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--ink-soft);
+    border-bottom-left-radius: 4px;
+}
+
+.agrivision-message.user {
+    margin-left: auto;
+    background: var(--accent-green);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+/* ================================
+   QUICK QUESTIONS
+   ================================ */
+
+.agrivision-suggestions {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.7rem 0.9rem;
+    overflow-x: auto;
+    border-top: 1px solid var(--border);
+}
+
+.agrivision-suggestion {
+    flex: 0 0 auto;
+    padding: 0.38rem 0.65rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--ink-soft);
+    font-size: 0.62rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.agrivision-suggestion:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+/* ================================
+   INPUT
+   ================================ */
+
+.agrivision-ai-input {
+    display: flex;
+    gap: 0.45rem;
+    padding: 0.8rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg-card);
+}
+
+.agrivision-ai-input input {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    font-size: 0.72rem;
+    outline: none;
+}
+
+.agrivision-ai-input input:focus {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.08);
+}
+
+.agrivision-ai-send {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--accent-green);
+    color: #fff;
+    cursor: pointer;
+}
+
+.agrivision-ai-send:hover {
+    opacity: 0.9;
+}
+
+/* ================================
+   MOBILE
+   ================================ */
+
+@media (max-width: 480px) {
+    .agrivision-ai {
+        right: 16px;
+        bottom: 16px;
+    }
+    .agrivision-ai-button {
+        width: 54px;
+        height: 54px;
+    }
+    .agrivision-ai-window {
+        right: -4px;
+        bottom: 66px;
+        width: calc(100vw - 24px);
+    }
+    .agrivision-ai-body {
+        height: 270px;
+    }
+}
+</style>
+
+<!-- =========================================================
+     CHATBOT HTML
+     ========================================================= -->
+
+<div class="agrivision-ai" id="agrivisionAI">
+
+    <!-- CHAT WINDOW -->
+    <div class="agrivision-ai-window">
+
+        <!-- HEADER -->
+        <div class="agrivision-ai-header">
+            <div class="agrivision-ai-brand">
+                <div class="agrivision-ai-icon">
+                    <i class="bi bi-stars"></i>
+                </div>
+                <div>
+                    <div class="agrivision-ai-title">
+                        AgriVision AI
+                    </div>
+                    <div class="agrivision-ai-subtitle">
+                        Agricultural market assistant
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="agrivision-ai-close" id="agrivisionAIClose">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="agrivision-ai-body" id="agrivisionAIBody">
+            <div class="agrivision-message bot">
+                Hello. I'm your AgriVision AI assistant.
+                Ask me about crop prices, market trends,
+                or where to sell your crops.
+            </div>
+        </div>
+
+        <!-- QUICK QUESTIONS -->
+        <div class="agrivision-suggestions">
+            <button type="button" class="agrivision-suggestion" data-question="Which crop has the best price?">
+                Best crop price
+            </button>
+            <button type="button" class="agrivision-suggestion" data-question="What are the current market trends?">
+                Market trends
+            </button>
+            <button type="button" class="agrivision-suggestion" data-question="Where should I sell my crop?">
+                Best market
+            </button>
+            <button type="button" class="agrivision-suggestion" data-question="What crops are most profitable to plant?">
+                What to plant?
+            </button>
+        </div>
+
+        <!-- INPUT -->
+        <form class="agrivision-ai-input" id="agrivisionAIForm">
+            <input type="text" id="agrivisionAIInput" placeholder="Ask AgriVision..." autocomplete="off">
+            <button type="submit" class="agrivision-ai-send">
+                <i class="bi bi-arrow-up"></i>
+            </button>
+        </form>
+
+    </div>
+
+    <!-- FLOATING BUTTON -->
+    <button type="button" class="agrivision-ai-button" id="agrivisionAIButton" aria-label="Open AgriVision AI">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span class="agrivision-ai-status"></span>
+    </button>
+
+</div>
+
+<!-- =========================================================
+     CHATBOT JAVASCRIPT
+     ========================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const chatbot = document.getElementById("agrivisionAI");
+    const button = document.getElementById("agrivisionAIButton");
+    const closeButton = document.getElementById("agrivisionAIClose");
+    const form = document.getElementById("agrivisionAIForm");
+    const input = document.getElementById("agrivisionAIInput");
+    const body = document.getElementById("agrivisionAIBody");
+    const suggestions = document.querySelectorAll(".agrivision-suggestion");
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    /* ================================================
+       OPEN / CLOSE
+       ================================================ */
+
+    button.addEventListener("click", function () {
+        chatbot.classList.toggle("open");
+        if (chatbot.classList.contains("open")) {
+            setTimeout(function () {
+                input.focus();
+            }, 200);
+        }
+    });
+
+    closeButton.addEventListener("click", function () {
+        chatbot.classList.remove("open");
+    });
+
+    /* ================================================
+       ADD MESSAGE
+       ================================================ */
+
+    function addMessage(text, type) {
+        const message = document.createElement("div");
+        message.className = "agrivision-message " + type;
+        message.textContent = text;
+        body.appendChild(message);
+        body.scrollTop = body.scrollHeight;
+    }
+
+    /* ================================================
+       SEND MESSAGE
+       ================================================ */
+
+    function sendMessage(text) {
+        text = text.trim();
+        if (!text) {
+            return;
+        }
+
+        // Add user message to chat
+        addMessage(text, "user");
+        input.value = "";
+
+        // Disable send button and show loading
+        const sendBtn = document.querySelector('.agrivision-ai-send');
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+        // Show typing indicator
+        const typingMsg = document.createElement("div");
+        typingMsg.className = "agrivision-message bot";
+        typingMsg.id = "typingIndicator";
+        typingMsg.textContent = "Thinking... 🌾";
+        body.appendChild(typingMsg);
+        body.scrollTop = body.scrollHeight;
+
+        // Send to API
+        fetch("/api/chat/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({
+                query: text,
+                k: 8
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove typing indicator
+            const typingEl = document.getElementById("typingIndicator");
+            if (typingEl) typingEl.remove();
+
+            if (data.success) {
+                addMessage(data.response, "bot");
+
+                // Show sources if available
+                if (data.sources && data.sources.length > 0) {
+                    const sourceText = "📊 Sources: " + data.sources.map(s => s.crop).join(", ");
+                    const sourceMsg = document.createElement("div");
+                    sourceMsg.className = "agrivision-message bot";
+                    sourceMsg.style.fontSize = "0.65rem";
+                    sourceMsg.style.opacity = "0.7";
+                    sourceMsg.textContent = sourceText;
+                    body.appendChild(sourceMsg);
+                    body.scrollTop = body.scrollHeight;
+                }
+            } else {
+                addMessage("Error: " + (data.error || "Unknown error"), "bot");
+            }
+        })
+        .catch(error => {
+            // Remove typing indicator
+            const typingEl = document.getElementById("typingIndicator");
+            if (typingEl) typingEl.remove();
+
+            addMessage("Sorry, I couldn't reach the AI service. Please try again later.", "bot");
+            console.error("Chat error:", error);
+        })
+        .finally(() => {
+            // Re-enable send button
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+        });
+    }
+
+    /* ================================================
+       FORM
+       ================================================ */
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        sendMessage(input.value);
+    });
+
+    /* ================================================
+       QUICK QUESTIONS
+       ================================================ */
+
+    suggestions.forEach(function (suggestion) {
+        suggestion.addEventListener("click", function () {
+            sendMessage(suggestion.dataset.question);
+        });
+    });
+
+    /* ================================================
+       ESCAPE KEY
+       ================================================ */
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && chatbot.classList.contains("open")) {
+            chatbot.classList.remove("open");
+        }
+    });
+
+});
+</script>
 
 </body>
 </html>

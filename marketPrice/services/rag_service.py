@@ -19,24 +19,25 @@ import requests
 
 print("✓ Using simplified RAG service without LangChain")
 
+
 class AgriRAGService:
     """Simplified RAG service without LangChain dependencies"""
-    
+
     def __init__(self, persist_directory: str = None):
         if persist_directory is None:
             persist_directory = os.path.join(settings.BASE_DIR, 'faiss_db')
-        
+
         self.persist_directory = persist_directory
         self.index = None
         self.documents = []
         self.metadata = []
         self.embeddings_model = None
-        
+
         os.makedirs(self.persist_directory, exist_ok=True)
-        
+
         self._initialize_embeddings()
         self._load_or_build()
-    
+
     def _initialize_embeddings(self):
         """Initialize the embedding model"""
         try:
@@ -46,12 +47,12 @@ class AgriRAGService:
         except Exception as e:
             logger.error(f"Error initializing embeddings: {e}")
             raise
-    
+
     def _load_or_build(self):
         """Load existing FAISS index or prepare to build"""
         index_path = os.path.join(self.persist_directory, "index.faiss")
         docs_path = os.path.join(self.persist_directory, "documents.pkl")
-        
+
         if os.path.exists(index_path) and os.path.exists(docs_path):
             try:
                 self.index = faiss.read_index(index_path)
@@ -61,31 +62,31 @@ class AgriRAGService:
                 return
             except Exception as e:
                 print(f"⚠ Could not load existing index: {e}")
-        
+
         print("ℹ No existing index found. Will build new one.")
         self.index = None
         self.documents = []
         self.metadata = []
-    
+
     def _create_documents(self):
         """Create documents from database"""
         documents = []
         metadata = []
-        
+
         print("📊 Creating documents from database...")
-        
+
         # ============================================================
         # 1. CROP DATA
         # ============================================================
         crops = Crop.objects.all()
         print(f"  Found {crops.count()} crops")
-        
+
         for crop in crops:
             prices = crop.harvest_prices.order_by('-year')[:5]
             price_lines = []
             for price in prices:
                 price_lines.append(f"Year {price.year}: {price.price:,} Ks/Ton")
-            
+
             profit = crop.profitability
             profit_text = ""
             if profit:
@@ -95,7 +96,7 @@ class AgriRAGService:
                         profit_text += f", Margin: {profit.profit_margin}%"
                     if hasattr(profit, 'yield_tons_per_acre') and profit.yield_tons_per_acre:
                         profit_text += f", Yield: {profit.yield_tons_per_acre} tons/acre"
-            
+
             content = f"""
 Crop: {crop.name}
 Category: {crop.category or 'N/A'}
@@ -112,14 +113,14 @@ Prices:
                 'category': crop.category or 'N/A',
                 'document_type': 'crop_data'
             })
-        
+
         # ============================================================
         # 2. PROFITABILITY-BASED PLANTING RECOMMENDATIONS
         # ============================================================
         print("  Adding planting recommendations...")
-        
+
         profit_crops = Profitability.objects.select_related('crop').order_by('-profit_per_acre')[:20]
-        
+
         if profit_crops:
             content = "🌾 TOP PROFITABLE CROPS TO PLANT:\n\n"
             for i, item in enumerate(profit_crops, 1):
@@ -130,12 +131,12 @@ Prices:
                 'document_type': 'planting_recommendations',
                 'crop_name': 'All Crops'
             })
-        
+
         # ============================================================
         # 3. FARMING ADVICE
         # ============================================================
         print("  Adding farming advice...")
-        
+
         crop_advice = [
             {
                 'crop': 'Rice',
@@ -243,7 +244,7 @@ Prices:
                 'fertilizer': 'Apply NPK 15-15-15 at 30 kg/acre. Add organic compost annually.'
             }
         ]
-        
+
         for advice in crop_advice:
             content = f"""
 CROP: {advice['crop']}
@@ -258,12 +259,12 @@ FERTILIZER: {advice['fertilizer']}
                 'document_type': 'farming_advice',
                 'crop_name': advice['crop']
             })
-        
+
         # ============================================================
         # 4. FERTILIZER ADVICE
         # ============================================================
         print("  Adding fertilizer advice...")
-        
+
         fertilizer_advice = [
             {
                 'type': 'Compost',
@@ -286,7 +287,7 @@ FERTILIZER: {advice['fertilizer']}
                 'application': 'Apply 40-60 kg per acre at planting and during early growth.'
             }
         ]
-        
+
         for advice in fertilizer_advice:
             content = f"""
 FERTILIZER: {advice['type']}
@@ -298,15 +299,15 @@ Application: {advice['application']}
                 'document_type': 'fertilizer_advice',
                 'fertilizer_name': advice['type']
             })
-        
+
         # ============================================================
         # 5. MARKET TRENDS
         # ============================================================
         print("  Adding market trends...")
-        
+
         trend_content = "CURRENT MARKET TRENDS IN MYANMAR:\n\n"
         crops_with_prices = Crop.objects.filter(harvest_prices__isnull=False).distinct()
-        
+
         for crop in crops_with_prices[:15]:
             prices = crop.harvest_prices.order_by('year')
             if prices.count() >= 2:
@@ -317,16 +318,16 @@ Application: {advice['application']}
                     change = ((last_price - first_price) / first_price) * 100
                     trend = "UP" if change > 0 else "DOWN"
                     trend_content += f"{crop.name}: {trend} {abs(change):.1f}% (Current: {last_price:,.0f} Ks/Ton)\n"
-        
+
         if len(trend_content) < 100:
             trend_content += "Limited price trend data available. Prices are generally stable."
-        
+
         documents.append(trend_content)
         metadata.append({
             'document_type': 'market_trends',
             'crop_name': 'All Crops'
         })
-        
+
         # ============================================================
         # 6. REGIONAL DATA & BEST MARKETS
         # ============================================================
@@ -336,36 +337,36 @@ Application: {advice['application']}
 
         if regional_data.exists():
             print(f"  Found {regional_data.count()} regional records")
-            
+
             region_dict = {}
             for item in regional_data:
                 region = item.region
                 if region not in region_dict:
                     region_dict[region] = {}
-                
+
                 crop = item.crop_category
                 if crop not in region_dict[region]:
                     region_dict[region][crop] = 0
                 if item.production_tons:
                     region_dict[region][crop] += float(item.production_tons)
-            
+
             content = "📍 BEST MARKETS TO SELL CROPS IN MYANMAR:\n\n"
             content += "Based on regional production data, here are the key markets and what they produce:\n\n"
-            
+
             for region in sorted(region_dict.keys()):
                 crops_in_region = region_dict[region]
                 total_prod = sum(crops_in_region.values())
-                
+
                 content += f"=== {region} REGION ===\n"
                 content += f"Total Production: {int(total_prod):,} tons\n"
                 content += "Major Crops Produced:\n"
-                
+
                 crops_sorted = sorted(crops_in_region.items(), key=lambda x: x[1], reverse=True)
                 for crop_name, prod_value in crops_sorted[:7]:
                     if prod_value > 0:
                         content += f"  - {crop_name}: {int(prod_value):,} tons\n"
                 content += "\n"
-            
+
             content += "\n💡 RECOMMENDATIONS:\n"
             content += "• Yangon: Best for rice, beans, vegetables, and fruits - major export hub\n"
             content += "• Mandalay: Best for pulses, sesame, cotton, and groundnut - regional trading center\n"
@@ -374,7 +375,7 @@ Application: {advice['application']}
             content += "• Shan State: Best for corn, potato, tea, coffee - high-value crops\n"
             content += "• Magway: Best for sesame, groundnut, cotton, chillies - oilseed hub\n"
             content += "• Sagaing: Best for wheat, pulses, cotton - upper Myanmar market\n"
-            
+
             documents.append(content)
             metadata.append({
                 'document_type': 'market_locations',
@@ -411,12 +412,12 @@ Market Access: Good - Specialty crop hub
                 'document_type': 'market_locations',
                 'crop_name': 'All Crops'
             })
-        
+
         # ============================================================
         # 7. WEATHER GUIDANCE
         # ============================================================
         print("  Adding weather guidance...")
-        
+
         weather_content = """🌤️ WEATHER GUIDANCE FOR FARMERS IN MYANMAR:
 
 1. MONSOON SEASON (June - October):
@@ -481,7 +482,7 @@ Market Access: Good - Specialty crop hub
             'crop_name': 'All Crops'
         })
         print("  ✅ Added weather guidance")
-        
+
         # ============================================================
         # 8. GENERAL FARMING KNOWLEDGE - IMPROVED WITH KEYWORDS
         # ============================================================
@@ -879,9 +880,10 @@ Answer:"""
             }
 
             data = {
-                "model": "llama-3.3-70b-versatile",
+                "model": "openai/gpt-oss-20b",
                 "messages": [
-                    {"role": "system", "content": "You are a helpful agricultural market intelligence assistant for Myanmar farmers. Provide practical, actionable advice based on the context provided."},
+                    {"role": "system",
+                     "content": "You are a helpful agricultural market intelligence assistant for Myanmar farmers. Provide practical, actionable advice based on the context provided."},
                     {"role": "user", "content": prompt}
                 ],
                 "temperature": 0.3,

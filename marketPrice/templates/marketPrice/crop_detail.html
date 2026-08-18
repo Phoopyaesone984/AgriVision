@@ -166,7 +166,7 @@
         </div>
     </div>
     {% endif %}
-    
+
     {% if has_daily_data %}
     <div class="col-lg-6 mb-4">
         <div class="card">
@@ -198,7 +198,7 @@
         </div>
     </div>
     {% endif %}
-    
+
     {% if has_profit_data %}
     <div class="col-lg-6 mb-4">
         <div class="card">
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     {% endif %}
-    
+
     // Daily Price Chart
     {% if has_daily_data %}
     const dailyCtx = document.getElementById('dailyChart').getContext('2d');
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     {% endif %}
-    
+
     // Yield Chart
     {% if has_yield_data %}
     const yieldCtx = document.getElementById('yieldChart').getContext('2d');
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     {% endif %}
-    
+
     // Profitability Chart
     {% if has_profit_data %}
     const profitCtx = document.getElementById('profitChart').getContext('2d');
